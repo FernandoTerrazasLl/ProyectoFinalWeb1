@@ -1,6 +1,6 @@
 # ProyectoFinalWeb1
 
-Aplicacion de ganaderia Tech
+Aplicacion de Telemedicina psicologica
 
 ## Integrantes
 
