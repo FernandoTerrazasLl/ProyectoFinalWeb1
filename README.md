@@ -16,6 +16,11 @@ https://www.figma.com/design/HIcyIeiTdjp0YQahtMmy6z/Untitled?node-id=0-1&t=o3nOz
 
 <img width="858" height="496" alt="Image" src="https://github.com/user-attachments/assets/efe445ae-f58d-49bd-8166-7dbc53ef95bb" />
 
+## Diagrama de Actividad: Reserva de Citas
+
+<img width="476" height="672" alt="Image" src="https://github.com/user-attachments/assets/f90f4731-0d35-4bcd-8f05-11f1f8c95fd1" />
+
+
 ## Integrantes
 
 - Fernando Terrazas Llanos
