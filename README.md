@@ -22,7 +22,7 @@ https://www.figma.com/design/HIcyIeiTdjp0YQahtMmy6z/Untitled?node-id=0-1&t=o3nOz
 
 ### Diagrama de Estados: Ciclo de Vida de una Cita
 
-<img width="756" height="400" alt="Image" src="https://github.com/user-attachments/assets/f762967a-e7df-4e4d-94e4-6c84342140c5" />
+<img width="894" height="455" alt="Image" src="https://github.com/user-attachments/assets/b0be70c7-1efd-4134-a36f-367d83aa1199" />
 
 ## Integrantes
 
