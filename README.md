@@ -24,6 +24,10 @@ https://www.figma.com/design/HIcyIeiTdjp0YQahtMmy6z/Untitled?node-id=0-1&t=o3nOz
 
 <img width="894" height="455" alt="Image" src="https://github.com/user-attachments/assets/b0be70c7-1efd-4134-a36f-367d83aa1199" />
 
+## Diagrama C1
+
+<img width="1105" height="628" alt="image" src="https://github.com/user-attachments/assets/bae808dc-4677-4735-8370-e95db48caa8d" />
+
 ## Integrantes
 
 - Fernando Terrazas Llanos
