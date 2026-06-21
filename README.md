@@ -24,13 +24,17 @@ https://www.figma.com/design/HIcyIeiTdjp0YQahtMmy6z/Untitled?node-id=0-1&t=o3nOz
 
 <img width="894" height="455" alt="Image" src="https://github.com/user-attachments/assets/b0be70c7-1efd-4134-a36f-367d83aa1199" />
 
-## Diagrama C1
+### Diagrama C1
 
 <img width="1105" height="628" alt="image" src="https://github.com/user-attachments/assets/bae808dc-4677-4735-8370-e95db48caa8d" />
 
-## Diagrama C2
+### Diagrama C2
 
 <img width="776" height="836" alt="image" src="https://github.com/user-attachments/assets/6a00adc2-ddfc-4fea-b2a3-5a1095a044c7" />
+
+### Diagrama C3
+
+<img width="1084" height="873" alt="image" src="https://github.com/user-attachments/assets/68684937-cea2-4c77-8713-615b77238e01" />
 
 ## Integrantes
 
