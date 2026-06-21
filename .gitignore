@@ -1,20 +1,16 @@
-# IDEs
 .idea/
 .vscode/
-
-# Python
 __pycache__/
 *.pyc
 venv/
 .env/
-
-# Docker
 .env
 .env.development
 .env.production
 .env.local
-
-# Frontend / Node
 node_modules/
 dist/
 build/
+.claude/
+*.local
+.DS_Store
