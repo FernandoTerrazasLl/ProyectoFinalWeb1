@@ -4,11 +4,7 @@ import type { RouteMatch } from "@shared/lib/router/RouteMatch";
 export class Router {
   private routes: Route[] = [];
   private notFound: Route["loader"] | null = null;
-  private readonly root: Element;
-
-  constructor(root: Element) {
-    this.root = root;
-  }
+  private root: Element | null = null;
 
   add(route: Route): this {
     this.routes.push(route);
@@ -20,15 +16,16 @@ export class Router {
     return this;
   }
 
-  start() {
+  start(root: Element) {
+    this.root = root;
     window.addEventListener("popstate", () => void this.resolve());
     document.addEventListener("click", (event) => this.interceptLinks(event));
-    this.resolve();
+    void this.resolve();
   }
 
   navigate(path: string) {
     window.history.pushState({}, "", path);
-    this.resolve();
+    void this.resolve();
   }
 
   private interceptLinks(event: MouseEvent) {
@@ -42,6 +39,9 @@ export class Router {
   }
 
   private async resolve() {
+    if (!this.root) 
+      return;
+
     const pathname = window.location.pathname;
 
     for (const route of this.routes) {
@@ -49,8 +49,10 @@ export class Router {
 
       if (!match) 
         continue;
-      if (route.guard && !route.guard()) 
+      if (route.guard && !route.guard()) {
+        this.navigate("/auth");
         return;
+      }
 
       const page = await route.loader();
       window.scrollTo(0, 0);
@@ -84,7 +86,7 @@ export class Router {
       else if (patternPart !== pathPart) 
         return null;
     }
-    
+
     return { params };
   }
 }
