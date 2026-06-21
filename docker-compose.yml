@@ -35,6 +35,37 @@ services:
       - private_network
     restart: always
 
+  worker-etl:
+    build:
+      context: ./code/admin
+    command: celery -A config worker --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./code/admin:/app
+    networks:
+      - private_network
+    restart: always
+
+  worker-ugc:
+    build:
+      context: ./code/backend
+    command: python -m src.workers.kafka_consumer
+    env_file:
+      - .env
+    depends_on:
+      - kafka
+      - mongodb
+      - clickhouse
+    volumes:
+      - ./code/backend:/app
+    networks:
+      - private_network
+    restart: always
+
   frontend:
     build:
       context: ./code/frontend
