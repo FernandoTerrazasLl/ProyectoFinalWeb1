@@ -1,5 +1,5 @@
 services:
-  db:
+  postgres:
     image: postgres:15-alpine
     env_file:
       - .env
@@ -15,7 +15,9 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      - postgres
+    volumes:
+      - ./code/admin:/app
     networks:
       - private_network
     restart: always
@@ -26,7 +28,9 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      - postgres
+    volumes:
+      - ./code/backend:/app
     networks:
       - private_network
     restart: always
@@ -34,6 +38,63 @@ services:
   frontend:
     build:
       context: ./code/frontend
+    volumes:
+      - ./code/frontend:/app
+    networks:
+      - private_network
+    restart: always
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - private_network
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - private_network
+    restart: always
+
+  mongodb:
+    image: mongo:6-jammy
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - private_network
+    restart: always
+
+  kafka:
+    image: apache/kafka:3.7.0
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - private_network
+    restart: always
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
     networks:
       - private_network
     restart: always
@@ -56,6 +117,11 @@ services:
 
 volumes:
   postgres_data:
+  elasticsearch_data:
+  redis_data:
+  mongodb_data:
+  kafka_data:
+  clickhouse_data:
 
 networks:
   public_network:

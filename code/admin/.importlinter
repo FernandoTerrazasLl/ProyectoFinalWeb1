@@ -1,0 +1,14 @@
+[importlinter]
+root_packages =
+    users
+    providers
+    appointments
+    config
+
+[importlinter:contract:1]
+name = Independence of domains
+type = independence
+modules =
+    users
+    providers
+    appointments

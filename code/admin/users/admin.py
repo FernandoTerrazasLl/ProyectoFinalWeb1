@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(PatientProfile)
 class PatientProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'ci', 'phone_number')
-    search_fields = ('user__username', 'ci')
+    list_display = ('user',)
+    search_fields = ('user__username',)
 
 admin.site.register(User, CustomUserAdmin)
