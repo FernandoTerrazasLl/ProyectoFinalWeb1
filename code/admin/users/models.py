@@ -1,7 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+import uuid
 
 class User(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     class Role(models.TextChoices):
         ADMIN = 'ADMIN', 'Admin'
         PATIENT = 'PATIENT', 'Patient'
@@ -11,6 +13,7 @@ class User(AbstractUser):
     auth_provider = models.CharField(max_length=20, default='local')
 
 class PatientProfile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='patient_profile')
     ci = models.CharField(max_length=20, blank=True)
     birth_date = models.DateField(null=True, blank=True)

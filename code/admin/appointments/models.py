@@ -1,8 +1,11 @@
 from django.db import models
 from providers.models import ProviderProfile
+from providers.models import ProviderProfile
 from users.models import PatientProfile
+import uuid
 
 class Appointment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     class Status(models.TextChoices):
         PENDING = 'PENDING', 'Pending'
         CONFIRMED = 'CONFIRMED', 'Confirmed'
@@ -22,6 +25,7 @@ class Appointment(models.Model):
         return f"Appointment: {self.patient} with {self.provider} on {self.date} at {self.time}"
 
 class ScheduleRule(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     provider = models.ForeignKey(ProviderProfile, on_delete=models.CASCADE, related_name='schedule_rules')
     day_of_week = models.IntegerField(choices=[
         (1, 'Monday'), (2, 'Tuesday'), (3, 'Wednesday'), 
@@ -34,6 +38,7 @@ class ScheduleRule(models.Model):
         return f"{self.provider} - Day {self.day_of_week} ({self.start_time} - {self.end_time})"
 
 class BlockedSlot(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     provider = models.ForeignKey(ProviderProfile, on_delete=models.CASCADE, related_name='blocked_slots')
     block_date = models.DateField()
     start_time = models.TimeField()
