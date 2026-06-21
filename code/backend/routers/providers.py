@@ -22,6 +22,8 @@ class ProviderResponse(BaseModel):
     session_price: float
     bio: str
     is_approved: bool
+    average_rating: float = 0.0
+    review_count: int = 0
 
 @router.get("/", response_model=List[ProviderResponse])
 async def get_providers(
@@ -47,6 +49,9 @@ async def get_providers(
             index="providers",
             body={
                 "query": {"match_all": {}},
+                "sort": [
+                    {"average_rating": {"order": "desc"}}
+                ],
                 "from": skip,
                 "size": limit
             }
