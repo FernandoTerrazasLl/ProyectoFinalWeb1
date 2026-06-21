@@ -8,6 +8,15 @@ services:
     networks:
       - private_network
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-curamente_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 768M
 
   admin:
     build:
@@ -15,12 +24,17 @@ services:
     env_file:
       - .env
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     volumes:
       - ./code/admin:/app
     networks:
       - private_network
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   backend:
     build:
@@ -28,12 +42,19 @@ services:
     env_file:
       - .env
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - ./code/backend:/app
     networks:
       - private_network
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   worker-etl:
     build:
@@ -42,13 +63,19 @@ services:
     env_file:
       - .env
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - ./code/admin:/app
     networks:
       - private_network
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 384M
 
   worker-ugc:
     build:
@@ -57,14 +84,21 @@ services:
     env_file:
       - .env
     depends_on:
-      - kafka
-      - mongodb
-      - clickhouse
+      kafka:
+        condition: service_started
+      mongodb:
+        condition: service_healthy
+      clickhouse:
+        condition: service_started
     volumes:
       - ./code/backend:/app
     networks:
       - private_network
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 384M
 
   frontend:
     build:
@@ -74,6 +108,10 @@ services:
     networks:
       - private_network
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 128M
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
@@ -86,6 +124,15 @@ services:
     networks:
       - private_network
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200 >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
 
   redis:
     image: redis:7-alpine
@@ -94,6 +141,15 @@ services:
     networks:
       - private_network
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   mongodb:
     image: mongo:6-jammy
@@ -102,6 +158,15 @@ services:
     networks:
       - private_network
     restart: always
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 768M
 
   kafka:
     image: apache/kafka:3.7.0
@@ -116,11 +181,16 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_HEAP_OPTS: "-Xmx512m -Xms512m"
     volumes:
       - kafka_data:/var/lib/kafka/data
     networks:
       - private_network
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
   clickhouse:
     image: clickhouse/clickhouse-server:latest
@@ -129,6 +199,10 @@ services:
     networks:
       - private_network
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 768M
 
   proxy:
     image: nginx:alpine
@@ -145,6 +219,10 @@ services:
       - public_network
       - private_network
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 128M
 
 volumes:
   postgres_data:

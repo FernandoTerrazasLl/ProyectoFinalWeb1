@@ -26,7 +26,9 @@ def sync_provider_to_es(provider_id: str):
             "specialty": provider.specialty.name if provider.specialty else None,
             "session_price": float(provider.session_price),
             "bio": provider.bio,
-            "is_approved": provider.is_approved
+            "is_approved": provider.is_approved,
+            "average_rating": float(provider.average_rating),
+            "review_count": provider.review_count
         }
         
         es = get_es_client()
