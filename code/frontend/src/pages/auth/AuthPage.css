@@ -1,0 +1,31 @@
+.auth-page {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.auth-page__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 24rem;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-6);
+}
+
+.auth-page__title {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.auth-page__signup-link {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+  text-decoration: none;
+}
