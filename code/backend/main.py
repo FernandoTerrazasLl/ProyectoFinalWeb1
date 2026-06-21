@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, providers
+from routers import auth, psychologists, specialties, ugc, triage
 
 app = FastAPI(title="CuraMente API")
 
@@ -13,7 +13,10 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
-app.include_router(providers.router)
+app.include_router(psychologists.router)
+app.include_router(specialties.router)
+app.include_router(ugc.router)
+app.include_router(triage.router)
 
 @app.get("/")
 def read_root():

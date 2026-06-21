@@ -4,3 +4,11 @@ psycopg2-binary>=2.9.9
 sqlalchemy>=2.0.29
 passlib[bcrypt]>=1.7.4
 PyJWT>=2.8.0
+import-linter==2.0
+kafka-python>=2.0.2
+elasticsearch[async]>=8.11.0
+redis>=5.0.0
+google-auth>=2.23.0
+motor>=3.3.2
+clickhouse-connect>=0.6.8
+requests>=2.31.0
