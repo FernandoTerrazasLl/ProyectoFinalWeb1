@@ -9,7 +9,7 @@ from kafka import KafkaProducer
 
 from src.services.es_client import get_es
 from src.services.kafka_producer import get_kafka_producer
-from routers.providers import ProviderResponse
+from routers.psychologists import PsychologistResponse
 
 router = APIRouter(prefix="/triage", tags=["triage"])
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ class TriageRequest(BaseModel):
 class TriageResponse(BaseModel):
     recommended_specialty: str
     risk_level: str
-    recommended_providers: List[ProviderResponse]
+    recommended_providers: List[PsychologistResponse]
 
 def publish_event(producer: KafkaProducer, payload: dict):
     if producer:
@@ -85,7 +85,7 @@ async def evaluate_triage(
         hits = es_response.get("hits", {}).get("hits", [])
         for hit in hits:
             source = hit["_source"]
-            recommended_providers.append(ProviderResponse(id=hit["_id"], **source))
+            recommended_providers.append(PsychologistResponse(id=hit["_id"], **source))
     except Exception as e:
         logger.error(f"Error fetching recommended providers: {e}")
         

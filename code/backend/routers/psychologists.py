@@ -1,7 +1,7 @@
 import json
 import logging
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.exceptions import NotFoundError
@@ -10,10 +10,10 @@ import redis.asyncio as redis
 from src.services.es_client import get_es
 from src.services.redis_client import get_redis
 
-router = APIRouter(prefix="/providers", tags=["providers"])
+router = APIRouter(prefix="/psychologists", tags=["psychologists"])
 logger = logging.getLogger(__name__)
 
-class ProviderResponse(BaseModel):
+class PsychologistResponse(BaseModel):
     id: str
     first_name: str
     last_name: str
@@ -24,14 +24,17 @@ class ProviderResponse(BaseModel):
     average_rating: float = 0.0
     review_count: int = 0
 
-@router.get("/", response_model=List[ProviderResponse])
-async def get_providers(
+@router.get("/", response_model=List[PsychologistResponse])
+async def get_psychologists(
     skip: int = 0, 
     limit: int = 10, 
+    q: Optional[str] = None,
+    specialty: Optional[str] = None,
+    maxRate: Optional[float] = None,
     es: AsyncElasticsearch = Depends(get_es),
     redis_client: redis.Redis = Depends(get_redis)
 ):
-    cache_key = f"providers:list:skip_{skip}:limit_{limit}"
+    cache_key = f"psychs:list:skip_{skip}:limit_{limit}:q_{q}:spec_{specialty}:max_{maxRate}"
     
     try:
         cached_data = await redis_client.get(cache_key)
@@ -40,11 +43,33 @@ async def get_providers(
     except Exception as e:
         logger.error(f"Redis error: {e}")
         
+    must_clauses = []
+    
+    if q:
+        must_clauses.append({
+            "multi_match": {
+                "query": q,
+                "fields": ["first_name", "last_name", "bio"]
+            }
+        })
+    if specialty:
+        must_clauses.append({
+            "match": {"specialty": specialty}
+        })
+    if maxRate is not None:
+        must_clauses.append({
+            "range": {
+                "session_price": {"lte": maxRate}
+            }
+        })
+        
+    es_query = {"bool": {"must": must_clauses}} if must_clauses else {"match_all": {}}
+
     try:
         es_response = await es.search(
             index="providers",
             body={
-                "query": {"match_all": {}},
+                "query": es_query,
                 "sort": [
                     {"average_rating": {"order": "desc"}}
                 ],
@@ -62,7 +87,7 @@ async def get_providers(
     result = []
     for hit in hits:
         source = hit["_source"]
-        result.append(ProviderResponse(id=hit["_id"], **source).dict())
+        result.append(PsychologistResponse(id=hit["_id"], **source).dict())
         
     try:
         await redis_client.setex(cache_key, 60, json.dumps(result))
@@ -71,13 +96,13 @@ async def get_providers(
 
     return result
 
-@router.get("/{provider_id}", response_model=ProviderResponse)
-async def get_provider(
-    provider_id: str, 
+@router.get("/{psychologist_id}", response_model=PsychologistResponse)
+async def get_psychologist(
+    psychologist_id: str, 
     es: AsyncElasticsearch = Depends(get_es),
     redis_client: redis.Redis = Depends(get_redis)
 ):
-    cache_key = f"providers:detail:{provider_id}"
+    cache_key = f"psychs:detail:{psychologist_id}"
     
     try:
         cached_data = await redis_client.get(cache_key)
@@ -87,11 +112,11 @@ async def get_provider(
         logger.error(f"Redis error: {e}")
 
     try:
-        es_response = await es.get(index="providers", id=provider_id)
+        es_response = await es.get(index="providers", id=psychologist_id)
         source = es_response["_source"]
-        result = ProviderResponse(id=es_response["_id"], **source).dict()
+        result = PsychologistResponse(id=es_response["_id"], **source).dict()
     except NotFoundError:
-        raise HTTPException(status_code=404, detail="Provider not found")
+        raise HTTPException(status_code=404, detail="Psychologist not found")
     except Exception as e:
         logger.error(f"Elasticsearch error: {e}")
         raise HTTPException(status_code=503, detail="Service Unavailable")
