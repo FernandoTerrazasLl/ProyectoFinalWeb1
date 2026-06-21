@@ -35,10 +35,14 @@ export abstract class Block<Props extends BlockOwnProps = BlockOwnProps> {
     this.unmount();
     const next = this.compile();
 
-    if (this.domElement && next) 
+    if (this.domElement && next)
       this.domElement.replaceWith(next);
 
     this.domElement = next;
+
+    if (!next)
+      return;
+
     this.toggleListeners("addEventListener");
     this.componentDidMount();
   }
