@@ -1,0 +1,45 @@
+<form class="register-form" ref="form">
+  {{{ Label text="Nombre" forId="register-name" }}}
+  {{{ Input
+    id="register-name"
+    type="text"
+    name="name"
+    placeholder="Tu nombre"
+    ref="name"
+  }}}
+  {{{ Label text="Correo" forId="register-email" }}}
+  {{{ Input
+    id="register-email"
+    type="email"
+    name="email"
+    placeholder="tu@correo.com"
+    ref="email"
+  }}}
+  {{{ Label text="Contraseña" forId="register-password" }}}
+  {{{ Input
+    id="register-password"
+    type="password"
+    name="password"
+    placeholder="Mínimo 8 caracteres"
+    ref="password"
+  }}}
+  {{{ Label text="Confirmar contraseña" forId="register-confirm-password" }}}
+  {{{ Input
+    id="register-confirm-password"
+    type="password"
+    name="confirmPassword"
+    placeholder="Repite tu contraseña"
+    ref="confirmPassword"
+  }}}
+  {{#if error}}
+    <p class="register-form__error">{{error}}</p>
+  {{/if}}
+  <button
+    class="button button--primary"
+    type="submit"
+    ref="submit"
+    disabled
+  >
+    Crear cuenta
+  </button>
+</form>
