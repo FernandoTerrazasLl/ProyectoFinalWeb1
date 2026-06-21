@@ -1,7 +1,6 @@
 import { Ok, Err, Result } from "ts-results-es";
 import type { HttpError } from "@shared/api/HttpError";
-
-export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+import type { HttpMethod } from "@shared/api/HttpMethod";
 
 export class HttpClient {
   private readonly baseUrl: string;
