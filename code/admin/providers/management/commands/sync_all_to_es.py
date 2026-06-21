@@ -12,8 +12,6 @@ class Command(BaseCommand):
         self.stdout.write(self.style.NOTICE(f'Starting sync of {count} providers to Elasticsearch...'))
         
         for provider in providers:
-            # We call the task synchronously or asynchronously.
-            # Using .delay() will enqueue it to Celery.
             sync_provider_to_es.delay(str(provider.id))
             
         self.stdout.write(self.style.SUCCESS(f'Successfully queued {count} providers for syncing.'))

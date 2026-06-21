@@ -5,7 +5,6 @@ from elasticsearch import Elasticsearch
 
 logger = logging.getLogger(__name__)
 
-# Reusing the ENV variable or defaulting
 ES_HOST = os.environ.get("ELASTICSEARCH_HOST", "http://elasticsearch:9200")
 INDEX_NAME = "providers"
 
@@ -18,7 +17,6 @@ def sync_provider_to_es(provider_id: str):
     try:
         provider = ProviderProfile.objects.select_related('user', 'specialty').get(id=provider_id)
         
-        # Format the document for ES
         doc = {
             "id": str(provider.id),
             "first_name": provider.user.first_name if provider.user else "",

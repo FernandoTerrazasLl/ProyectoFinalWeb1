@@ -45,12 +45,10 @@ async def evaluate_triage(
     es: AsyncElasticsearch = Depends(get_es),
     producer: KafkaProducer = Depends(get_kafka_producer)
 ):
-    # 1. Evaluate top specialty
     scores_dict = triage.scores.dict()
     top_specialty = max(scores_dict, key=scores_dict.get)
     max_score = scores_dict[top_specialty]
     
-    # 2. Evaluate risk level based on max_score (mock logic)
     if max_score > 6:
         risk_level = "Severe"
     elif max_score > 3:
@@ -58,7 +56,6 @@ async def evaluate_triage(
     else:
         risk_level = "Low"
         
-    # 3. Publish to Kafka (Persist in MongoDB)
     event_payload = {
         "type": "triage_assessment",
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -71,7 +68,6 @@ async def evaluate_triage(
     }
     background_tasks.add_task(publish_event, producer, event_payload)
     
-    # 4. Query Elasticsearch for the top 3 providers in that specialty sorted by rating
     recommended_providers = []
     try:
         es_response = await es.search(
@@ -92,7 +88,6 @@ async def evaluate_triage(
             recommended_providers.append(ProviderResponse(id=hit["_id"], **source))
     except Exception as e:
         logger.error(f"Error fetching recommended providers: {e}")
-        # Not raising 500, we gracefully return an empty list of providers
         
     return TriageResponse(
         recommended_specialty=top_specialty,

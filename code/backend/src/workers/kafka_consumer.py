@@ -15,7 +15,6 @@ CLICKHOUSE_HOST = os.getenv("CLICKHOUSE_HOST", "clickhouse")
 KAFKA_TOPIC = "ugc_events"
 
 async def setup_clickhouse():
-    # Attempt to create the analytics table if it doesn't exist
     try:
         client = clickhouse_connect.get_client(host=CLICKHOUSE_HOST, port=8123)
         client.command('''
@@ -39,17 +38,14 @@ async def process_message(msg_value, mongo_db, ch_client):
         event_type = event.get("type")
         
         if event_type == "review":
-            # Store in MongoDB (Documental structure)
             await mongo_db.reviews.insert_one(event["data"])
             logger.info("Inserted review into MongoDB.")
             
         elif event_type == "triage_assessment":
-            # Store in MongoDB for Triage History
             await mongo_db.triages.insert_one(event["data"])
             logger.info("Inserted triage assessment into MongoDB.")
             
         elif event_type == "metric_event":
-            # Store in ClickHouse (Analytical structure)
             if ch_client:
                 data = event["data"]
                 timestamp = event["timestamp"].replace('T', ' ')[:19] # Basic formatting
@@ -66,9 +62,6 @@ async def consume():
     mongo_db = mongo_client["curamente_ugc"]
     ch_client = await setup_clickhouse()
     
-    # We use a sync consumer in an async wrapper for simplicity in this script
-    # Ideally, aiokafka would be used, but kafka-python is synchronous.
-    # To prevent blocking, we just poll with a timeout or use asyncio.to_thread
     consumer = KafkaConsumer(
         KAFKA_TOPIC,
         bootstrap_servers=KAFKA_BROKER,
@@ -79,7 +72,6 @@ async def consume():
     logger.info("Kafka UGC Consumer Worker started...")
     
     for message in consumer:
-        # Run processing asynchronously
         await process_message(message.value, mongo_db, ch_client)
 
 def main():

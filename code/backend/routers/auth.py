@@ -35,7 +35,6 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     
     hashed_password = get_password_hash(user.password)
     
-    # We leave username empty or mirror email since we made it nullable
     new_user = models.User(
         email=user.email,
         username=user.email,
@@ -85,7 +84,6 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == email).first()
     
     if not db_user:
-        # Auto-register silently
         db_user = models.User(
             email=email,
             username=email,
@@ -102,7 +100,6 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(db_user)
     elif db_user.auth_provider == "local":
-        # Link accounts if needed or reject
         db_user.auth_provider = "google_and_local"
         db_user.provider_id = provider_id
         db.commit()
@@ -118,7 +115,6 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
 
 @router.post("/refresh")
 async def refresh(refresh_token: str = Header(...), redis_client: redis.Redis = Depends(get_redis)):
-    # Verify if token is blacklisted
     payload = decode_token(refresh_token)
     if not payload or payload.get("type") != "refresh":
         raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
@@ -129,7 +125,6 @@ async def refresh(refresh_token: str = Header(...), redis_client: redis.Redis = 
         raise HTTPException(status_code=401, detail="Token has been revoked")
         
     email = payload.get("sub")
-    # For a real system we should fetch the user from DB to get the current role
     new_access = create_access_token(data={"sub": email, "role": "PATIENT"}) 
     return {"access_token": new_access, "token_type": "bearer"}
 
@@ -138,7 +133,6 @@ async def logout(refresh_token: str = Header(...), redis_client: redis.Redis = D
     payload = decode_token(refresh_token)
     if payload:
         jti = payload.get("jti")
-        # Add to blacklist for 7 days (to match refresh token expiration)
         await redis_client.setex(f"blacklist:{jti}", 7 * 24 * 60 * 60, "true")
     
     return {"message": "Successfully logged out"}

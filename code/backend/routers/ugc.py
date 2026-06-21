@@ -41,7 +41,6 @@ async def submit_review(
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "data": review.dict()
     }
-    # Fire and forget using background task
     background_tasks.add_task(publish_event, producer, event_payload)
     return {"status": "accepted", "message": "Review submitted successfully"}
 

@@ -13,7 +13,6 @@ REFRESH_TOKEN_EXPIRE_DAYS = 7
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
 
 def verify_password(plain_password, hashed_password):
-    # If the hash is unusable (e.g. registered via Google), it shouldn't match anything
     if not hashed_password or hashed_password.startswith("!"):
         return False
     return django_pbkdf2_sha256.verify(plain_password, hashed_password)
@@ -48,9 +47,7 @@ def decode_token(token: str):
 
 def verify_google_token(token: str):
     try:
-        # Specify the CLIENT_ID of the app that accesses the backend:
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_CLIENT_ID)
         return idinfo
     except ValueError:
-        # Invalid token
         return None
