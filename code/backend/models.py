@@ -1,11 +1,13 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Time, Text, Numeric, DateTime, Table
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 from database import Base
+import uuid
 
 class User(Base):
     __tablename__ = "users_user"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     password = Column(String)
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
@@ -22,8 +24,8 @@ class User(Base):
 class PatientProfile(Base):
     __tablename__ = "users_patientprofile"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users_user.id"), unique=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users_user.id"), unique=True)
     ci = Column(String)
     birth_date = Column(Date)
     phone_number = Column(String)
@@ -34,7 +36,7 @@ class PatientProfile(Base):
 class Specialty(Base):
     __tablename__ = "providers_specialty"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, unique=True)
     description = Column(Text)
 
@@ -42,24 +44,24 @@ provider_tags = Table(
     "providers_providerprofile_tags",
     Base.metadata,
     Column("id", Integer, primary_key=True),
-    Column("providerprofile_id", Integer, ForeignKey("providers_providerprofile.id")),
-    Column("tag_id", Integer, ForeignKey("providers_tag.id")),
+    Column("providerprofile_id", UUID(as_uuid=True), ForeignKey("providers_providerprofile.id")),
+    Column("tag_id", UUID(as_uuid=True), ForeignKey("providers_tag.id")),
 )
 
 class Tag(Base):
     __tablename__ = "providers_tag"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, unique=True)
 
 class ProviderProfile(Base):
     __tablename__ = "providers_providerprofile"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users_user.id"), unique=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users_user.id"), unique=True)
     bio = Column(Text)
     session_price = Column(Numeric(8, 2))
-    specialty_id = Column(Integer, ForeignKey("providers_specialty.id"))
+    specialty_id = Column(UUID(as_uuid=True), ForeignKey("providers_specialty.id"))
     is_approved = Column(Boolean, default=False)
     average_rating = Column(Numeric(3, 2), default=0.00)
     review_count = Column(Integer, default=0)
@@ -74,9 +76,9 @@ class ProviderProfile(Base):
 class Appointment(Base):
     __tablename__ = "appointments_appointment"
 
-    id = Column(Integer, primary_key=True, index=True)
-    provider_id = Column(Integer, ForeignKey("providers_providerprofile.id"))
-    patient_id = Column(Integer, ForeignKey("users_patientprofile.id"))
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    provider_id = Column(UUID(as_uuid=True), ForeignKey("providers_providerprofile.id"))
+    patient_id = Column(UUID(as_uuid=True), ForeignKey("users_patientprofile.id"))
     date = Column(Date)
     time = Column(Time)
     reason = Column(Text)
@@ -90,8 +92,8 @@ class Appointment(Base):
 class ScheduleRule(Base):
     __tablename__ = "appointments_schedulerule"
 
-    id = Column(Integer, primary_key=True, index=True)
-    provider_id = Column(Integer, ForeignKey("providers_providerprofile.id"))
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    provider_id = Column(UUID(as_uuid=True), ForeignKey("providers_providerprofile.id"))
     day_of_week = Column(Integer)
     start_time = Column(Time)
     end_time = Column(Time)
@@ -101,8 +103,8 @@ class ScheduleRule(Base):
 class BlockedSlot(Base):
     __tablename__ = "appointments_blockedslot"
 
-    id = Column(Integer, primary_key=True, index=True)
-    provider_id = Column(Integer, ForeignKey("providers_providerprofile.id"))
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    provider_id = Column(UUID(as_uuid=True), ForeignKey("providers_providerprofile.id"))
     block_date = Column(Date)
     start_time = Column(Time)
     end_time = Column(Time)
