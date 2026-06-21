@@ -1,0 +1,16 @@
+<div class="filters-panel">
+  {{{ Label text="Especialidad" forId="filters-specialty" }}}
+  {{{ Select
+    id="filters-specialty"
+    options=specialtyOptions
+    ref="specialty"
+  }}}
+  {{{ Label text="Tarifa máxima" forId="filters-max-rate" }}}
+  {{{ RangeSlider
+    id="filters-max-rate"
+    min=0
+    max=1000
+    value=maxRate
+    ref="maxRate"
+  }}}
+</div>

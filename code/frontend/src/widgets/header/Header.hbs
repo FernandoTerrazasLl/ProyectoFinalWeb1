@@ -1,0 +1,8 @@
+<header class="header">
+  <a class="header__brand" href="/directory" data-link>CuraMente</a>
+  {{#if userName}}
+    <span class="header__user">{{userName}}</span>
+  {{else}}
+    <a class="header__login-link" href="/auth" data-link>Iniciar sesión</a>
+  {{/if}}
+</header>
