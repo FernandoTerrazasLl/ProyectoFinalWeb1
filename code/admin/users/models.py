@@ -8,6 +8,7 @@ class User(AbstractUser):
         PROVIDER = 'PROVIDER', 'Provider'
     
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.PATIENT)
+    auth_provider = models.CharField(max_length=20, default='local')
 
 class PatientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='patient_profile')

@@ -14,6 +14,7 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     is_staff = Column(Boolean, default=False)
     role = Column(String)
+    auth_provider = Column(String, default="local")
 
     patient_profile = relationship("PatientProfile", back_populates="user", uselist=False)
     provider_profile = relationship("ProviderProfile", back_populates="user", uselist=False)
@@ -60,11 +61,15 @@ class ProviderProfile(Base):
     session_price = Column(Numeric(8, 2))
     specialty_id = Column(Integer, ForeignKey("providers_specialty.id"))
     is_approved = Column(Boolean, default=False)
+    average_rating = Column(Numeric(3, 2), default=0.00)
+    review_count = Column(Integer, default=0)
 
     user = relationship("User", back_populates="provider_profile")
     specialty = relationship("Specialty")
     tags = relationship("Tag", secondary=provider_tags)
     appointments = relationship("Appointment", back_populates="provider")
+    schedule_rules = relationship("ScheduleRule", back_populates="provider")
+    blocked_slots = relationship("BlockedSlot", back_populates="provider")
 
 class Appointment(Base):
     __tablename__ = "appointments_appointment"
@@ -81,3 +86,26 @@ class Appointment(Base):
 
     provider = relationship("ProviderProfile", back_populates="appointments")
     patient = relationship("PatientProfile", back_populates="appointments")
+
+class ScheduleRule(Base):
+    __tablename__ = "appointments_schedulerule"
+
+    id = Column(Integer, primary_key=True, index=True)
+    provider_id = Column(Integer, ForeignKey("providers_providerprofile.id"))
+    day_of_week = Column(Integer)
+    start_time = Column(Time)
+    end_time = Column(Time)
+
+    provider = relationship("ProviderProfile", back_populates="schedule_rules")
+
+class BlockedSlot(Base):
+    __tablename__ = "appointments_blockedslot"
+
+    id = Column(Integer, primary_key=True, index=True)
+    provider_id = Column(Integer, ForeignKey("providers_providerprofile.id"))
+    block_date = Column(Date)
+    start_time = Column(Time)
+    end_time = Column(Time)
+    reason = Column(String)
+
+    provider = relationship("ProviderProfile", back_populates="blocked_slots")
