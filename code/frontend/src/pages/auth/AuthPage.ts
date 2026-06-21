@@ -20,10 +20,6 @@ export class AuthPage extends Block<BlockOwnProps> {
       },
     });
 
-    const formSlot = this.refs.form;
-    const formElement = loginForm.element();
-
-    if (formSlot && formElement) 
-      formSlot.replaceWith(formElement);
+    this.mountInto("form", loginForm);
   }
 }

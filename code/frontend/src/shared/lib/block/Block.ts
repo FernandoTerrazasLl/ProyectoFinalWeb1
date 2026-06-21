@@ -31,6 +31,14 @@ export abstract class Block<Props extends BlockOwnProps = BlockOwnProps> {
 
   protected componentWillUnmount() {}
 
+  protected mountInto(refName: string, child: Block) {
+    const slot = this.refs[refName];
+    const element = child.element();
+
+    if (slot && element)
+      slot.replaceWith(element);
+  }
+
   protected render() {
     this.unmount();
     const next = this.compile();

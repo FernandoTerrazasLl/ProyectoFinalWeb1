@@ -16,14 +16,9 @@ export class DirectoryPage extends Block<BlockOwnProps> {
   private query: PsychologistQuery = {};
 
   protected componentDidMount() {
-    const searchBox = new SearchBox({
+    this.mountInto("search", new SearchBox({
       onSearch: (q) => this.applyQuery({ ...this.query, q }),
-    });
-    const searchSlot = this.refs.search;
-    const searchElement = searchBox.element();
-
-    if (searchSlot && searchElement) 
-      searchSlot.replaceWith(searchElement);
+    }));
 
     void this.loadFilters();
     void this.loadResults();
@@ -35,17 +30,11 @@ export class DirectoryPage extends Block<BlockOwnProps> {
     if (result.isErr()) 
       return;
 
-    const filtersPanel = new FiltersPanel({
+    this.mountInto("filters", new FiltersPanel({
       specialtyOptions: result.value.map((specialty) => ({ value: specialty.id, label: specialty.name })),
       maxRate: 1000,
       onChange: (filters) => this.applyQuery({ ...this.query, ...filters }),
-    });
-
-    const filtersSlot = this.refs.filters;  
-    const filtersElement = filtersPanel.element();
-
-    if (filtersSlot && filtersElement) 
-      filtersSlot.replaceWith(filtersElement);
+    }));
   }
 
   private async applyQuery(query: PsychologistQuery) {

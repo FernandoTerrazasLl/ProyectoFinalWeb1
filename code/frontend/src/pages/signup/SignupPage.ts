@@ -20,10 +20,6 @@ export class SignupPage extends Block<BlockOwnProps> {
       },
     });
 
-    const formSlot = this.refs.form;
-    const formElement = registerForm.element();
-
-    if (formSlot && formElement) 
-      formSlot.replaceWith(formElement);
+    this.mountInto("form", registerForm);
   }
 }
