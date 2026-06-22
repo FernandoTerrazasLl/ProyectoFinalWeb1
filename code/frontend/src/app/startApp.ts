@@ -22,7 +22,7 @@ export function startApp(root: Element) {
 
   routerInstance.setNotFound(async () => {
     const { NotFoundPage } = await import("@pages/not-found");
-    return mountPage(NotFoundPage, {});
+    return mountPage(NotFoundPage, () => ({}));
   });
   
   routerInstance.start(content);

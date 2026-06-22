@@ -26,8 +26,8 @@ export class DirectoryPage extends Block<BlockOwnProps> {
 
   private async loadFilters() {
     const result = await listSpecialties();
-    
-    if (result.isErr()) 
+
+    if (result.isErr())
       return;
 
     this.mountInto("filters", new FiltersPanel({
@@ -43,18 +43,14 @@ export class DirectoryPage extends Block<BlockOwnProps> {
   }
 
   private async loadResults() {
-    this.showResults([new Spinner({}).element()]);
+    this.replaceChildrenInto("results", [new Spinner({})]);
 
     const result = await listPsychologists(this.query);
 
     if (result.isErr()) {
-      this.showResults([
-        new EmptyState({
-          title: "Ocurrió un error",
-          description: "Intentá de nuevo en un momento.",
-        }).element(),
+      this.replaceChildrenInto("results", [
+        new EmptyState({ title: "Ocurrió un error", description: "Intentá de nuevo en un momento." }),
       ]);
-
       return;
     }
 
@@ -63,27 +59,17 @@ export class DirectoryPage extends Block<BlockOwnProps> {
 
   private renderPsychologists(psychologists: Psychologist[]) {
     if (psychologists.length === 0) {
-      this.showResults([
-        new EmptyState({
-          title: "No se encontraron especialistas",
-          description: "Probá con otra palabra o ajustá los filtros.",
-        }).element(),
+      this.replaceChildrenInto("results", [
+        new EmptyState({ title: "No se encontraron especialistas", description: "Probá con otra palabra o ajustá los filtros." }),
       ]);
-
       return;
     }
 
-    const cards = psychologists.map((psychologist) =>
-      new PsychologistCard({
-        psychologist,
-        onOpen: (id) => routerInstance.navigate(`/profile/${id}`),
-      }).element(),
+    this.replaceChildrenInto(
+      "results",
+      psychologists.map((psychologist) =>
+        new PsychologistCard({ psychologist, onOpen: (id) => routerInstance.navigate(`/profile/${id}`) }),
+      ),
     );
-    
-    this.showResults(cards);
-  }
-
-  private showResults(elements: Array<Element | null>) {
-    this.refs.results?.replaceChildren(...elements.filter((element): element is Element => element !== null));
   }
 }

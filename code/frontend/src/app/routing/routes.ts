@@ -1,20 +1,20 @@
 import type { Route } from "@shared/lib/router/Route";
 import { mountPage } from "@shared/lib/router/mountPage";
-import { hasActiveSession } from "@entities/user";
+import { hasActiveSession, isProvider } from "@entities/user";
 
 export const routes: Route[] = [
   {
     path: "/auth",
     loader: async () => {
       const { AuthPage } = await import("@pages/auth");
-      return mountPage(AuthPage, {});
+      return mountPage(AuthPage, () => ({}));
     },
   },
   {
     path: "/signup",
     loader: async () => {
       const { SignupPage } = await import("@pages/signup");
-      return mountPage(SignupPage, {});
+      return mountPage(SignupPage, () => ({}));
     },
   },
   {
@@ -22,7 +22,55 @@ export const routes: Route[] = [
     guard: hasActiveSession,
     loader: async () => {
       const { DirectoryPage } = await import("@pages/directory");
-      return mountPage(DirectoryPage, {});
+      return mountPage(DirectoryPage, () => ({}));
+    },
+  },
+  {
+    path: "/profile/:id",
+    guard: hasActiveSession,
+    loader: async () => {
+      const { ProviderProfilePage } = await import("@pages/provider-profile");
+      return mountPage(ProviderProfilePage, (params) => ({ id: params.id ?? "" }));
+    },
+  },
+  {
+    path: "/patient-profile",
+    guard: hasActiveSession,
+    loader: async () => {
+      const { PatientProfilePage } = await import("@pages/patient-profile");
+      return mountPage(PatientProfilePage, () => ({}));
+    },
+  },
+  {
+    path: "/triage",
+    guard: hasActiveSession,
+    loader: async () => {
+      const { TriagePage } = await import("@pages/triage");
+      return mountPage(TriagePage, () => ({}));
+    },
+  },
+  {
+    path: "/triage/result",
+    guard: hasActiveSession,
+    loader: async () => {
+      const { TriageResultPage } = await import("@pages/triage-result");
+      return mountPage(TriageResultPage, () => ({}));
+    },
+  },
+  {
+    path: "/dashboard/schedule",
+    guard: isProvider,
+    loader: async () => {
+      const { ProviderSchedulePage } = await import("@pages/provider-schedule");
+      return mountPage(ProviderSchedulePage, () => ({}));
+    },
+  },
+  {
+    path: "/dashboard/profile",
+    guard: isProvider,
+    loader: async () => {
+      const { ProviderSettingsPage } = await import("@pages/provider-settings");
+      return mountPage(ProviderSettingsPage, () => ({}));
     },
   },
 ];
