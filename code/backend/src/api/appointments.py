@@ -51,6 +51,9 @@ def create_appointment(
         if b.start_time <= naive_time < b.end_time:
             raise HTTPException(status_code=400, detail="Requested time is blocked by the provider")
         
+    provider_profile = db.query(models.ProviderProfile).filter(models.ProviderProfile.id == appt.provider_id).first()
+    price = provider_profile.session_price if provider_profile else None
+        
     new_appt = models.Appointment(
         provider_id=appt.provider_id,
         patient_id=patient.id,
@@ -58,6 +61,7 @@ def create_appointment(
         time=naive_time,
         reason=appt.reason,
         status="PENDING",
+        price_charged=price,
         created_at=datetime.now(timezone.utc).replace(tzinfo=None),
         updated_at=datetime.now(timezone.utc).replace(tzinfo=None)
     )
@@ -99,9 +103,24 @@ def get_appointment_patient(
         today = date.today()
         age = today.year - user.birth_date.year - ((today.month, today.day) < (user.birth_date.month, user.birth_date.day))
         
+    past_count = db.query(models.Appointment).filter(
+        models.Appointment.patient_id == patient_profile.id,
+        models.Appointment.provider_id == provider.id,
+        models.Appointment.status == "COMPLETED"
+    ).count()
+        
     return {
-        "name": f"{user.first_name} {user.last_name}".strip(),
+        "name": f"{user.first_name} {user.last_name} {user.maternal_last_name}".strip().replace("  ", " "),
         "age": age,
         "phone": user.phone_number or "N/A",
-        "reason": appointment.reason
+        "email": user.email,
+        "time": appointment.time,
+        "reason": appointment.reason,
+        "ci": user.ci or "N/A",
+        "gender": user.gender,
+        "avatar_url": user.avatar_url,
+        "status": appointment.status,
+        "date": appointment.date,
+        "created_at": appointment.created_at,
+        "previous_appointments_count": past_count
     }

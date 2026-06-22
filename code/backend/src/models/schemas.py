@@ -48,7 +48,16 @@ class PatientDetailResponse(BaseModel):
     name: str
     age: int
     phone: str
+    email: str
+    time: time
     reason: str
+    ci: Optional[str] = None
+    gender: Optional[str] = None
+    avatar_url: Optional[str] = None
+    status: str
+    date: date
+    created_at: datetime
+    previous_appointments_count: int
 
 # --- ME (PROFILE/SCHEDULE) SCHEMAS ---
 class MyAppointmentResponse(BaseModel):

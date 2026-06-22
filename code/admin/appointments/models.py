@@ -18,6 +18,7 @@ class Appointment(models.Model):
     time = models.TimeField()
     reason = models.TextField()
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    price_charged = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

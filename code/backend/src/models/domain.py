@@ -90,6 +90,7 @@ class Appointment(Base):
     time = Column(Time)
     reason = Column(Text)
     status = Column(String)
+    price_charged = Column(Numeric(8, 2), nullable=True)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
 
