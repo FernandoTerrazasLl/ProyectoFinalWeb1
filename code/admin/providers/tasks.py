@@ -26,7 +26,9 @@ def sync_provider_to_es(provider_id: str):
             "bio": provider.bio,
             "is_approved": provider.is_approved,
             "average_rating": float(provider.average_rating),
-            "review_count": provider.review_count
+            "review_count": provider.review_count,
+            "tags": [tag.name for tag in provider.tags.all()],
+            "avatar_url": provider.user.avatar_url if provider.user else ""
         }
         
         es = get_es_client()

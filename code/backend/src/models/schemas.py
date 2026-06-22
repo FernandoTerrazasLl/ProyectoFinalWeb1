@@ -101,6 +101,8 @@ class PsychologistResponse(BaseModel):
     is_approved: bool
     average_rating: float = 0.0
     review_count: int = 0
+    tags: List[str] = []
+    avatar_url: Optional[str] = ""
 
 class AvailabilitySlot(BaseModel):
     time: str

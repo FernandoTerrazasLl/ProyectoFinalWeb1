@@ -4,7 +4,7 @@ from datetime import date, time, datetime, timezone
 from pydantic import BaseModel, UUID4
 import src.models.domain as models
 from src.db.database import get_db
-from src.core.dependencies import get_current_patient, get_current_provider
+from src.core.dependencies import get_current_patient, get_current_provider, get_current_user
 
 from src.models.schemas import *
 from src.services.schedule_service import generate_slots
@@ -124,3 +124,28 @@ def get_appointment_patient(
         "created_at": appointment.created_at,
         "previous_appointments_count": past_count
     }
+
+@router.patch("/{id}/cancel")
+def cancel_appointment(
+    id: UUID4,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    appointment = db.query(models.Appointment).filter(models.Appointment.id == id).first()
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+        
+    is_patient = current_user.patient_profile and current_user.patient_profile.id == appointment.patient_id
+    is_provider = current_user.provider_profile and current_user.provider_profile.id == appointment.provider_id
+    
+    if not (is_patient or is_provider):
+        raise HTTPException(status_code=403, detail="Not authorized to cancel this appointment")
+        
+    if appointment.status == "CANCELLED":
+        raise HTTPException(status_code=400, detail="Appointment is already cancelled")
+        
+    appointment.status = "CANCELLED"
+    appointment.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    db.commit()
+    
+    return {"detail": "Appointment cancelled successfully"}
