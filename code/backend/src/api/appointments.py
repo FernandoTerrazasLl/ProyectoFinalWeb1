@@ -20,7 +20,7 @@ def create_appointment(
         models.Appointment.provider_id == appt.provider_id,
         models.Appointment.date == appt.date,
         models.Appointment.time == appt.time,
-        models.Appointment.status != "cancelled"
+        models.Appointment.status != "CANCELLED"
     ).first()
     
     if existing:
@@ -32,7 +32,7 @@ def create_appointment(
         date=appt.date,
         time=appt.time,
         reason=appt.reason,
-        status="pending",
+        status="PENDING",
         created_at=datetime.now(timezone.utc).replace(tzinfo=None),
         updated_at=datetime.now(timezone.utc).replace(tzinfo=None)
     )
@@ -70,13 +70,13 @@ def get_appointment_patient(
     
     # Calculate age naively
     age = 0
-    if patient_profile.birth_date:
+    if user.birth_date:
         today = date.today()
-        age = today.year - patient_profile.birth_date.year - ((today.month, today.day) < (patient_profile.birth_date.month, patient_profile.birth_date.day))
+        age = today.year - user.birth_date.year - ((today.month, today.day) < (user.birth_date.month, user.birth_date.day))
         
     return {
         "name": f"{user.first_name} {user.last_name}".strip(),
         "age": age,
-        "phone": patient_profile.phone_number or "N/A",
+        "phone": user.phone_number or "N/A",
         "reason": appointment.reason
     }
