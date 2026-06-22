@@ -1,0 +1,22 @@
+<article class="psychologist-detail">
+  <header class="psychologist-detail__header">
+    {{{ Avatar
+      src=psychologist.image
+      alt=psychologist.name
+      initials=psychologist.name
+      size="lg"
+    }}}
+    <div class="psychologist-detail__heading">
+      <h1 class="psychologist-detail__name">{{psychologist.name}}</h1>
+      <p class="psychologist-detail__specialty">{{psychologist.specialty}}</p>
+      {{{ StarRating value=psychologist.rating }}}
+      <p class="psychologist-detail__rate">Bs. {{psychologist.rate}} / sesión</p>
+    </div>
+  </header>
+  <p class="psychologist-detail__bio">{{psychologist.bio}}</p>
+  <div class="psychologist-detail__tags">
+    {{#each psychologist.tags}}
+      {{{ Tag text=this }}}
+    {{/each}}
+  </div>
+</article>

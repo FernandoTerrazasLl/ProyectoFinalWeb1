@@ -1,0 +1,41 @@
+.triage-quiz {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.triage-quiz__question {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.triage-quiz__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.triage-quiz__option {
+  text-align: left;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  background-color: var(--color-surface);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.triage-quiz__option--selected {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg);
+}
+
+.triage-quiz__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}

@@ -1,0 +1,37 @@
+.triage-result-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+}
+
+.triage-result-page__summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.triage-result-page__title {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.triage-result-page__risk {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+}
+
+.triage-result-page__lead {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-muted);
+}
+
+.triage-result-page__results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--space-4);
+}

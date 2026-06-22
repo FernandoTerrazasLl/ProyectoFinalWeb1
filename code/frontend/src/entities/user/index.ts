@@ -4,6 +4,7 @@ export type { SessionState } from "@entities/user/model/SessionState";
 export { sessionStore } from "@entities/user/model/sessionStore";
 export { applySession } from "@entities/user/model/applySession";
 export { hasActiveSession } from "@entities/user/model/hasActiveSession";
+export { isProvider } from "@entities/user/model/isProvider";
 export type { AuthSession } from "@entities/user/api/AuthSession";
 export type { LoginUserRequest } from "@entities/user/api/LoginUserRequest";
 export type { RegisterUserRequest } from "@entities/user/api/RegisterUserRequest";

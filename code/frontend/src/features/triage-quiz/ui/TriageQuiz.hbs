@@ -1,0 +1,27 @@
+<div class="triage-quiz">
+  {{{ ProgressBar value=progress }}}
+  <h2 class="triage-quiz__question">{{questionText}}</h2>
+  <div class="triage-quiz__options">
+    {{#each options}}
+      <button
+        class="triage-quiz__option {{#if selected}}triage-quiz__option--selected{{/if}}"
+        type="button"
+        data-option-id="{{id}}"
+      >
+        {{text}}
+      </button>
+    {{/each}}
+  </div>
+  <div class="triage-quiz__actions">
+    <button class="button button--secondary triage-quiz__cancel" type="button">
+      Cancelar y volver
+    </button>
+    <button
+      class="button button--primary triage-quiz__continue"
+      type="button"
+      {{#unless canContinue}}disabled{{/unless}}
+    >
+      Continuar
+    </button>
+  </div>
+</div>
