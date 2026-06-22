@@ -5,6 +5,7 @@ const fromSrc = (segment: string): string =>
   fileURLToPath(new URL(`./src/${segment}`, import.meta.url));
 
 export default defineConfig({
+  envDir: fileURLToPath(new URL("../../", import.meta.url)),
   resolve: {
     alias: {
       "@app": fromSrc("app"),
