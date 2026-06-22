@@ -1,9 +1,8 @@
 export interface Review {
   id: string;
-  psychologistId: string;
-  appointmentId: string;
+  author: string;
   rating: number;
-  text: string;
+  comment: string;
   date: string;
   verified: boolean;
 }

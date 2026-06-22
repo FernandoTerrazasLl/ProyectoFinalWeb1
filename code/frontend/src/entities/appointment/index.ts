@@ -1,3 +1,14 @@
 export type { Appointment } from "@entities/appointment/model/Appointment";
 export type { AppointmentState } from "@entities/appointment/model/AppointmentState";
 export { APPOINTMENT_STATES } from "@entities/appointment/model/AppointmentState";
+export type { AvailabilitySlot } from "@entities/appointment/model/AvailabilitySlot";
+export type { PatientAppointment } from "@entities/appointment/model/PatientAppointment";
+export type { ScheduleEntry } from "@entities/appointment/model/ScheduleEntry";
+export type { PatientInfo } from "@entities/appointment/model/PatientInfo";
+export type { BookAppointmentRequest } from "@entities/appointment/api/BookAppointmentRequest";
+export { getAvailability } from "@entities/appointment/api/getAvailability";
+export { bookAppointment } from "@entities/appointment/api/bookAppointment";
+export { listMyAppointments } from "@entities/appointment/api/listMyAppointments";
+export { getProviderSchedule } from "@entities/appointment/api/getProviderSchedule";
+export { getAppointmentPatient } from "@entities/appointment/api/getAppointmentPatient";
+export { blockSlot } from "@entities/appointment/api/blockSlot";
