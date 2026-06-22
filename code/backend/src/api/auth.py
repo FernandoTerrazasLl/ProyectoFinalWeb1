@@ -50,6 +50,10 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         patient_profile = models.PatientProfile(user_id=new_user.id)
         db.add(patient_profile)
         db.commit()
+    elif new_user.role == "PROVIDER":
+        provider_profile = models.ProviderProfile(user_id=new_user.id)
+        db.add(provider_profile)
+        db.commit()
 
     return {"message": "User registered successfully", "user_id": new_user.id}
 

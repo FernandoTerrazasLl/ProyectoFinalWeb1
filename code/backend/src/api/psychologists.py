@@ -156,7 +156,7 @@ def get_availability(
     appointments = db.query(models.Appointment).filter(
         models.Appointment.provider_id == prov_uuid,
         models.Appointment.date == target_date,
-        models.Appointment.status != "cancelled"
+        models.Appointment.status != "CANCELLED"
     ).all()
     
     booked_times = {app.time for app in appointments}
