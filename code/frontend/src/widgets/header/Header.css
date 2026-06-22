@@ -15,13 +15,19 @@
   text-decoration: none;
 }
 
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
 .header__user {
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
   color: var(--color-text);
 }
 
-.header__login-link {
+.header__link {
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
   color: var(--color-primary);
