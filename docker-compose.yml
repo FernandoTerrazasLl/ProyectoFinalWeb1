@@ -80,7 +80,7 @@ services:
   worker-ugc:
     build:
       context: ./code/backend
-    command: python -m src.workers.kafka_consumer
+    command: python -m src.services.kafka_consumer
     env_file:
       - .env
     depends_on:

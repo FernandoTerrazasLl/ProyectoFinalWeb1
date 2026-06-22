@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, psychologists, specialties, ugc, triage, appointments
+from src.api import auth, psychologists, specialties, ugc, triage, appointments
 
 app = FastAPI(title="CuraMente API")
 

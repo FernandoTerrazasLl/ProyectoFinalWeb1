@@ -48,7 +48,7 @@ async def process_message(msg_value, mongo_db, ch_client):
         elif event_type == "metric_event":
             if ch_client:
                 data = event["data"]
-                timestamp = event["timestamp"].replace('T', ' ')[:19] # Basic formatting
+                timestamp = event["timestamp"].replace('T', ' ')[:19]
                 ch_client.insert('user_events', [
                     [timestamp, data.get("event_type", "unknown"), data.get("user_id", ""), json.dumps(data.get("metadata", {}))]
                 ], column_names=['timestamp', 'event_type', 'user_id', 'metadata'])

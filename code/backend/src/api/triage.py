@@ -9,7 +9,7 @@ from kafka import KafkaProducer
 
 from src.services.es_client import get_es
 from src.services.kafka_producer import get_kafka_producer
-from routers.psychologists import PsychologistResponse
+from src.api.psychologists import PsychologistResponse
 
 router = APIRouter(prefix="/triage", tags=["triage"])
 logger = logging.getLogger(__name__)

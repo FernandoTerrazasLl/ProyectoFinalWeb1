@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
-from database import get_db
-import models
-from core.security import (
+from src.db.database import get_db
+import src.models.domain as models
+from src.core.security import (
     verify_password, get_password_hash, create_access_token, 
     create_refresh_token, decode_token, verify_google_token
 )
@@ -90,10 +90,10 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
         db_user = models.User(
             email=email,
             username=email,
-            password=get_password_hash(None), # Unusable password
+            password=get_password_hash(None),
             first_name=first_name,
             last_name=last_name,
-            role="PATIENT", # Default
+            role="PATIENT",
             is_staff=False,
             is_active=True,
             auth_provider="google",

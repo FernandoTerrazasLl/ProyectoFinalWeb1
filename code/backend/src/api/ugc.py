@@ -20,7 +20,7 @@ class ReviewPayload(BaseModel):
 
 class EventPayload(BaseModel):
     user_id: Optional[str] = None
-    event_type: str # e.g. "page_view", "click", "search"
+    event_type: str
     metadata: Dict[str, Any]
 
 def publish_event(producer: KafkaProducer, payload: dict):

@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from datetime import date, time, datetime, timedelta
 from typing import List
 from pydantic import BaseModel
-import models
-from database import get_db
-from core.dependencies import get_current_patient
+import src.models.domain as models
+from src.db.database import get_db
+from src.core.dependencies import get_current_patient
 import uuid
 
 router = APIRouter(prefix="/appointments", tags=["appointments"])
@@ -30,7 +30,6 @@ class ScheduleResponse(BaseModel):
 
 def generate_slots(start_time: time, end_time: time, interval_minutes: int = 60) -> List[time]:
     slots = []
-    # Convert to datetime to do math
     current = datetime.combine(date.today(), start_time)
     end = datetime.combine(date.today(), end_time)
     
@@ -45,7 +44,6 @@ def get_provider_schedule(
     target_date: date = Query(..., alias="date"),
     db: Session = Depends(get_db)
 ):
-    # Verify provider exists
     try:
         prov_uuid = uuid.UUID(provider_id)
     except ValueError:
@@ -55,10 +53,8 @@ def get_provider_schedule(
     if not provider:
         raise HTTPException(status_code=404, detail="Provider not found")
 
-    # Get weekday (0 = Monday, 6 = Sunday)
     weekday = target_date.weekday()
     
-    # Get schedule rule for this day
     rules = db.query(models.ScheduleRule).filter(
         models.ScheduleRule.provider_id == prov_uuid,
         models.ScheduleRule.day_of_week == weekday
@@ -67,13 +63,11 @@ def get_provider_schedule(
     if not rules:
         return {"available_slots": []}
         
-    # Get all blocked slots for this date
     blocked = db.query(models.BlockedSlot).filter(
         models.BlockedSlot.provider_id == prov_uuid,
         models.BlockedSlot.block_date == target_date
     ).all()
     
-    # Get all booked appointments
     appointments = db.query(models.Appointment).filter(
         models.Appointment.provider_id == prov_uuid,
         models.Appointment.date == target_date,
@@ -90,7 +84,6 @@ def get_provider_schedule(
             if slot in booked_times:
                 continue
             
-            # Check if blocked manually
             is_blocked = False
             for b in blocked:
                 if b.start_time <= slot < b.end_time:
@@ -113,7 +106,6 @@ def create_appointment(
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid provider ID")
         
-    # Basic validation: check if already booked
     existing = db.query(models.Appointment).filter(
         models.Appointment.provider_id == prov_uuid,
         models.Appointment.date == appt.date,
