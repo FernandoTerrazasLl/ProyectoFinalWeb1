@@ -22,13 +22,13 @@
 
 .register-form__row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--space-3);
 }
 
-@media (width <= 600px) {
+@media (width >= 768px) {
   .register-form__row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 

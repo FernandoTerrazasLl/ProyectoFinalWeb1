@@ -1,7 +1,7 @@
 .signup-page {
   display: flex;
   justify-content: center;
-  padding: var(--space-8);
+  padding: var(--space-4);
 }
 
 .signup-page__panel {
@@ -9,11 +9,21 @@
   flex-direction: column;
   gap: var(--space-4);
   width: 100%;
-  max-width: 24rem;
+  max-width: 28rem;
   background-color: var(--color-surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  padding: var(--space-6);
+  padding: var(--space-4);
+}
+
+@media (width >= 768px) {
+  .signup-page {
+    padding: var(--space-8);
+  }
+
+  .signup-page__panel {
+    padding: var(--space-6);
+  }
 }
 
 .signup-page__title {

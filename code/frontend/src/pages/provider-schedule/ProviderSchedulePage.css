@@ -2,9 +2,15 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  padding: var(--space-6);
+  padding: var(--space-4);
   max-width: 40rem;
   margin: 0 auto;
+}
+
+@media (width >= 768px) {
+  .provider-schedule-page {
+    padding: var(--space-6);
+  }
 }
 
 .provider-schedule-page__title {

@@ -21,6 +21,4 @@
   --space-8: 2rem;
   --font-sans: system-ui, -apple-system, "Segoe UI", roboto, sans-serif;
   --font-size-base: 16px;
-  --breakpoint-tablet: 768px;
-  --breakpoint-desktop: 1280px;
 }
