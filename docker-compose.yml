@@ -103,8 +103,6 @@ services:
   frontend:
     build:
       context: ./code/frontend
-    volumes:
-      - ./code/frontend:/app
     networks:
       - private_network
     restart: always

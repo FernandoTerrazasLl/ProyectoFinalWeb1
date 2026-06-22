@@ -6,7 +6,6 @@ from src.db.database import get_db
 import src.models.domain as models
 
 from src.models.schemas import *
-from src.services.schedule_service import generate_slots
 
 router = APIRouter(prefix="/specialties", tags=["specialties"])
 

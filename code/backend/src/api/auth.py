@@ -12,7 +12,6 @@ from src.services.redis_client import get_redis
 import redis.asyncio as redis
 
 from src.models.schemas import *
-from src.services.schedule_service import generate_slots
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

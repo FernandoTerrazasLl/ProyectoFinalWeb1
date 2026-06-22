@@ -8,7 +8,6 @@ from src.services.kafka_producer import get_kafka_producer
 from kafka import KafkaProducer
 
 from src.models.schemas import *
-from src.services.schedule_service import generate_slots
 
 router = APIRouter(prefix="/ugc", tags=["ugc"])
 logger = logging.getLogger(__name__)

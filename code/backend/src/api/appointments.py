@@ -7,7 +7,6 @@ from src.db.database import get_db
 from src.core.dependencies import get_current_patient, get_current_provider
 
 from src.models.schemas import *
-from src.services.schedule_service import generate_slots
 
 router = APIRouter(prefix="/appointments", tags=["appointments"])
 
