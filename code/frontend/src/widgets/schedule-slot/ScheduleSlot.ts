@@ -19,7 +19,10 @@ export class ScheduleSlot extends Block<ScheduleSlotProps> {
 
   constructor(props: ScheduleSlotProps) {
     super({
-      isReserved: props.entry.state === "pending" || props.entry.state === "completed",
+      isReserved:
+        props.entry.state === "pending" ||
+        props.entry.state === "confirmed" ||
+        props.entry.state === "completed",
       isFree: props.entry.state === "available",
       isBlocked: props.entry.state === "blocked",
       ...props,

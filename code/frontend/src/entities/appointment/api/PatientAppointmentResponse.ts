@@ -1,5 +1,3 @@
-import type { AppointmentState } from "@entities/appointment/model/AppointmentState";
-
 export interface PatientAppointmentResponse {
   id: string;
   provider_id: string;
@@ -8,5 +6,5 @@ export interface PatientAppointmentResponse {
   provider_address: string;
   date: string;
   time: string;
-  state: AppointmentState;
+  state: string;
 }

@@ -1,6 +1,7 @@
 export const APPOINTMENT_STATES = [
   "available",
   "pending",
+  "confirmed",
   "completed",
   "blocked",
   "cancelled",

@@ -1,7 +1,10 @@
+import type { AppointmentState } from "@entities/appointment/model/AppointmentState";
 import type { PatientAppointment } from "@entities/appointment/model/PatientAppointment";
 import type { PatientAppointmentResponse } from "@entities/appointment/api/PatientAppointmentResponse";
 
 export function toPatientAppointment(response: PatientAppointmentResponse): PatientAppointment {
+  const state = response.state.toLowerCase() as AppointmentState;
+
   return {
     id: response.id,
     providerId: response.provider_id,
@@ -10,7 +13,7 @@ export function toPatientAppointment(response: PatientAppointmentResponse): Pati
     providerAddress: response.provider_address,
     date: response.date,
     time: response.time,
-    state: response.state,
-    reviewable: response.state === "completed",
+    state,
+    reviewable: state === "completed",
   };
 }

@@ -8,6 +8,7 @@ import "@widgets/appointment-card/AppointmentCard.css";
 const STATE_LABELS: Record<AppointmentState, string> = {
   available: "Disponible",
   pending: "Pendiente",
+  confirmed: "Confirmada",
   completed: "Completada",
   blocked: "Bloqueada",
   cancelled: "Cancelada",
