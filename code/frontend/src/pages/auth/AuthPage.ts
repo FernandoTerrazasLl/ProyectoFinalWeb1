@@ -1,6 +1,7 @@
 import { Block } from "@shared/lib/block/Block";
 import type { BlockOwnProps } from "@shared/lib/block/BlockOwnProps";
 import { LoginForm, submitLogin } from "@features/auth-login";
+import { GoogleButton } from "@features/oauth-google";
 import { routerInstance } from "@shared/lib/router/routerInstance";
 import authPageTemplate from "@pages/auth/AuthPage.hbs?raw";
 import "@pages/auth/AuthPage.css";
@@ -13,13 +14,14 @@ export class AuthPage extends Block<BlockOwnProps> {
       onSubmit: async (request) => {
         const result = await submitLogin(request);
 
-        if (result.isOk()) 
+        if (result.isOk())
           routerInstance.navigate("/directory");
-        else 
+        else
           loginForm.setProps({ error: result.error.message });
       },
     });
 
     this.mountInto("form", loginForm);
+    this.mountInto("google", new GoogleButton({ onAuthenticated: () => routerInstance.navigate("/directory") }));
   }
 }
