@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Time, Text, Numeric, DateTime, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
-from database import Base
+from src.db.database import Base
 import uuid
+from datetime import datetime
 
 class User(Base):
     __tablename__ = "users_user"
@@ -13,10 +14,19 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     first_name = Column(String)
     last_name = Column(String)
+    maternal_last_name = Column(String, default="")
     is_active = Column(Boolean, default=True)
     is_staff = Column(Boolean, default=False)
+    is_superuser = Column(Boolean, default=False)
     role = Column(String)
     auth_provider = Column(String, default="local")
+    provider_id = Column(String, default="")
+    date_joined = Column(DateTime, default=datetime.utcnow)
+    avatar_url = Column(String, default="")
+    phone_number = Column(String, default="")
+    ci = Column(String, default="")
+    gender = Column(String, nullable=True)
+    birth_date = Column(Date, nullable=True)
 
     patient_profile = relationship("PatientProfile", back_populates="user", uselist=False)
     provider_profile = relationship("ProviderProfile", back_populates="user", uselist=False)
@@ -26,9 +36,6 @@ class PatientProfile(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users_user.id"), unique=True)
-    ci = Column(String)
-    birth_date = Column(Date)
-    phone_number = Column(String)
 
     user = relationship("User", back_populates="patient_profile")
     appointments = relationship("Appointment", back_populates="patient")

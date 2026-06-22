@@ -1,3 +1,23 @@
 [importlinter]
-root_packages =
-    src
+root_package = src
+
+[importlinter:contract:1]
+name = Layered architecture
+type = layers
+layers =
+    src.api
+    src.services | src.core
+    src.models
+    src.db
+
+[importlinter:contract:2]
+name = API Module Independence
+type = independence
+modules =
+    src.api.auth
+    src.api.appointments
+    src.api.me
+    src.api.psychologists
+    src.api.specialties
+    src.api.triage
+    src.api.ugc

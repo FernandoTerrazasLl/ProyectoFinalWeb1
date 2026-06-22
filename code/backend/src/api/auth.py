@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
-from database import get_db
-import models
-from core.security import (
+from src.db.database import get_db
+import src.models.domain as models
+from src.core.security import (
     verify_password, get_password_hash, create_access_token, 
     create_refresh_token, decode_token, verify_google_token
 )
@@ -11,20 +11,10 @@ from typing import Optional
 from src.services.redis_client import get_redis
 import redis.asyncio as redis
 
+from datetime import datetime
+from src.models.schemas import *
+
 router = APIRouter(prefix="/auth", tags=["auth"])
-
-class UserCreate(BaseModel):
-    name: str
-    email: str
-    password: str
-    role: str = "PATIENT"
-
-class UserLogin(BaseModel):
-    email: str
-    password: str
-
-class GoogleLogin(BaseModel):
-    id_token: str
 
 @router.post("/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
@@ -34,20 +24,23 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     
     hashed_password = get_password_hash(user.password)
     
-    name_parts = user.name.strip().split(" ", 1)
-    first_name = name_parts[0]
-    last_name = name_parts[1] if len(name_parts) > 1 else ""
-    
     new_user = models.User(
         email=user.email,
         username=user.email,
         password=hashed_password,
-        first_name=first_name,
-        last_name=last_name,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        maternal_last_name=user.maternal_last_name,
+        ci=user.ci,
+        birth_date=user.birth_date,
+        gender=user.gender,
+        phone_number=user.phone_number,
         role=user.role,
         is_staff=False,
+        is_superuser=False,
         is_active=True,
-        auth_provider="local"
+        auth_provider="local",
+        date_joined=datetime.utcnow()
     )
     db.add(new_user)
     db.commit()
@@ -90,10 +83,10 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
         db_user = models.User(
             email=email,
             username=email,
-            password=get_password_hash(None), # Unusable password
+            password=get_password_hash(None),
             first_name=first_name,
             last_name=last_name,
-            role="PATIENT", # Default
+            role="PATIENT",
             is_staff=False,
             is_active=True,
             auth_provider="google",

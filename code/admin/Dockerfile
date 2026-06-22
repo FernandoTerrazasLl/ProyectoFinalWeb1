@@ -28,7 +28,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends libpq5 && \
     rm -rf /var/lib/apt/lists/*
 
-RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+RUN groupadd -r appgroup && useradd -r -m -g appgroup appuser
 
 COPY --from=builder /opt/venv /opt/venv
 

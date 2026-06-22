@@ -4,13 +4,16 @@ import type { HttpError } from "@shared/api/HttpError";
 import type { RegisterUserRequest } from "@entities/user/api/RegisterUserRequest";
 
 export function registerUser(request: RegisterUserRequest): Promise<Result<unknown, HttpError>> {
-  const [firstName, ...lastNameParts] = request.name.trim().split(" ");
-
   return http.request("POST", "/auth/register", {
     email: request.email,
     password: request.password,
-    first_name: firstName,
-    last_name: lastNameParts.join(" "),
+    first_name: request.firstName,
+    last_name: request.lastName,
+    maternal_last_name: request.maternalLastName,
+    ci: request.ci,
+    birth_date: request.birthDate,
+    gender: request.gender,
+    phone_number: request.phoneNumber,
     role: "PATIENT",
   });
 }

@@ -17,6 +17,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CELERY CONFIGURATION
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://redis:6379/0')
+
 SECRET_KEY = 'django-insecure-fg^z1j$w%w-k%x-exoxpd&h6qksq7m1w^f9@sr_u9kb8a*7b^d'
 
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'

@@ -7,36 +7,15 @@ from pydantic import BaseModel
 from elasticsearch import AsyncElasticsearch
 from kafka import KafkaProducer
 
-from src.services.es_client import get_es
+from src.services.es_client import get_es, parse_es_hits
 from src.services.kafka_producer import get_kafka_producer
-from routers.psychologists import PsychologistResponse
+
+from src.models.schemas import *
 
 router = APIRouter(prefix="/triage", tags=["triage"])
 logger = logging.getLogger(__name__)
 
-KAFKA_TOPIC = "ugc_events"
-
-class TriageScores(BaseModel):
-    clinica: int = 0
-    pareja: int = 0
-    laboral: int = 0
-    infantil: int = 0
-
-class TriageRequest(BaseModel):
-    user_id: str
-    scores: TriageScores
-
-class TriageResponse(BaseModel):
-    recommended_specialty: str
-    risk_level: str
-    recommended_providers: List[PsychologistResponse]
-
-def publish_event(producer: KafkaProducer, payload: dict):
-    if producer:
-        try:
-            producer.send(KAFKA_TOPIC, payload)
-        except Exception as e:
-            logger.error(f"Error publishing to Kafka: {e}")
+from src.core.events import dispatch_async_event
 
 @router.post("/evaluate", response_model=TriageResponse)
 async def evaluate_triage(
@@ -56,17 +35,13 @@ async def evaluate_triage(
     else:
         risk_level = "Low"
         
-    event_payload = {
-        "type": "triage_assessment",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "data": {
-            "user_id": triage.user_id,
-            "scores": scores_dict,
-            "recommended_specialty": top_specialty,
-            "risk_level": risk_level
-        }
+    payload_data = {
+        "user_id": triage.user_id,
+        "scores": scores_dict,
+        "recommended_specialty": top_specialty,
+        "risk_level": risk_level
     }
-    background_tasks.add_task(publish_event, producer, event_payload)
+    background_tasks.add_task(dispatch_async_event, producer, "triage_assessment", payload_data)
     
     recommended_providers = []
     try:
@@ -82,10 +57,7 @@ async def evaluate_triage(
                 "size": 3
             }
         )
-        hits = es_response.get("hits", {}).get("hits", [])
-        for hit in hits:
-            source = hit["_source"]
-            recommended_providers.append(PsychologistResponse(id=hit["_id"], **source))
+        recommended_providers = parse_es_hits(es_response, PsychologistResponse)
     except Exception as e:
         logger.error(f"Error fetching recommended providers: {e}")
         

@@ -6,23 +6,24 @@ from pydantic import BaseModel
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.exceptions import NotFoundError
 import redis.asyncio as redis
+from sqlalchemy.orm import Session
+from datetime import date, time, datetime, timedelta
 
-from src.services.es_client import get_es
+from src.services.es_client import get_es, parse_es_hits
 from src.services.redis_client import get_redis
+from src.services.mongo_client import get_mongo_db
+from motor.motor_asyncio import AsyncIOMotorDatabase
+from src.db.database import get_db
+import src.models.domain as models
+import uuid
+
+from src.models.schemas import *
+from src.services.schedule_service import generate_slots
 
 router = APIRouter(prefix="/psychologists", tags=["psychologists"])
 logger = logging.getLogger(__name__)
 
-class PsychologistResponse(BaseModel):
-    id: str
-    first_name: str
-    last_name: str
-    specialty: Optional[str] = None
-    session_price: float
-    bio: str
-    is_approved: bool
-    average_rating: float = 0.0
-    review_count: int = 0
+
 
 @router.get("/", response_model=List[PsychologistResponse])
 async def get_psychologists(
@@ -83,11 +84,7 @@ async def get_psychologists(
         logger.error(f"Elasticsearch error: {e}")
         raise HTTPException(status_code=503, detail="Service Unavailable")
 
-    hits = es_response.get("hits", {}).get("hits", [])
-    result = []
-    for hit in hits:
-        source = hit["_source"]
-        result.append(PsychologistResponse(id=hit["_id"], **source).dict())
+    result = [p.dict() for p in parse_es_hits(es_response, PsychologistResponse)]
         
     try:
         await redis_client.setex(cache_key, 60, json.dumps(result))
@@ -126,4 +123,80 @@ async def get_psychologist(
     except Exception:
         pass
 
+    return result
+
+
+
+@router.get("/{psychologist_id}/availability", response_model=List[AvailabilitySlot])
+def get_availability(
+    psychologist_id: str,
+    target_date: date = Query(..., alias="date"),
+    db: Session = Depends(get_db)
+):
+    try:
+        prov_uuid = uuid.UUID(psychologist_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid provider ID")
+        
+    weekday = target_date.weekday()
+    
+    rules = db.query(models.ScheduleRule).filter(
+        models.ScheduleRule.provider_id == prov_uuid,
+        models.ScheduleRule.day_of_week == weekday
+    ).all()
+    
+    if not rules:
+        return []
+        
+    blocked = db.query(models.BlockedSlot).filter(
+        models.BlockedSlot.provider_id == prov_uuid,
+        models.BlockedSlot.block_date == target_date
+    ).all()
+    
+    appointments = db.query(models.Appointment).filter(
+        models.Appointment.provider_id == prov_uuid,
+        models.Appointment.date == target_date,
+        models.Appointment.status != "cancelled"
+    ).all()
+    
+    booked_times = {app.time for app in appointments}
+    
+    availability = []
+    for rule in rules:
+        slots = generate_slots(rule.start_time, rule.end_time)
+        for slot in slots:
+            slot_str = slot.strftime("%H:%M")
+            if slot in booked_times:
+                availability.append({"time": slot_str, "available": False})
+                continue
+            
+            is_blocked = False
+            for b in blocked:
+                if b.start_time <= slot < b.end_time:
+                    is_blocked = True
+                    break
+            
+            availability.append({"time": slot_str, "available": not is_blocked})
+                
+    return sorted(availability, key=lambda x: x["time"])
+
+@router.get("/{psychologist_id}/reviews")
+async def get_reviews(
+    psychologist_id: str,
+    mongo_db: AsyncIOMotorDatabase = Depends(get_mongo_db)
+):
+    cursor = mongo_db.reviews.find({"provider_id": psychologist_id}).sort("rating", -1)
+    reviews = await cursor.to_list(length=50)
+    
+    result = []
+    for r in reviews:
+        # Map MongoDB _id object to string if needed
+        result.append({
+            "id": str(r.get("_id")),
+            "author": "Paciente Anónimo", # Fallback since we only have user_id
+            "rating": r.get("rating", 0),
+            "comment": r.get("comment", ""),
+            "date": r.get("date", "2026-06-21"),
+            "verified": True
+        })
     return result

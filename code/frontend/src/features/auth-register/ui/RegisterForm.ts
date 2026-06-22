@@ -13,7 +13,17 @@ export class RegisterForm extends Block<RegisterFormProps> {
     submit: (event) => {
       event.preventDefault();
       const values = this.readValues();
-      this.props.onSubmit({ name: values.name, email: values.email, password: values.password });
+      this.props.onSubmit({ 
+        firstName: values.firstName, 
+        lastName: values.lastName, 
+        maternalLastName: values.maternalLastName,
+        ci: values.ci,
+        birthDate: values.birthDate,
+        gender: values.gender,
+        phoneNumber: values.phoneNumber,
+        email: values.email, 
+        password: values.password 
+      });
     },
   };
 
@@ -23,7 +33,13 @@ export class RegisterForm extends Block<RegisterFormProps> {
 
   private readValues(): RegisterFormValues {
     return {
-      name: (this.refs.name as HTMLInputElement).value,
+      firstName: (this.refs.firstName as HTMLInputElement).value,
+      lastName: (this.refs.lastName as HTMLInputElement).value,
+      maternalLastName: (this.refs.maternalLastName as HTMLInputElement).value,
+      ci: (this.refs.ci as HTMLInputElement).value,
+      birthDate: (this.refs.birthDate as HTMLInputElement).value,
+      gender: (this.refs.gender as HTMLSelectElement).value,
+      phoneNumber: (this.refs.phoneNumber as HTMLInputElement).value,
       email: (this.refs.email as HTMLInputElement).value,
       password: (this.refs.password as HTMLInputElement).value,
       confirmPassword: (this.refs.confirmPassword as HTMLInputElement).value,

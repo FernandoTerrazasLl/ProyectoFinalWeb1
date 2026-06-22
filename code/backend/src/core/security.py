@@ -19,7 +19,7 @@ def verify_password(plain_password, hashed_password):
 
 def get_password_hash(password):
     if not password:
-        return "!" + str(uuid.uuid4()) # Unusable password marker compatible with Django conceptually
+        return "!" + str(uuid.uuid4())
     return django_pbkdf2_sha256.hash(password)
 
 def create_access_token(data: dict):
