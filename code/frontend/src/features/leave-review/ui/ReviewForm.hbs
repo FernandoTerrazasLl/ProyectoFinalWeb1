@@ -1,0 +1,17 @@
+<form class="review-form">
+  {{#if submitted}}
+    <p class="review-form__success">¡Gracias! Tu reseña fue recibida con éxito.</p>
+  {{else}}
+    <div class="review-form__stars">
+      <button class="review-form__star" type="button" data-star="1" aria-label="1 estrella">★</button>
+      <button class="review-form__star" type="button" data-star="2" aria-label="2 estrellas">★</button>
+      <button class="review-form__star" type="button" data-star="3" aria-label="3 estrellas">★</button>
+      <button class="review-form__star" type="button" data-star="4" aria-label="4 estrellas">★</button>
+      <button class="review-form__star" type="button" data-star="5" aria-label="5 estrellas">★</button>
+    </div>
+    {{{ Textarea name="comment" placeholder="Escribí tu comentario" ref="comment" }}}
+    <button class="button button--primary review-form__submit" type="submit" disabled>
+      Enviar reseña
+    </button>
+  {{/if}}
+</form>

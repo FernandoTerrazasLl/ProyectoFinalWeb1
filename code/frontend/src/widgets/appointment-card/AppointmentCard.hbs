@@ -1,0 +1,11 @@
+<article class="appointment-card">
+  <div class="appointment-card__head">
+    <h3 class="appointment-card__provider">{{appointment.providerName}}</h3>
+    {{{ Badge text=stateLabel }}}
+  </div>
+  <p class="appointment-card__when">{{appointment.date}} · {{appointment.time}}</p>
+  <p class="appointment-card__contact">{{appointment.providerAddress}} · {{appointment.providerPhone}}</p>
+  {{#if appointment.reviewable}}
+    <button class="button button--secondary appointment-card__review" type="button">Dejar reseña</button>
+  {{/if}}
+</article>
