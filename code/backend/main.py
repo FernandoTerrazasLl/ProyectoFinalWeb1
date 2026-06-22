@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, psychologists, specialties, ugc, triage
+from routers import auth, psychologists, specialties, ugc, triage, appointments
 
 app = FastAPI(title="CuraMente API")
 
@@ -15,6 +15,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(psychologists.router)
 app.include_router(specialties.router)
+app.include_router(appointments.router)
 app.include_router(ugc.router)
 app.include_router(triage.router)
 

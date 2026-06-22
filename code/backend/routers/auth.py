@@ -14,10 +14,9 @@ import redis.asyncio as redis
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 class UserCreate(BaseModel):
+    name: str
     email: str
     password: str
-    first_name: str
-    last_name: str
     role: str = "PATIENT"
 
 class UserLogin(BaseModel):
@@ -35,12 +34,16 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     
     hashed_password = get_password_hash(user.password)
     
+    name_parts = user.name.strip().split(" ", 1)
+    first_name = name_parts[0]
+    last_name = name_parts[1] if len(name_parts) > 1 else ""
+    
     new_user = models.User(
         email=user.email,
         username=user.email,
         password=hashed_password,
-        first_name=user.first_name,
-        last_name=user.last_name,
+        first_name=first_name,
+        last_name=last_name,
         role=user.role,
         is_staff=False,
         is_active=True,
