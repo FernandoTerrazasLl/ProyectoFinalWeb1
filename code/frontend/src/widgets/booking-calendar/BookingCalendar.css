@@ -35,6 +35,12 @@
   cursor: not-allowed;
 }
 
+.booking-calendar__slot--selected {
+  background-color: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-surface);
+}
+
 .booking-calendar__status {
   font-family: var(--font-sans);
   font-size: var(--font-size-base);

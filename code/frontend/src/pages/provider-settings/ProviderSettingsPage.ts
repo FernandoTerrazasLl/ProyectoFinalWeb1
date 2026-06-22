@@ -1,6 +1,7 @@
 import { Block } from "@shared/lib/block/Block";
 import type { BlockOwnProps } from "@shared/lib/block/BlockOwnProps";
 import { EditProviderProfile } from "@features/edit-provider-profile";
+import { DashboardSidebar } from "@widgets/dashboard-sidebar";
 import { Spinner } from "@shared/ui/Spinner/Spinner";
 import { EmptyState } from "@shared/ui/EmptyState/EmptyState";
 import { getMyProviderProfile } from "@entities/psychologist";
@@ -11,6 +12,7 @@ export class ProviderSettingsPage extends Block<BlockOwnProps> {
   protected template = providerSettingsPageTemplate;
 
   protected componentDidMount() {
+    this.mountInto("sidebar", new DashboardSidebar({ active: "profile" }));
     this.mountInto("form", new Spinner({}));
     void this.loadProfile();
   }

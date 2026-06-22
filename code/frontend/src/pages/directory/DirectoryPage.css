@@ -5,6 +5,24 @@
   padding: var(--space-4);
 }
 
+.directory-page__title {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.directory-page__subtitle {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-muted);
+}
+
+.directory-page__cta {
+  width: 100%;
+  text-align: center;
+}
+
 .directory-page__layout {
   display: flex;
   flex-direction: column;

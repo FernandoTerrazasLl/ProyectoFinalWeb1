@@ -5,4 +5,5 @@ export interface AppointmentCardProps extends BlockOwnProps {
   appointment: PatientAppointment;
   onReview: (appointment: PatientAppointment) => void;
   stateLabel?: string;
+  stateTone?: "neutral" | "success" | "warning" | "danger";
 }

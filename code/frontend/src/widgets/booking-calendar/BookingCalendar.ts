@@ -16,8 +16,15 @@ export class BookingCalendar extends Block<BookingCalendarProps> {
     click: (event) => {
       const slot = (event.target as Element).closest("[data-time]");
 
-      if (slot)
-        this.props.onSelectSlot(this.props.date ?? today(), slot.getAttribute("data-time") ?? "");
+      if (!slot)
+        return;
+
+      slot.parentElement
+        ?.querySelectorAll(".booking-calendar__slot--selected")
+        .forEach((selected) => selected.classList.remove("booking-calendar__slot--selected"));
+      slot.classList.add("booking-calendar__slot--selected");
+
+      this.props.onSelectSlot(this.props.date ?? today(), slot.getAttribute("data-time") ?? "");
     },
   };
 

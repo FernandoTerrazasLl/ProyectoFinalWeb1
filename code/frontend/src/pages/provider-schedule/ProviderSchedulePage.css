@@ -1,14 +1,24 @@
 .provider-schedule-page {
   display: flex;
   flex-direction: column;
+}
+
+.provider-schedule-page__content {
+  display: flex;
+  flex-direction: column;
   gap: var(--space-4);
   padding: var(--space-4);
   max-width: 40rem;
   margin: 0 auto;
+  width: 100%;
 }
 
 @media (width >= 768px) {
   .provider-schedule-page {
+    flex-direction: row;
+  }
+
+  .provider-schedule-page__content {
     padding: var(--space-6);
   }
 }

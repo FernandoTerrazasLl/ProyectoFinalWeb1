@@ -14,6 +14,15 @@ const STATE_LABELS: Record<AppointmentState, string> = {
   cancelled: "Cancelada",
 };
 
+const STATE_TONES: Record<AppointmentState, "neutral" | "success" | "warning" | "danger"> = {
+  available: "neutral",
+  pending: "neutral",
+  confirmed: "success",
+  completed: "success",
+  blocked: "neutral",
+  cancelled: "danger",
+};
+
 export class AppointmentCard extends Block<AppointmentCardProps> {
   protected template = appointmentCardTemplate;
   protected events: EventListType = {
@@ -24,6 +33,10 @@ export class AppointmentCard extends Block<AppointmentCardProps> {
   };
 
   constructor(props: AppointmentCardProps) {
-    super({ stateLabel: STATE_LABELS[props.appointment.state], ...props });
+    super({
+      stateLabel: STATE_LABELS[props.appointment.state],
+      stateTone: STATE_TONES[props.appointment.state],
+      ...props,
+    });
   }
 }

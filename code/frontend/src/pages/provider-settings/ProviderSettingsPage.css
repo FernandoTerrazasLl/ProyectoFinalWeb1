@@ -1,7 +1,13 @@
 .provider-settings-page {
   display: flex;
+  flex-direction: column;
+}
+
+.provider-settings-page__content {
+  display: flex;
   justify-content: center;
   padding: var(--space-4);
+  width: 100%;
 }
 
 .provider-settings-page__panel {
@@ -18,6 +24,10 @@
 
 @media (width >= 768px) {
   .provider-settings-page {
+    flex-direction: row;
+  }
+
+  .provider-settings-page__content {
     padding: var(--space-8);
   }
 

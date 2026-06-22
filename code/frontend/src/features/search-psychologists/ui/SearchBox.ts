@@ -13,6 +13,13 @@ export class SearchBox extends Block<SearchBoxProps> {
       const value = (event.target as HTMLInputElement).value;
       this.debounceTimer = setTimeout(() => this.props.onSearch(value), 350);
     },
+    click: (event) => {
+      if (!(event.target as Element).closest(".search-box__submit"))
+        return;
+
+      clearTimeout(this.debounceTimer);
+      this.props.onSearch((this.refs.input as HTMLInputElement).value);
+    },
   };
 
   protected componentWillUnmount() {

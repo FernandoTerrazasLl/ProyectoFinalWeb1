@@ -3,6 +3,7 @@ import type { BlockOwnProps } from "@shared/lib/block/BlockOwnProps";
 import type { EventListType } from "@shared/lib/block/EventListType";
 import { ScheduleSlot } from "@widgets/schedule-slot";
 import { PatientInfoCard } from "@widgets/patient-info-modal";
+import { DashboardSidebar } from "@widgets/dashboard-sidebar";
 import { Modal } from "@shared/ui/Modal/Modal";
 import { Spinner } from "@shared/ui/Spinner/Spinner";
 import { EmptyState } from "@shared/ui/EmptyState/EmptyState";
@@ -21,6 +22,7 @@ export class ProviderSchedulePage extends Block<BlockOwnProps> {
   };
 
   protected componentDidMount() {
+    this.mountInto("sidebar", new DashboardSidebar({ active: "schedule" }));
     (this.refs.date as HTMLInputElement).value = today();
     void this.loadSchedule(today());
   }

@@ -32,3 +32,10 @@
   font-size: var(--font-size-base);
   color: var(--color-muted);
 }
+
+.appointment-card__review {
+  align-self: flex-start;
+  background-color: #ccfbf1;
+  border-color: transparent;
+  color: var(--color-primary-hover);
+}

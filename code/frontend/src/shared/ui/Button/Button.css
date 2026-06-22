@@ -34,3 +34,12 @@
   background-color: var(--color-danger);
   color: var(--color-surface);
 }
+
+.button--ink {
+  background-color: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.button--ink:hover {
+  background-color: var(--color-ink-hover);
+}
