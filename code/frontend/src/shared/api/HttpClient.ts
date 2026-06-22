@@ -5,49 +5,86 @@ import type { HttpMethod } from "@shared/api/HttpMethod";
 export class HttpClient {
   private readonly baseUrl: string;
   private accessToken: string | null = null;
+  private refreshToken: string | null = null;
+  private onAccessTokenRefreshed: ((token: string) => void) | null = null;
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
   }
 
-  setAccessToken(token: string | null) {
-    this.accessToken = token;
+  setTokens(accessToken: string | null, refreshToken: string | null) {
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
   }
 
-  async request<T>(
+  setOnAccessTokenRefreshed(listener: (token: string) => void) {
+    this.onAccessTokenRefreshed = listener;
+  }
+
+  request<T>(method: HttpMethod, path: string, body?: unknown, signal?: AbortSignal): Promise<Result<T, HttpError>> {
+    return this.send<T>(method, path, body, signal, true);
+  }
+
+  private async send<T>(
     method: HttpMethod,
     path: string,
-    body?: unknown,
-    signal?: AbortSignal,
+    body: unknown,
+    signal: AbortSignal | undefined,
+    allowRefresh: boolean,
   ): Promise<Result<T, HttpError>> {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {}),
-    };
-
     const init: RequestInit = {
       method,
-      headers,
+      headers: {
+        "Content-Type": "application/json",
+        ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {}),
+      },
       ...(signal ? { signal } : {}),
       ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     };
 
     const sent = await Result.wrapAsync(() => fetch(`${this.baseUrl}${path}`, init));
 
-    if (sent.isErr()) 
+    if (sent.isErr())
       return Err({ status: 0, message: "network_error" });
 
     const response = sent.value;
 
-    if (!response.ok) 
+    if (response.status === 401 && allowRefresh && (await this.refreshAccessToken()))
+      return this.send<T>(method, path, body, signal, false);
+    if (!response.ok)
       return Err({ status: response.status, message: response.statusText });
-    if (response.status === 204) 
+    if (response.status === 204)
       return Ok(undefined as T);
 
     const parsed = await Result.wrapAsync<T>(() => response.json());
-    
-    return parsed.isErr()
-      ? Err({ status: response.status, message: "invalid_json" })
+
+    return parsed.isErr() 
+      ? Err({ status: response.status, message: "invalid_json" }) 
       : Ok(parsed.value);
+  }
+
+  private async refreshAccessToken(): Promise<boolean> {
+    if (!this.refreshToken)
+      return false;
+
+    const sent = await Result.wrapAsync(() =>
+      fetch(`${this.baseUrl}/auth/refresh`, {
+        method: "POST",
+        headers: { refresh_token: this.refreshToken as string },
+      }),
+    );
+
+    if (sent.isErr() || !sent.value.ok)
+      return false;
+
+    const parsed = await Result.wrapAsync<{ access_token: string }>(() => sent.value.json());
+
+    if (parsed.isErr())
+      return false;
+
+    this.accessToken = parsed.value.access_token;
+    this.onAccessTokenRefreshed?.(parsed.value.access_token);
+
+    return true;
   }
 }
