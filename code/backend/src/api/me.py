@@ -1,0 +1,190 @@
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.orm import Session
+from datetime import date, time, datetime, timedelta
+from typing import List, Optional
+from pydantic import BaseModel, UUID4
+import src.models.domain as models
+from src.db.database import get_db
+from src.core.dependencies import get_current_patient, get_current_provider
+from src.services.es_client import get_es
+from elasticsearch import AsyncElasticsearch
+import logging
+
+logger = logging.getLogger(__name__)
+
+from src.models.schemas import *
+from src.services.schedule_service import generate_slots
+
+router = APIRouter(prefix="/me", tags=["me"])
+
+
+
+
+
+
+
+
+
+
+
+@router.get("/appointments", response_model=List[MyAppointmentResponse])
+def get_my_appointments(
+    patient: models.PatientProfile = Depends(get_current_patient),
+    db: Session = Depends(get_db)
+):
+    appointments = db.query(models.Appointment).filter(
+        models.Appointment.patient_id == patient.id
+    ).order_by(models.Appointment.date.desc(), models.Appointment.time.desc()).all()
+    
+    result = []
+    for appt in appointments:
+        provider_profile = appt.provider
+        user = provider_profile.user
+        
+        result.append({
+            "id": appt.id,
+            "provider_id": appt.provider_id,
+            "provider_name": f"{user.first_name} {user.last_name}".strip(),
+            "provider_phone": "N/A",  # Not in provider schema
+            "provider_address": "N/A",  # Not in provider schema
+            "date": appt.date,
+            "time": appt.time,
+            "state": appt.status
+        })
+    return result
+
+
+@router.get("/schedule", response_model=List[ScheduleItemResponse])
+def get_my_schedule(
+    target_date: date = Query(..., alias="date"),
+    provider: models.ProviderProfile = Depends(get_current_provider),
+    db: Session = Depends(get_db)
+):
+    weekday = target_date.weekday()
+    
+    rules = db.query(models.ScheduleRule).filter(
+        models.ScheduleRule.provider_id == provider.id,
+        models.ScheduleRule.day_of_week == weekday
+    ).all()
+    
+    blocked = db.query(models.BlockedSlot).filter(
+        models.BlockedSlot.provider_id == provider.id,
+        models.BlockedSlot.block_date == target_date
+    ).all()
+    
+    appointments = db.query(models.Appointment).filter(
+        models.Appointment.provider_id == provider.id,
+        models.Appointment.date == target_date,
+        models.Appointment.status != "cancelled"
+    ).all()
+    
+    booked_map = {app.time: app for app in appointments}
+    
+    schedule_items = []
+    for rule in rules:
+        slots = generate_slots(rule.start_time, rule.end_time)
+        for slot in slots:
+            if slot in booked_map:
+                appt = booked_map[slot]
+                patient_name = f"{appt.patient.user.first_name} {appt.patient.user.last_name}".strip()
+                schedule_items.append({
+                    "appointment_id": appt.id,
+                    "time": slot,
+                    "state": appt.status,
+                    "patient_name": patient_name
+                })
+                continue
+            
+            is_blocked = False
+            for b in blocked:
+                if b.start_time <= slot < b.end_time:
+                    is_blocked = True
+                    break
+            
+            if is_blocked:
+                schedule_items.append({
+                    "time": slot,
+                    "state": "blocked"
+                })
+            else:
+                schedule_items.append({
+                    "time": slot,
+                    "state": "available"
+                })
+                
+    return sorted(schedule_items, key=lambda x: x["time"])
+
+@router.post("/blocked-slots")
+def block_slot(
+    slot: BlockedSlotCreate,
+    provider: models.ProviderProfile = Depends(get_current_provider),
+    db: Session = Depends(get_db)
+):
+    dt = datetime.combine(date.today(), slot.time)
+    end_time = (dt + timedelta(hours=1)).time()
+    
+    new_block = models.BlockedSlot(
+        provider_id=provider.id,
+        block_date=slot.date,
+        start_time=slot.time,
+        end_time=end_time,
+        reason="Manual block"
+    )
+    db.add(new_block)
+    db.commit()
+    return {"status": "success", "message": "Slot blocked successfully"}
+
+@router.get("/provider-profile", response_model=ProviderProfileResponse)
+def get_provider_profile(
+    provider: models.ProviderProfile = Depends(get_current_provider)
+):
+    return {
+        "bio": provider.bio or "",
+        "session_price": float(provider.session_price) if provider.session_price else 0.0,
+        "tags": [tag.name for tag in provider.tags]
+    }
+
+@router.put("/provider-profile", response_model=ProviderProfileResponse)
+async def update_provider_profile(
+    profile_update: ProviderProfileUpdate,
+    provider: models.ProviderProfile = Depends(get_current_provider),
+    db: Session = Depends(get_db),
+    es: AsyncElasticsearch = Depends(get_es)
+):
+    provider.bio = profile_update.bio
+    provider.session_price = profile_update.session_price
+    
+    provider.tags.clear()
+    for tag_name in profile_update.tags:
+        tag = db.query(models.Tag).filter(models.Tag.name == tag_name).first()
+        if not tag:
+            tag = models.Tag(name=tag_name)
+            db.add(tag)
+        provider.tags.append(tag)
+        
+    db.commit()
+    db.refresh(provider)
+    
+    tags_list = [tag.name for tag in provider.tags]
+    price = float(provider.session_price) if provider.session_price else 0.0
+    
+    try:
+        await es.update(
+            index="providers",
+            id=str(provider.id),
+            body={
+                "doc": {
+                    "bio": provider.bio,
+                    "session_price": price,
+                    "tags": tags_list
+                }
+            }
+        )
+    except Exception as e:
+        logger.error(f"Failed to sync provider profile update to ES: {e}")
+    
+    return {
+        "bio": provider.bio or "",
+        "session_price": price,
+        "tags": tags_list
+    }

@@ -11,20 +11,10 @@ from typing import Optional
 from src.services.redis_client import get_redis
 import redis.asyncio as redis
 
+from src.models.schemas import *
+from src.services.schedule_service import generate_slots
+
 router = APIRouter(prefix="/auth", tags=["auth"])
-
-class UserCreate(BaseModel):
-    name: str
-    email: str
-    password: str
-    role: str = "PATIENT"
-
-class UserLogin(BaseModel):
-    email: str
-    password: str
-
-class GoogleLogin(BaseModel):
-    id_token: str
 
 @router.post("/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):

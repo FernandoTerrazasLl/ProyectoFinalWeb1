@@ -25,3 +25,17 @@ class ESClient:
 
 async def get_es() -> AsyncElasticsearch:
     return ESClient.get_client()
+
+from typing import Type, TypeVar, List
+from pydantic import BaseModel
+
+T = TypeVar('T', bound=BaseModel)
+
+def parse_es_hits(es_response: dict, model_class: Type[T]) -> List[T]:
+    """Extracts hits from an ES response and converts them to Pydantic models."""
+    hits = es_response.get("hits", {}).get("hits", [])
+    result = []
+    for hit in hits:
+        source = hit.get("_source", {})
+        result.append(model_class(id=hit.get("_id"), **source))
+    return result

@@ -33,3 +33,9 @@ def get_current_patient(current_user: models.User = Depends(get_current_user), d
         db.commit()
         db.refresh(patient)
     return patient
+
+def get_current_provider(current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    provider = db.query(models.ProviderProfile).filter(models.ProviderProfile.user_id == current_user.id).first()
+    if not provider:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not registered as a psychologist/provider")
+    return provider
