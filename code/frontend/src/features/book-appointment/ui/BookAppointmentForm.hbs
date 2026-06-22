@@ -1,0 +1,12 @@
+<form class="book-appointment">
+  {{#if submitted}}
+    <p class="book-appointment__success">¡Listo! Diste el primer paso. Tu cita quedó agendada.</p>
+  {{else}}
+    <p class="book-appointment__slot" ref="slot">Elegí un horario disponible</p>
+    {{{ Textarea name="reason" placeholder="Contanos brevemente el motivo de tu consulta" ref="reason" }}}
+    {{#if error}}<p class="book-appointment__error">{{error}}</p>{{/if}}
+    <button class="button button--primary book-appointment__submit" type="submit" ref="submit" disabled>
+      Agendar
+    </button>
+  {{/if}}
+</form>

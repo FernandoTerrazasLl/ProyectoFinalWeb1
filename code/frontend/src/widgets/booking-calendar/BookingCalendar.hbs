@@ -1,0 +1,19 @@
+<div class="booking-calendar">
+  <input class="booking-calendar__date" type="date" value="{{date}}" min="{{date}}" ref="date">
+  {{#if loading}}
+    <p class="booking-calendar__status">Cargando horarios…</p>
+  {{else}}
+    <div class="booking-calendar__slots">
+      {{#each slots}}
+        <button
+          class="booking-calendar__slot"
+          type="button"
+          data-time="{{time}}"
+          {{#unless available}}disabled{{/unless}}
+        >
+          {{time}}
+        </button>
+      {{/each}}
+    </div>
+  {{/if}}
+</div>

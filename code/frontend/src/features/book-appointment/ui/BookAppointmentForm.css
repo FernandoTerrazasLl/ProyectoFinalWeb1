@@ -1,0 +1,23 @@
+.book-appointment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.book-appointment__slot {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+}
+
+.book-appointment__error {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-danger);
+}
+
+.book-appointment__success {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-success);
+}
