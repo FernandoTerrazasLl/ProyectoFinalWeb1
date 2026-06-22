@@ -9,7 +9,6 @@ from kafka import KafkaProducer
 
 from src.services.es_client import get_es, parse_es_hits
 from src.services.kafka_producer import get_kafka_producer
-from src.api.psychologists import PsychologistResponse
 
 from src.models.schemas import *
 from src.services.schedule_service import generate_slots

@@ -18,15 +18,6 @@ from src.services.schedule_service import generate_slots
 router = APIRouter(prefix="/me", tags=["me"])
 
 
-
-
-
-
-
-
-
-
-
 @router.get("/appointments", response_model=List[MyAppointmentResponse])
 def get_my_appointments(
     patient: models.PatientProfile = Depends(get_current_patient),

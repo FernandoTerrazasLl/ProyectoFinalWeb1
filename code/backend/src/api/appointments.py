@@ -11,12 +11,6 @@ from src.services.schedule_service import generate_slots
 
 router = APIRouter(prefix="/appointments", tags=["appointments"])
 
-
-
-
-
-
-
 @router.post("/", response_model=AppointmentResponse)
 def create_appointment(
     appt: AppointmentCreate,
