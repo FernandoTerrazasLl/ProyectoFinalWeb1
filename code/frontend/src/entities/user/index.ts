@@ -8,4 +8,5 @@ export type { AuthSession } from "@entities/user/api/AuthSession";
 export type { LoginUserRequest } from "@entities/user/api/LoginUserRequest";
 export type { RegisterUserRequest } from "@entities/user/api/RegisterUserRequest";
 export { loginUser } from "@entities/user/api/loginUser";
+export { loginWithGoogle } from "@entities/user/api/loginWithGoogle";
 export { registerUser } from "@entities/user/api/registerUser";
