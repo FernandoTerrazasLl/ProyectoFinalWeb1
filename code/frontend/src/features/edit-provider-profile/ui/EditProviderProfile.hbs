@@ -1,0 +1,15 @@
+<form class="edit-provider-profile">
+  {{#if saved}}
+    <p class="edit-provider-profile__success">Tus cambios ya son visibles para los pacientes.</p>
+  {{else}}
+    {{{ Label text="Biografía" forId="edit-bio" }}}
+    {{{ Textarea id="edit-bio" name="bio" ref="bio" }}}
+    {{{ Label text="Precio por sesión (Bs.)" forId="edit-rate" }}}
+    {{{ Input id="edit-rate" type="text" name="rate" ref="rate" }}}
+    {{{ Label text="Problemas que tratás (máximo 5)" forId="edit-tag" }}}
+    <div class="edit-provider-profile__chips" ref="chips"></div>
+    {{{ Input id="edit-tag" type="text" placeholder="Escribí un problema y presioná Enter" ref="tagInput" }}}
+    <p class="edit-provider-profile__limit" ref="limit"></p>
+    <button class="button button--primary" type="submit">Guardar cambios</button>
+  {{/if}}
+</form>
