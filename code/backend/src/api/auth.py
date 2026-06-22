@@ -45,6 +45,12 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    if new_user.role == "PATIENT":
+        patient_profile = models.PatientProfile(user_id=new_user.id)
+        db.add(patient_profile)
+        db.commit()
+
     return {"message": "User registered successfully", "user_id": new_user.id}
 
 @router.post("/login")
@@ -63,7 +69,8 @@ def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     return {
         "access_token": access_token, 
         "refresh_token": refresh_token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "role": db_user.role
     }
 
 @router.post("/google")
@@ -95,6 +102,11 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
+
+        if db_user.role == "PATIENT":
+            patient_profile = models.PatientProfile(user_id=db_user.id)
+            db.add(patient_profile)
+            db.commit()
     elif db_user.auth_provider == "local":
         db_user.auth_provider = "google_and_local"
         db_user.provider_id = provider_id
@@ -106,7 +118,8 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
     return {
         "access_token": access_token, 
         "refresh_token": refresh_token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "role": db_user.role
     }
 
 @router.post("/refresh")

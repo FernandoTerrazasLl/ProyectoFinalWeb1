@@ -66,7 +66,7 @@ def get_my_schedule(
     appointments = db.query(models.Appointment).filter(
         models.Appointment.provider_id == provider.id,
         models.Appointment.date == target_date,
-        models.Appointment.status != "cancelled"
+        models.Appointment.status != "CANCELLED"
     ).all()
     
     booked_map = {app.time: app for app in appointments}
