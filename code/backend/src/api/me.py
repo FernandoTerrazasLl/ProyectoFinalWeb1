@@ -51,7 +51,7 @@ def get_my_schedule(
     provider: models.ProviderProfile = Depends(get_current_provider),
     db: Session = Depends(get_db)
 ):
-    weekday = target_date.weekday()
+    weekday = target_date.isoweekday()
     
     rules = db.query(models.ScheduleRule).filter(
         models.ScheduleRule.provider_id == provider.id,

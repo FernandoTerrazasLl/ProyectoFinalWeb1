@@ -7,6 +7,7 @@ from src.db.database import get_db
 from src.core.dependencies import get_current_patient, get_current_provider
 
 from src.models.schemas import *
+from src.services.schedule_service import generate_slots
 
 router = APIRouter(prefix="/appointments", tags=["appointments"])
 
@@ -16,21 +17,45 @@ def create_appointment(
     patient: models.PatientProfile = Depends(get_current_patient),
     db: Session = Depends(get_db)
 ):
+    naive_time = appt.time.replace(tzinfo=None)
+    
     existing = db.query(models.Appointment).filter(
         models.Appointment.provider_id == appt.provider_id,
         models.Appointment.date == appt.date,
-        models.Appointment.time == appt.time,
+        models.Appointment.time == naive_time,
         models.Appointment.status != "CANCELLED"
     ).first()
     
     if existing:
         raise HTTPException(status_code=400, detail="Time slot is already booked")
         
+    weekday = appt.date.isoweekday()
+    rules = db.query(models.ScheduleRule).filter(
+        models.ScheduleRule.provider_id == appt.provider_id,
+        models.ScheduleRule.day_of_week == weekday
+    ).all()
+    
+    valid_slots = set()
+    for rule in rules:
+        valid_slots.update(generate_slots(rule.start_time, rule.end_time))
+        
+    if naive_time not in valid_slots:
+        raise HTTPException(status_code=400, detail="Requested time is outside provider's working hours")
+        
+    blocked = db.query(models.BlockedSlot).filter(
+        models.BlockedSlot.provider_id == appt.provider_id,
+        models.BlockedSlot.block_date == appt.date
+    ).all()
+    
+    for b in blocked:
+        if b.start_time <= naive_time < b.end_time:
+            raise HTTPException(status_code=400, detail="Requested time is blocked by the provider")
+        
     new_appt = models.Appointment(
         provider_id=appt.provider_id,
         patient_id=patient.id,
         date=appt.date,
-        time=appt.time,
+        time=naive_time,
         reason=appt.reason,
         status="PENDING",
         created_at=datetime.now(timezone.utc).replace(tzinfo=None),
