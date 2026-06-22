@@ -8,6 +8,11 @@ class UserCreate(BaseModel):
     password: str
     first_name: str
     last_name: str
+    maternal_last_name: str = ""
+    ci: str
+    birth_date: date
+    gender: str
+    phone_number: str
     role: str
 
 class UserLogin(BaseModel):
