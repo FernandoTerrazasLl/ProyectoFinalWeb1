@@ -1,0 +1,24 @@
+.patient-info-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.patient-info-card__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.patient-info-card__label {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.patient-info-card__value {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+}

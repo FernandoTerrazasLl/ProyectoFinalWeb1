@@ -1,0 +1,13 @@
+<div class="schedule-slot">
+  <span class="schedule-slot__time">{{entry.time}}</span>
+  {{#if isReserved}}
+    <span class="schedule-slot__patient">{{entry.patientName}}</span>
+    <button class="button button--secondary schedule-slot__info" type="button">Ver información</button>
+  {{/if}}
+  {{#if isFree}}
+    <button class="button button--secondary schedule-slot__block" type="button">Bloquear</button>
+  {{/if}}
+  {{#if isBlocked}}
+    {{{ Badge text="Bloqueado" }}}
+  {{/if}}
+</div>
