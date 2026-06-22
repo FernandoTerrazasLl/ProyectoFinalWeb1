@@ -37,5 +37,7 @@ def parse_es_hits(es_response: dict, model_class: Type[T]) -> List[T]:
     result = []
     for hit in hits:
         source = hit.get("_source", {})
+        # If the document source already contains an id, use the _id instead to avoid multiple values
+        source.pop("id", None)
         result.append(model_class(id=hit.get("_id"), **source))
     return result

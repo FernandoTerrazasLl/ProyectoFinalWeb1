@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.api import auth, psychologists, specialties, ugc, triage, appointments, me
 
-app = FastAPI(title="CuraMente API")
+app = FastAPI(title="CuraMente API", root_path="/api")
 
 app.add_middleware(
     CORSMiddleware,

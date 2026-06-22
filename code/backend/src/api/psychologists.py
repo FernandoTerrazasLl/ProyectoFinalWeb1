@@ -44,7 +44,9 @@ async def get_psychologists(
     except Exception as e:
         logger.error(f"Redis error: {e}")
         
-    must_clauses = []
+    must_clauses = [
+        {"match": {"is_approved": True}}
+    ]
     
     if q:
         must_clauses.append({
@@ -111,6 +113,7 @@ async def get_psychologist(
     try:
         es_response = await es.get(index="providers", id=psychologist_id)
         source = es_response["_source"]
+        source.pop("id", None)
         result = PsychologistResponse(id=es_response["_id"], **source).dict()
     except NotFoundError:
         raise HTTPException(status_code=404, detail="Psychologist not found")
