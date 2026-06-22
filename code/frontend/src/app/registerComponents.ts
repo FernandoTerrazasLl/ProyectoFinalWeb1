@@ -9,6 +9,9 @@ import { StarRating } from "@shared/ui/StarRating/StarRating";
 import { Tag } from "@shared/ui/Tag/Tag";
 import { Select } from "@shared/ui/Select/Select";
 import { RangeSlider } from "@shared/ui/RangeSlider/RangeSlider";
+import { ProgressBar } from "@shared/ui/ProgressBar/ProgressBar";
+import { Textarea } from "@shared/ui/Textarea/Textarea";
+import { Badge } from "@shared/ui/Badge/Badge";
 
 export function registerComponents() {
   ComponentRegistry.register(Button);
@@ -21,4 +24,7 @@ export function registerComponents() {
   ComponentRegistry.register(Tag);
   ComponentRegistry.register(Select);
   ComponentRegistry.register(RangeSlider);
+  ComponentRegistry.register(ProgressBar);
+  ComponentRegistry.register(Textarea);
+  ComponentRegistry.register(Badge);
 }
