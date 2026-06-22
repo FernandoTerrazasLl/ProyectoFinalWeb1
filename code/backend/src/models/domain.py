@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from src.db.database import Base
 import uuid
+from datetime import datetime
 
 class User(Base):
     __tablename__ = "users_user"
@@ -15,8 +16,10 @@ class User(Base):
     last_name = Column(String)
     is_active = Column(Boolean, default=True)
     is_staff = Column(Boolean, default=False)
+    is_superuser = Column(Boolean, default=False)
     role = Column(String)
     auth_provider = Column(String, default="local")
+    date_joined = Column(DateTime, default=datetime.utcnow)
 
     patient_profile = relationship("PatientProfile", back_populates="user", uselist=False)
     provider_profile = relationship("ProviderProfile", back_populates="user", uselist=False)

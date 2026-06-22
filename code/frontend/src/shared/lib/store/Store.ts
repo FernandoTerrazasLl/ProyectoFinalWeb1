@@ -12,7 +12,8 @@ export class Store<State extends object> {
 
   setState(partial: Partial<State>) {
     this.state = { ...this.state, ...partial };
-    this.listeners.forEach((listener) => listener(this.state));
+    const currentListeners = new Set(this.listeners);
+    currentListeners.forEach((listener) => listener(this.state));
   }
 
   subscribe(listener: (state: State) => void): () => void {

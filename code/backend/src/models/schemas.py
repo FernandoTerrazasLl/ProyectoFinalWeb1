@@ -4,14 +4,14 @@ from datetime import date, time, datetime
 
 # --- AUTH SCHEMAS ---
 class UserCreate(BaseModel):
-    username: str
     email: EmailStr
     password: str
-    name: str
+    first_name: str
+    last_name: str
     role: str
 
 class UserLogin(BaseModel):
-    username: str
+    email: EmailStr
     password: str
 
 class GoogleLogin(BaseModel):
