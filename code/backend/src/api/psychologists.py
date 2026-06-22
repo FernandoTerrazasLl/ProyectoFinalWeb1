@@ -141,7 +141,7 @@ def get_availability(
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid provider ID")
         
-    weekday = target_date.weekday()
+    weekday = target_date.isoweekday()
     
     rules = db.query(models.ScheduleRule).filter(
         models.ScheduleRule.provider_id == prov_uuid,
