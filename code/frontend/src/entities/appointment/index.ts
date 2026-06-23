@@ -15,3 +15,4 @@ export { getProviderSchedule } from "@entities/appointment/api/getProviderSchedu
 export { getAppointmentPatient } from "@entities/appointment/api/getAppointmentPatient";
 export { blockSlot } from "@entities/appointment/api/blockSlot";
 export { cancelAppointment } from "@entities/appointment/api/cancelAppointment";
+export { completeAppointment } from "@entities/appointment/api/completeAppointment";

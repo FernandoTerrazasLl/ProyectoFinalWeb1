@@ -10,6 +10,11 @@
         </span>
       </div>
       <div class="schedule-slot__actions">
+        {{#if canComplete}}
+          <button class="button button--secondary schedule-slot__complete" type="button">
+            Completar
+          </button>
+        {{/if}}
         {{#if canCancel}}
           <button class="button button--secondary schedule-slot__cancel" type="button">
             Cancelar Cita

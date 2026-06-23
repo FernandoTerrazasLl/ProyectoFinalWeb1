@@ -7,7 +7,13 @@ import { DashboardSidebar } from "@widgets/dashboard-sidebar";
 import { Modal } from "@shared/ui/Modal/Modal";
 import { Spinner } from "@shared/ui/Spinner/Spinner";
 import { EmptyState } from "@shared/ui/EmptyState/EmptyState";
-import { getProviderSchedule, getAppointmentPatient, blockSlot, cancelAppointment } from "@entities/appointment";
+import {
+  getProviderSchedule,
+  getAppointmentPatient,
+  blockSlot,
+  cancelAppointment,
+  completeAppointment,
+} from "@entities/appointment";
 import providerSchedulePageTemplate from "@pages/provider-schedule/ProviderSchedulePage.hbs?raw";
 import "@pages/provider-schedule/ProviderSchedulePage.css";
 
@@ -53,6 +59,7 @@ export class ProviderSchedulePage extends Block<BlockOwnProps> {
           onViewInfo: (appointmentId) => void this.viewPatient(appointmentId),
           onBlock: (time) => void this.blockTime(date, time),
           onCancel: (appointmentId) => void this.handleCancel(date, appointmentId),
+          onComplete: (appointmentId) => void this.handleComplete(date, appointmentId),
         }),
       ),
     );
@@ -84,6 +91,13 @@ export class ProviderSchedulePage extends Block<BlockOwnProps> {
 
   private async handleCancel(date: string, appointmentId: string) {
     const result = await cancelAppointment(appointmentId);
+
+    if (result.isOk())
+      await this.loadSchedule(date);
+  }
+
+  private async handleComplete(date: string, appointmentId: string) {
+    const result = await completeAppointment(appointmentId);
 
     if (result.isOk())
       await this.loadSchedule(date);

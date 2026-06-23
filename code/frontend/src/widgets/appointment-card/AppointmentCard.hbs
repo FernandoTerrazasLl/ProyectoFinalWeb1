@@ -1,11 +1,40 @@
 <article class="appointment-card">
   <div class="appointment-card__head">
-    <h3 class="appointment-card__provider">{{appointment.providerName}}</h3>
+    <div class="appointment-card__provider-wrap">
+      {{{ Avatar initials=appointment.providerName size="md" }}}
+      <div>
+        <h3 class="appointment-card__provider">{{appointment.providerName}}</h3>
+        <p class="appointment-card__specialty">Especialista asignado</p>
+      </div>
+    </div>
+    <span class="appointment-card__date">
+      {{{ Icon name="calendar" }}}
+      {{dateLabel}}
+    </span>
+  </div>
+  <div class="appointment-card__details">
+    <div class="appointment-card__detail">
+      <span class="appointment-card__detail-label">Dirección del consultorio</span>
+      <p class="appointment-card__detail-value">
+        {{{ Icon name="map-pin" }}}
+        {{appointment.providerAddress}}
+      </p>
+    </div>
+    <div class="appointment-card__detail">
+      <span class="appointment-card__detail-label">Teléfono del especialista</span>
+      <p class="appointment-card__detail-value">
+        {{{ Icon name="phone" }}}
+        {{appointment.providerPhone}}
+      </p>
+    </div>
+  </div>
+  <div class="appointment-card__state">
     {{{ Badge text=stateLabel tone=stateTone }}}
   </div>
-  <p class="appointment-card__when">{{appointment.date}} · {{appointment.time}}</p>
-  <p class="appointment-card__contact">{{appointment.providerAddress}} · {{appointment.providerPhone}}</p>
   <div class="appointment-card__actions">
+    {{#if canBookAgain}}
+      <button class="button button--ink appointment-card__book-again" type="button">Agendar de nuevo</button>
+    {{/if}}
     {{#if appointment.reviewable}}
       <button class="button button--secondary appointment-card__review" type="button">Dejar reseña</button>
     {{/if}}

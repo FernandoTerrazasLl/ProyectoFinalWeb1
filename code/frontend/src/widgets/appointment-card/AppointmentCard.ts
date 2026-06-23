@@ -31,6 +31,8 @@ export class AppointmentCard extends Block<AppointmentCardProps> {
         this.props.onReview(this.props.appointment);
       if ((event.target as Element).closest(".appointment-card__cancel"))
         this.props.onCancel(this.props.appointment);
+      if ((event.target as Element).closest(".appointment-card__book-again"))
+        this.props.onBookAgain(this.props.appointment);
     },
   };
 
@@ -39,6 +41,8 @@ export class AppointmentCard extends Block<AppointmentCardProps> {
       stateLabel: STATE_LABELS[props.appointment.state],
       stateTone: STATE_TONES[props.appointment.state],
       canCancel: props.appointment.state === "pending" || props.appointment.state === "confirmed",
+      canBookAgain: props.appointment.state === "completed" || props.appointment.state === "cancelled",
+      dateLabel: `${props.appointment.date}, ${props.appointment.time}`,
       ...props,
     });
   }

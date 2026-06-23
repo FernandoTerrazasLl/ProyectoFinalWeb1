@@ -62,12 +62,19 @@
   flex-shrink: 0;
 }
 
+.schedule-slot__complete {
+  border-color: #a7f3d0;
+  background-color: #ecfdf5;
+  color: var(--color-success);
+}
+
 .schedule-slot__cancel {
   color: var(--color-danger);
 }
 
 .schedule-slot__cancel .icon,
-.schedule-slot__info .icon {
+.schedule-slot__info .icon,
+.schedule-slot__complete .icon {
   width: 1rem;
   height: 1rem;
 }
