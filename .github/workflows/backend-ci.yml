@@ -1,0 +1,59 @@
+name: backend-ci
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "code/backend/**"
+      - "code/admin/**"
+  pull_request:
+    paths:
+      - "code/backend/**"
+      - "code/admin/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Crear archivo .env de pruebas
+        run: |
+          echo "POSTGRES_DB=curamente" >> .env
+          echo "POSTGRES_USER=postgres" >> .env
+          echo "POSTGRES_PASSWORD=postgrespassword" >> .env
+          echo "POSTGRES_HOST=postgres" >> .env
+          echo "POSTGRES_PORT=5432" >> .env
+          echo "DJANGO_DEBUG=True" >> .env
+          echo "DJANGO_ALLOWED_HOSTS=*" >> .env
+          echo "SECRET_KEY=secret_test_key" >> .env
+          echo "JWT_SECRET_KEY=jwt_secret_key" >> .env
+          echo "GOOGLE_CLIENT_ID=test_id" >> .env
+
+      - name: Levantar infraestructura con Docker Compose
+        run: docker-compose up -d postgres redis elasticsearch mongodb kafka clickhouse backend admin
+
+      - name: Esperar a que los servicios estén listos
+        run: |
+          echo "Esperando 30 segundos para que las bases de datos arranquen completamente..."
+          sleep 30
+
+      - name: Ejecutar Tests de Backend (pytest)
+        run: |
+          docker-compose exec -T backend pytest --junitxml=pytest-report.xml --cov=src --cov-report=html tests/
+
+      - name: Subir Resultados de Tests (Artifact)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-pytest-results
+          path: code/backend/pytest-report.xml
+
+      - name: Subir Reporte de Cobertura HTML (Artifact)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-coverage-report
+          path: code/backend/htmlcov/

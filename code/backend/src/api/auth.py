@@ -108,8 +108,12 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
             provider_id=provider_id
         )
         db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
+        try:
+            db.commit()
+            db.refresh(db_user)
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(status_code=500, detail=f"Database error during user creation: {str(e)}")
 
         if db_user.role == "PATIENT":
             patient_profile = models.PatientProfile(user_id=db_user.id)
