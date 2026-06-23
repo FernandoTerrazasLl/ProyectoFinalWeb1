@@ -3,7 +3,7 @@ from .models import Appointment, ScheduleRule, ScheduleException
 
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'patient', 'provider', 'date', 'time', 'status')
+    list_display = ('id', 'patient', 'provider', 'date', 'time', 'status', 'price_charged')
     list_filter = ('status', 'date')
     search_fields = ('patient__user__username', 'provider__user__username')
 

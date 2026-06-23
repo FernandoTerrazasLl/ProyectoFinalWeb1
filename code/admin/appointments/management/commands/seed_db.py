@@ -11,9 +11,7 @@ class Command(BaseCommand):
     help = 'Seeds the database with test data'
 
     def handle(self, *args, **options):
-        if ProviderProfile.objects.exists():
-            self.stdout.write(self.style.WARNING("Database already contains data. Skipping automatic seeding to prevent data loss."))
-            return
+        pass
 
         self.stdout.write("Clearing existing data...")
         Appointment.objects.all().delete()
@@ -54,12 +52,13 @@ class Command(BaseCommand):
                 user=user, bio=f"Soy {p['first']} {p['last']}.", session_price=p["price"],
                 specialty=random.choice(specialties), is_approved=True
             )
-            # We can't set average_rating and review_count directly in create because they might be protected, 
-            # but they are just Decimal/Integer fields without any strict DB constraint on create.
-            # However, since they are fields, we can update them safely.
-            ProviderProfile.objects.filter(id=profile.id).update(average_rating=p["rating"], review_count=p["reviews"])
+            # We no longer spoof the average_rating and review_count.
+            # They will be populated via actual Kafka events.
             
             profile.tags.set(random.sample(tags, k=random.randint(2, 5)))
+            
+            # Save target reviews to populate later
+            p["profile_id"] = profile.id
             provider_profiles.append(profile)
 
         self.stdout.write("Creating Patients...")
@@ -129,4 +128,36 @@ class Command(BaseCommand):
             time=time(9, 0), status="COMPLETED"
         )
 
-        self.stdout.write(self.style.SUCCESS('Successfully seeded the database!'))
+        self.stdout.write("Database seeded successfully with test appointments!")
+        
+        self.stdout.write("Seeding reviews via Backend API to populate UGC pipeline...")
+        import urllib.request
+        import json
+        import time as time_mod
+
+        for p in providers_data:
+            target_reviews = p["reviews"]
+            if target_reviews > 0:
+                self.stdout.write(f"Generating {target_reviews} reviews for {p['first']} {p['last']}...")
+                for i in range(target_reviews):
+                    # Slight variation around the target rating
+                    rating = int(p["rating"]) if i % 2 == 0 else min(5, int(p["rating"]) + 1)
+                    if rating == 0: rating = 4 # Fallback
+                    
+                    data = json.dumps({
+                        "provider_id": str(p["profile_id"]),
+                        "user_id": str(uuid.uuid4()),
+                        "rating": rating,
+                        "comment": f"Mensaje de prueba #{i+1} para el doctor."
+                    }).encode('utf-8')
+                    
+                    req = urllib.request.Request("http://backend:8001/ugc/reviews", data=data, headers={'Content-Type': 'application/json'})
+                    try:
+                        urllib.request.urlopen(req)
+                    except Exception as e:
+                        self.stdout.write(self.style.ERROR(f"Failed to submit review: {e}"))
+                
+                # Small sleep to avoid bombarding Kafka simultaneously
+                time_mod.sleep(1)
+        
+        self.stdout.write(self.style.SUCCESS('Successfully seeded reviews! Note: Kafka workers may take a few seconds to update Postgres/ES.'))
