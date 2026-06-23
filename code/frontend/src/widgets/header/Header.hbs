@@ -1,13 +1,33 @@
 <header class="header">
-  <a class="header__brand" href="/directory" data-link>CuraMente</a>
+  <a class="header__brand" href="/directory" data-link>
+    {{{ Icon name="heart-pulse" }}}
+    <span class="header__brand-name">CuraMente</span>
+  </a>
   {{#if userName}}
-    <nav class="header__nav">
-      <a class="header__link" href="/directory" data-link>Directorio</a>
-      <a class="header__link" href="/triage" data-link>Evaluación</a>
-      <span class="header__user">{{userName}}</span>
-      <a class="header__link" href="/account/password" data-link>Cambiar contraseña</a>
-      <button class="header__logout" type="button">Cerrar sesión</button>
-    </nav>
+    <div class="header__profile">
+      <button class="header__avatar" type="button" aria-label="Menú de perfil" aria-haspopup="true">
+        {{{ Icon name="user" }}}
+      </button>
+      {{#if menuOpen}}
+        <div class="header__menu">
+          <p class="header__menu-name">{{userName}}</p>
+          <a class="header__menu-item" href="/patient-profile" data-link>
+            {{{ Icon name="settings" }}}
+            Mi Perfil
+          </a>
+          {{#if isProvider}}
+            <a class="header__menu-item" href="/dashboard/profile" data-link>
+              {{{ Icon name="briefcase" }}}
+              Modo Psicólogo
+            </a>
+          {{/if}}
+          <button class="header__menu-item header__logout" type="button">
+            {{{ Icon name="log-out" }}}
+            Cerrar Sesión
+          </button>
+        </div>
+      {{/if}}
+    </div>
   {{else}}
     <a class="header__link" href="/auth" data-link>Iniciar sesión</a>
   {{/if}}

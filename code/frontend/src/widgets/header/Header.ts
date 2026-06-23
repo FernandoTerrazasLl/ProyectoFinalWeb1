@@ -9,19 +9,40 @@ import "@widgets/header/Header.css";
 export class Header extends Block<HeaderProps> {
   protected template = headerTemplate;
   private unsubscribe: (() => void) | undefined;
+  private closeOnOutsideClick = (event: MouseEvent) => {
+    if (this.props.menuOpen && !(event.target as Element).closest(".header__profile"))
+      this.setProps({ menuOpen: false });
+  };
+
   protected events: EventListType = {
-    click: (event) => {
-      if ((event.target as Element).closest(".header__logout"))
-        void this.logout();
-    },
+    click: (event) => this.handleClick(event),
   };
 
   protected componentDidMount() {
-    this.unsubscribe = sessionStore.subscribe((state) => this.setProps({ userName: state.user?.name ?? null }));
+    this.unsubscribe = sessionStore.subscribe((state) =>
+      this.setProps({ userName: state.user?.name ?? null, isProvider: state.role === "PROVIDER" }),
+    );
+    document.addEventListener("mousedown", this.closeOnOutsideClick);
   }
 
   protected componentWillUnmount() {
     this.unsubscribe?.();
+    document.removeEventListener("mousedown", this.closeOnOutsideClick);
+  }
+
+  private handleClick(event: Event) {
+    const target = event.target as Element;
+
+    if (target.closest(".header__logout")) {
+      void this.logout();
+      return;
+    }
+    if (target.closest(".header__avatar")) {
+      this.setProps({ menuOpen: !this.props.menuOpen });
+      return;
+    }
+    if (target.closest(".header__menu-item"))
+      this.setProps({ menuOpen: false });
   }
 
   private async logout() {

@@ -13,8 +13,10 @@ import { RangeSlider } from "@shared/ui/RangeSlider/RangeSlider";
 import { ProgressBar } from "@shared/ui/ProgressBar/ProgressBar";
 import { Textarea } from "@shared/ui/Textarea/Textarea";
 import { Badge } from "@shared/ui/Badge/Badge";
+import { Icon } from "@shared/ui/Icon/Icon";
 
 export function registerComponents() {
+  ComponentRegistry.register(Icon);
   ComponentRegistry.register(Button);
   ComponentRegistry.register(Input);
   ComponentRegistry.register(Label);
