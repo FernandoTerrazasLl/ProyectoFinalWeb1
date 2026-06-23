@@ -11,6 +11,10 @@ class Command(BaseCommand):
     help = 'Seeds the database with test data'
 
     def handle(self, *args, **options):
+        if ProviderProfile.objects.exists():
+            self.stdout.write(self.style.WARNING("Database already contains data. Skipping automatic seeding to prevent data loss."))
+            return
+
         self.stdout.write("Clearing existing data...")
         Appointment.objects.all().delete()
         ScheduleException.objects.all().delete()
@@ -81,7 +85,7 @@ class Command(BaseCommand):
         # Prov A has a block tomorrow from 10 to 11
         ScheduleException.objects.create(
             provider=provider_profiles[0], date=today + timedelta(days=1),
-            start_time=time(10, 0), end_time=time(11, 0), exception_type="BLOCKED", reason="Emergencia"
+            start_time=time(10, 0), end_time=time(11, 0), exception_type="BLOCKED"
         )
         # Prov B has an extra shift on Sunday from 15 to 16
         sunday = today + timedelta(days=(6 - today.weekday() + 7) % 7) # Next Sunday
@@ -90,7 +94,7 @@ class Command(BaseCommand):
             
         ScheduleException.objects.create(
             provider=provider_profiles[1], date=sunday,
-            start_time=time(15, 0), end_time=time(16, 0), exception_type="EXTRA", reason="Turno dominical"
+            start_time=time(15, 0), end_time=time(16, 0), exception_type="EXTRA"
         )
 
         self.stdout.write("Creating Appointments...")
