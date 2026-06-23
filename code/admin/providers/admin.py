@@ -17,3 +17,9 @@ class ProviderProfileAdmin(admin.ModelAdmin):
     list_filter = ('is_approved', 'specialty')
     search_fields = ('user__username', 'user__email')
     filter_horizontal = ('tags',)
+    readonly_fields = ('average_rating', 'review_count')
+
+    def get_exclude(self, request, obj=None):
+        if obj is None:
+            return ('average_rating', 'review_count')
+        return super().get_exclude(request, obj)
