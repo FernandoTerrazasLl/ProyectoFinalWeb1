@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 import uuid
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -29,9 +31,14 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    def clean(self):
+        super().clean()
+        if self.birth_date and self.birth_date > timezone.now().date():
+            raise ValidationError({'birth_date': 'La fecha de nacimiento no puede estar en el futuro.'})
+
 class PatientProfile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='patient_profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='patient_profile', limit_choices_to={'role': 'PATIENT'})
 
     def __str__(self):
         return f"{self.user.get_full_name()} (Patient)"

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Appointment, ScheduleRule, BlockedSlot
+from .models import Appointment, ScheduleRule, ScheduleException
 
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
@@ -12,7 +12,8 @@ class ScheduleRuleAdmin(admin.ModelAdmin):
     list_display = ('provider', 'day_of_week', 'start_time', 'end_time')
     list_filter = ('day_of_week',)
 
-@admin.register(BlockedSlot)
-class BlockedSlotAdmin(admin.ModelAdmin):
-    list_display = ('provider', 'block_date', 'start_time', 'end_time', 'reason')
-    list_filter = ('block_date',)
+@admin.register(ScheduleException)
+class ScheduleExceptionAdmin(admin.ModelAdmin):
+    list_display = ('provider', 'exception_type', 'date', 'start_time', 'end_time', 'reason')
+    list_filter = ('exception_type', 'date')
+    search_fields = ('provider__user__username', 'provider__user__email')

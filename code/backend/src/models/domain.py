@@ -78,7 +78,7 @@ class ProviderProfile(Base):
     tags = relationship("Tag", secondary=provider_tags)
     appointments = relationship("Appointment", back_populates="provider")
     schedule_rules = relationship("ScheduleRule", back_populates="provider")
-    blocked_slots = relationship("BlockedSlot", back_populates="provider")
+    schedule_exceptions = relationship("ScheduleException", back_populates="provider")
 
 class Appointment(Base):
     __tablename__ = "appointments_appointment"
@@ -108,14 +108,15 @@ class ScheduleRule(Base):
 
     provider = relationship("ProviderProfile", back_populates="schedule_rules")
 
-class BlockedSlot(Base):
-    __tablename__ = "appointments_blockedslot"
+class ScheduleException(Base):
+    __tablename__ = "appointments_scheduleexception"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     provider_id = Column(UUID(as_uuid=True), ForeignKey("providers_providerprofile.id"))
-    block_date = Column(Date)
+    date = Column(Date)
     start_time = Column(Time)
     end_time = Column(Time)
+    exception_type = Column(String)
     reason = Column(String)
 
-    provider = relationship("ProviderProfile", back_populates="blocked_slots")
+    provider = relationship("ProviderProfile", back_populates="schedule_exceptions")

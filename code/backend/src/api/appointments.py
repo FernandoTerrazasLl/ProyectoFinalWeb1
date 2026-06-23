@@ -35,19 +35,24 @@ def create_appointment(
         models.ScheduleRule.day_of_week == weekday
     ).all()
     
+    exceptions = db.query(models.ScheduleException).filter(
+        models.ScheduleException.provider_id == appt.provider_id,
+        models.ScheduleException.date == appt.date
+    ).all()
+    
     valid_slots = set()
     for rule in rules:
         valid_slots.update(generate_slots(rule.start_time, rule.end_time))
         
+    extra_exceptions = [e for e in exceptions if e.exception_type == "EXTRA"]
+    for e in extra_exceptions:
+        valid_slots.update(generate_slots(e.start_time, e.end_time))
+        
     if naive_time not in valid_slots:
         raise HTTPException(status_code=400, detail="Requested time is outside provider's working hours")
         
-    blocked = db.query(models.BlockedSlot).filter(
-        models.BlockedSlot.provider_id == appt.provider_id,
-        models.BlockedSlot.block_date == appt.date
-    ).all()
-    
-    for b in blocked:
+    blocked_exceptions = [e for e in exceptions if e.exception_type == "BLOCKED"]
+    for b in blocked_exceptions:
         if b.start_time <= naive_time < b.end_time:
             raise HTTPException(status_code=400, detail="Requested time is blocked by the provider")
         
