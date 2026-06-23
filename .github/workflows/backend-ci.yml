@@ -32,16 +32,24 @@ jobs:
           echo "JWT_SECRET_KEY=jwt_secret_key" >> .env
           echo "GOOGLE_CLIENT_ID=test_id" >> .env
 
+      - name: Configurar límites del sistema (Para Elasticsearch)
+        run: sudo sysctl -w vm.max_map_count=262144
+
       - name: Levantar infraestructura con Docker Compose
         run: docker-compose up -d postgres redis elasticsearch mongodb kafka clickhouse backend admin
 
       - name: Esperar a que los servicios estén listos
         run: |
-          echo "Esperando 30 segundos para que las bases de datos arranquen completamente..."
-          sleep 30
+          echo "Esperando 45 segundos para que las bases de datos arranquen completamente..."
+          sleep 45
+
+      - name: Revisar Logs por si hubo error
+        if: failure()
+        run: docker-compose logs backend
 
       - name: Ejecutar Tests de Backend (pytest)
         run: |
+          # Usamos -T porque en GitHub Actions no hay terminal interactiva (TTY)
           docker-compose exec -T backend pytest --junitxml=pytest-report.xml --cov=src --cov-report=html tests/
 
       - name: Subir Resultados de Tests (Artifact)
