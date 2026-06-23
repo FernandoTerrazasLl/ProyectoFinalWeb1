@@ -54,6 +54,7 @@ services:
     volumes:
       - ./code/backend:/app
     networks:
+      - public_network
       - private_network
     restart: always
     deploy:
