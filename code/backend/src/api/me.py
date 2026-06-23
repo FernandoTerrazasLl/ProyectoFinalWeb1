@@ -26,7 +26,8 @@ def get_user_profile(current_user: models.User = Depends(get_current_user)):
         "ci": current_user.ci or "",
         "birth_date": current_user.birth_date,
         "gender": current_user.gender,
-        "phone_number": current_user.phone_number or ""
+        "phone_number": current_user.phone_number or "",
+        "email": current_user.email
     }
 
 @router.put("/profile", response_model=UserProfileResponse)
@@ -35,6 +36,12 @@ def update_user_profile(
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    if profile_data.email and profile_data.email != current_user.email:
+        existing = db.query(models.User).filter(models.User.email == profile_data.email).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        current_user.email = profile_data.email
+
     current_user.first_name = profile_data.first_name
     current_user.last_name = profile_data.last_name
     current_user.maternal_last_name = profile_data.maternal_last_name
@@ -46,7 +53,16 @@ def update_user_profile(
     db.commit()
     db.refresh(current_user)
     
-    return current_user
+    return {
+        "first_name": current_user.first_name or "",
+        "last_name": current_user.last_name or "",
+        "maternal_last_name": current_user.maternal_last_name or "",
+        "ci": current_user.ci or "",
+        "birth_date": current_user.birth_date,
+        "gender": current_user.gender,
+        "phone_number": current_user.phone_number or "",
+        "email": current_user.email
+    }
 
 @router.get("/appointments", response_model=List[MyAppointmentResponse])
 def get_my_appointments(
@@ -165,14 +181,63 @@ def create_exception(
     db.commit()
     return {"status": "success", "message": "Exception created successfully"}
 
+@router.get("/schedule-rules", response_model=List[ScheduleRuleResponse])
+def get_schedule_rules(
+    provider: models.ProviderProfile = Depends(get_current_provider),
+    db: Session = Depends(get_db)
+):
+    rules = db.query(models.ScheduleRule).filter(
+        models.ScheduleRule.provider_id == provider.id
+    ).all()
+    return rules
+
+@router.post("/schedule-rules", response_model=List[ScheduleRuleResponse])
+def update_schedule_rules(
+    rules: List[ScheduleRuleCreate],
+    provider: models.ProviderProfile = Depends(get_current_provider),
+    db: Session = Depends(get_db)
+):
+    # 1. Delete existing rules for this provider
+    db.query(models.ScheduleRule).filter(
+        models.ScheduleRule.provider_id == provider.id
+    ).delete()
+    
+    # 2. Insert new rules
+    new_rules = []
+    for rule in rules:
+        new_rule = models.ScheduleRule(
+            provider_id=provider.id,
+            day_of_week=rule.day_of_week,
+            start_time=rule.start_time,
+            end_time=rule.end_time
+        )
+        db.add(new_rule)
+        new_rules.append(new_rule)
+        
+    db.commit()
+    for nr in new_rules:
+        db.refresh(nr)
+        
+    return new_rules
+
 @router.get("/provider-profile", response_model=ProviderProfileResponse)
 def get_provider_profile(
     provider: models.ProviderProfile = Depends(get_current_provider)
 ):
     return {
+        "first_name": provider.user.first_name or "",
+        "last_name": provider.user.last_name or "",
+        "maternal_last_name": provider.user.maternal_last_name or "",
+        "ci": provider.user.ci or "",
+        "birth_date": provider.user.birth_date,
+        "gender": provider.user.gender,
+        "phone_number": provider.user.phone_number or "",
+        "email": provider.user.email,
         "bio": provider.bio or "",
         "session_price": float(provider.session_price) if provider.session_price else 0.0,
-        "tags": [tag.name for tag in provider.tags]
+        "tags": [tag.name for tag in provider.tags],
+        "specialty": provider.specialty.name if provider.specialty else None,
+        "office_address": getattr(provider, "office_address", "")
     }
 
 @router.put("/provider-profile", response_model=ProviderProfileResponse)
@@ -182,8 +247,36 @@ async def update_provider_profile(
     db: Session = Depends(get_db),
     es: AsyncElasticsearch = Depends(get_es)
 ):
+    current_user = provider.user
+    
+    if profile_update.email and profile_update.email != current_user.email:
+        existing = db.query(models.User).filter(models.User.email == profile_update.email).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        current_user.email = profile_update.email
+
+    current_user.first_name = profile_update.first_name
+    current_user.last_name = profile_update.last_name
+    current_user.maternal_last_name = profile_update.maternal_last_name
+    current_user.ci = profile_update.ci
+    current_user.birth_date = profile_update.birth_date
+    current_user.gender = profile_update.gender
+    current_user.phone_number = profile_update.phone_number
+    
     provider.bio = profile_update.bio
     provider.session_price = profile_update.session_price
+    
+    if hasattr(provider, 'office_address'):
+        provider.office_address = profile_update.office_address
+        
+    if profile_update.specialty:
+        spec = db.query(models.Specialty).filter(models.Specialty.name == profile_update.specialty).first()
+        if not spec:
+            spec = models.Specialty(name=profile_update.specialty, description="")
+            db.add(spec)
+            db.commit()
+            db.refresh(spec)
+        provider.specialty_id = spec.id
     
     provider.tags.clear()
     for tag_name in profile_update.tags:
@@ -205,9 +298,12 @@ async def update_provider_profile(
             id=str(provider.id),
             body={
                 "doc": {
+                    "first_name": current_user.first_name,
+                    "last_name": current_user.last_name,
                     "bio": provider.bio,
                     "session_price": price,
-                    "tags": tags_list
+                    "tags": tags_list,
+                    "specialty": profile_update.specialty
                 }
             }
         )
@@ -215,7 +311,17 @@ async def update_provider_profile(
         logger.error(f"Failed to sync provider profile update to ES: {e}")
     
     return {
+        "first_name": current_user.first_name or "",
+        "last_name": current_user.last_name or "",
+        "maternal_last_name": current_user.maternal_last_name or "",
+        "ci": current_user.ci or "",
+        "birth_date": current_user.birth_date,
+        "gender": current_user.gender,
+        "phone_number": current_user.phone_number or "",
+        "email": current_user.email,
         "bio": provider.bio or "",
         "session_price": price,
-        "tags": tags_list
+        "tags": tags_list,
+        "specialty": profile_update.specialty,
+        "office_address": getattr(provider, "office_address", "")
     }
