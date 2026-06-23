@@ -61,21 +61,26 @@ class ScheduleRule(models.Model):
     def __str__(self):
         return f"{self.provider} - Day {self.day_of_week} ({self.start_time} - {self.end_time})"
 
-class BlockedSlot(models.Model):
+class ScheduleException(models.Model):
+    class ExceptionType(models.TextChoices):
+        EXTRA = 'EXTRA', 'Extra Slot'
+        BLOCKED = 'BLOCKED', 'Blocked Slot'
+        
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    provider = models.ForeignKey(ProviderProfile, on_delete=models.CASCADE, related_name='blocked_slots')
-    block_date = models.DateField()
+    provider = models.ForeignKey(ProviderProfile, on_delete=models.CASCADE, related_name='schedule_exceptions')
+    date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
+    exception_type = models.CharField(max_length=10, choices=ExceptionType.choices, default=ExceptionType.BLOCKED)
     reason = models.CharField(max_length=255, blank=True)
 
     def clean(self):
         super().clean()
         if self.start_time and self.end_time and self.start_time >= self.end_time:
             raise ValidationError('End time must be strictly after start time.')
-        if self._state.adding and self.block_date:
-            if self.block_date < timezone.now().date():
-                raise ValidationError({'block_date': 'Cannot block a date in the past.'})
+        if self._state.adding and self.date:
+            if self.date < timezone.now().date():
+                raise ValidationError({'date': 'Cannot add an exception for a date in the past.'})
 
     def __str__(self):
-        return f"{self.provider} - Blocked on {self.block_date} ({self.start_time} - {self.end_time})"
+        return f"{self.provider} - {self.exception_type} on {self.date} ({self.start_time} - {self.end_time})"

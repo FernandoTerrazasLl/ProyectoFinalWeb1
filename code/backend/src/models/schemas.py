@@ -88,9 +88,10 @@ class MyAppointmentResponse(BaseModel):
     time: time
     state: str
 
-class BlockedSlotCreate(BaseModel):
+class ScheduleExceptionCreate(BaseModel):
     date: date
     time: time
+    exception_type: str
 
 class ScheduleItemResponse(BaseModel):
     appointment_id: Optional[UUID4] = None

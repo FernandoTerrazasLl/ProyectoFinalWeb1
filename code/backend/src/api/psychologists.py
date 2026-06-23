@@ -148,14 +148,14 @@ def get_availability(
         models.ScheduleRule.day_of_week == weekday
     ).all()
     
-    if not rules:
-        return []
-        
-    blocked = db.query(models.BlockedSlot).filter(
-        models.BlockedSlot.provider_id == prov_uuid,
-        models.BlockedSlot.block_date == target_date
+    exceptions = db.query(models.ScheduleException).filter(
+        models.ScheduleException.provider_id == prov_uuid,
+        models.ScheduleException.date == target_date
     ).all()
     
+    if not rules and not exceptions:
+        return []
+        
     appointments = db.query(models.Appointment).filter(
         models.Appointment.provider_id == prov_uuid,
         models.Appointment.date == target_date,
@@ -164,23 +164,37 @@ def get_availability(
     
     booked_times = {app.time for app in appointments}
     
-    availability = []
+    all_slots_set = set()
     for rule in rules:
         slots = generate_slots(rule.start_time, rule.end_time)
-        for slot in slots:
-            slot_str = slot.strftime("%H:%M")
-            if slot in booked_times:
-                availability.append({"time": slot_str, "available": False})
-                continue
-            
-            is_blocked = False
-            for b in blocked:
-                if b.start_time <= slot < b.end_time:
-                    is_blocked = True
-                    break
-            
-            availability.append({"time": slot_str, "available": not is_blocked})
+        all_slots_set.update(slots)
+        
+    extra_exceptions = [e for e in exceptions if e.exception_type == "EXTRA"]
+    for e in extra_exceptions:
+        slots = generate_slots(e.start_time, e.end_time)
+        all_slots_set.update(slots)
+        
+    blocked_exceptions = [e for e in exceptions if e.exception_type == "BLOCKED"]
+    
+    availability = []
+    for slot in all_slots_set:
+        slot_str = slot.strftime("%H:%M")
+        
+        is_blocked = False
+        for b in blocked_exceptions:
+            if b.start_time <= slot < b.end_time:
+                is_blocked = True
+                break
                 
+        if is_blocked:
+            availability.append({"time": slot_str, "available": False})
+            continue
+            
+        if slot in booked_times:
+            availability.append({"time": slot_str, "available": False})
+        else:
+            availability.append({"time": slot_str, "available": True})
+            
     return sorted(availability, key=lambda x: x["time"])
 
 @router.get("/{psychologist_id}/reviews")

@@ -88,9 +88,9 @@ def get_my_schedule(
         models.ScheduleRule.day_of_week == weekday
     ).all()
     
-    blocked = db.query(models.BlockedSlot).filter(
-        models.BlockedSlot.provider_id == provider.id,
-        models.BlockedSlot.block_date == target_date
+    exceptions = db.query(models.ScheduleException).filter(
+        models.ScheduleException.provider_id == provider.id,
+        models.ScheduleException.date == target_date
     ).all()
     
     appointments = db.query(models.Appointment).filter(
@@ -101,59 +101,70 @@ def get_my_schedule(
     
     booked_map = {app.time: app for app in appointments}
     
-    schedule_items = []
+    all_slots_set = set()
     for rule in rules:
         slots = generate_slots(rule.start_time, rule.end_time)
-        for slot in slots:
-            if slot in booked_map:
-                appt = booked_map[slot]
-                patient_name = f"{appt.patient.user.first_name} {appt.patient.user.last_name}".strip()
-                schedule_items.append({
-                    "appointment_id": appt.id,
-                    "time": slot,
-                    "state": appt.status,
-                    "patient_name": patient_name
-                })
-                continue
-            
-            is_blocked = False
-            for b in blocked:
-                if b.start_time <= slot < b.end_time:
-                    is_blocked = True
-                    break
-            
-            if is_blocked:
-                schedule_items.append({
-                    "time": slot,
-                    "state": "blocked"
-                })
-            else:
-                schedule_items.append({
-                    "time": slot,
-                    "state": "available"
-                })
+        all_slots_set.update(slots)
+        
+    extra_exceptions = [e for e in exceptions if e.exception_type == "EXTRA"]
+    for e in extra_exceptions:
+        slots = generate_slots(e.start_time, e.end_time)
+        all_slots_set.update(slots)
+        
+    blocked_exceptions = [e for e in exceptions if e.exception_type == "BLOCKED"]
+
+    schedule_items = []
+    for slot in all_slots_set:
+        is_blocked = False
+        for b in blocked_exceptions:
+            if b.start_time <= slot < b.end_time:
+                is_blocked = True
+                break
                 
+        if is_blocked:
+            schedule_items.append({
+                "time": slot,
+                "state": "blocked"
+            })
+            continue
+            
+        if slot in booked_map:
+            appt = booked_map[slot]
+            patient_name = f"{appt.patient.user.first_name} {appt.patient.user.last_name}".strip()
+            schedule_items.append({
+                "appointment_id": appt.id,
+                "time": slot,
+                "state": appt.status,
+                "patient_name": patient_name
+            })
+        else:
+            schedule_items.append({
+                "time": slot,
+                "state": "available"
+            })
+            
     return sorted(schedule_items, key=lambda x: x["time"])
 
-@router.post("/blocked-slots")
-def block_slot(
-    slot: BlockedSlotCreate,
+@router.post("/exceptions")
+def create_exception(
+    exc: ScheduleExceptionCreate,
     provider: models.ProviderProfile = Depends(get_current_provider),
     db: Session = Depends(get_db)
 ):
-    dt = datetime.combine(date.today(), slot.time)
+    dt = datetime.combine(date.today(), exc.time)
     end_time = (dt + timedelta(hours=1)).time()
     
-    new_block = models.BlockedSlot(
+    new_exc = models.ScheduleException(
         provider_id=provider.id,
-        block_date=slot.date,
-        start_time=slot.time,
+        date=exc.date,
+        start_time=exc.time,
         end_time=end_time,
-        reason="Manual block"
+        exception_type=exc.exception_type,
+        reason="Manual exception"
     )
-    db.add(new_block)
+    db.add(new_exc)
     db.commit()
-    return {"status": "success", "message": "Slot blocked successfully"}
+    return {"status": "success", "message": "Exception created successfully"}
 
 @router.get("/provider-profile", response_model=ProviderProfileResponse)
 def get_provider_profile(
