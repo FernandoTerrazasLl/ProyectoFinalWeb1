@@ -3,7 +3,12 @@
     {{{ Icon name="calendar" }}}
     Selecciona una fecha
   </p>
-  <input class="booking-calendar__date" type="date" value="{{date}}" min="{{min}}" ref="date">
+  <div class="booking-calendar__date-field">
+    {{{ Icon name="calendar" }}}
+    <span class="booking-calendar__date-label">{{dateLabel}}</span>
+    {{{ Icon name="chevron-down" }}}
+    <input class="booking-calendar__date-input" type="date" value="{{date}}" min="{{min}}" ref="date">
+  </div>
   {{#if loading}}
     <p class="booking-calendar__status">Cargando horarios…</p>
   {{else}}

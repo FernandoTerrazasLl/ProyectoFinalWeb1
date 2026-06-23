@@ -21,15 +21,42 @@
   color: var(--color-muted);
 }
 
-.booking-calendar__date {
+.booking-calendar__date-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   width: 100%;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
+  background-color: var(--color-surface);
+  cursor: pointer;
+}
+
+.booking-calendar__date-field .icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+.booking-calendar__date-label {
+  flex: 1;
   font-family: var(--font-sans);
   font-size: var(--font-size-sm);
   color: var(--color-text);
-  background-color: var(--color-surface);
+  text-transform: capitalize;
+}
+
+.booking-calendar__date-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
 }
 
 .booking-calendar__slots {

@@ -8,6 +8,7 @@ export type { PatientInfo } from "@entities/appointment/model/PatientInfo";
 export type { BookAppointmentRequest } from "@entities/appointment/api/BookAppointmentRequest";
 export { getAvailability } from "@entities/appointment/api/getAvailability";
 export { formatTimeLabel } from "@entities/appointment/lib/formatTimeLabel";
+export { formatDateLabel } from "@entities/appointment/lib/formatDateLabel";
 export { bookAppointment } from "@entities/appointment/api/bookAppointment";
 export { listMyAppointments } from "@entities/appointment/api/listMyAppointments";
 export { getProviderSchedule } from "@entities/appointment/api/getProviderSchedule";
