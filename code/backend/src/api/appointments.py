@@ -159,3 +159,27 @@ def cancel_appointment(
 
     return {"detail": "Appointment cancelled successfully"}
 
+@router.patch("/{id}/complete")
+def complete_appointment(
+    id: UUID4,
+    provider: models.ProviderProfile = Depends(get_current_provider),
+    db: Session = Depends(get_db)
+):
+    appointment = db.query(models.Appointment).filter(
+        models.Appointment.id == id,
+        models.Appointment.provider_id == provider.id
+    ).first()
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+
+    if appointment.status == "COMPLETED":
+        raise HTTPException(status_code=400, detail="Appointment is already completed")
+    if appointment.status == "CANCELLED":
+        raise HTTPException(status_code=400, detail="Cancelled appointments cannot be completed")
+
+    appointment.status = "COMPLETED"
+    appointment.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    db.commit()
+
+    return {"detail": "Appointment completed successfully"}
+
