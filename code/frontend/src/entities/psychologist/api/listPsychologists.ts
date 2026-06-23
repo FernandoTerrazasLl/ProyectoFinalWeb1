@@ -8,6 +8,7 @@ import { toPsychologist } from "@entities/psychologist/api/toPsychologist";
 
 export async function listPsychologists(
   query: PsychologistQuery = {},
+  signal?: AbortSignal,
 ): Promise<Result<Psychologist[], HttpError>> {
   const params = new URLSearchParams();
 
@@ -17,11 +18,17 @@ export async function listPsychologists(
     params.set("specialty", query.specialty);
   if (query.maxRate !== undefined)
     params.set("maxRate", String(query.maxRate));
+  if (query.skip !== undefined)
+    params.set("skip", String(query.skip));
+  if (query.limit !== undefined)
+    params.set("limit", String(query.limit));
 
   const search = params.toString();
   const result = await http.request<PsychologistResponse[]>(
     "GET",
     `/psychologists/${search ? `?${search}` : ""}`,
+    undefined,
+    signal,
   );
 
   return result.map((responses) => responses.map(toPsychologist));

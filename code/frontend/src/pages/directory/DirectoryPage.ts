@@ -3,6 +3,7 @@ import type { BlockOwnProps } from "@shared/lib/block/BlockOwnProps";
 import { SearchBox } from "@features/search-psychologists";
 import { FiltersPanel } from "@widgets/filters-panel";
 import { PsychologistCard } from "@widgets/psychologist-card";
+import { Button } from "@shared/ui/Button/Button";
 import { Spinner } from "@shared/ui/Spinner/Spinner";
 import { EmptyState } from "@shared/ui/EmptyState/EmptyState";
 import { listPsychologists, type Psychologist, type PsychologistQuery } from "@entities/psychologist";
@@ -11,9 +12,14 @@ import { routerInstance } from "@shared/lib/router/routerInstance";
 import directoryPageTemplate from "@pages/directory/DirectoryPage.hbs?raw";
 import "@pages/directory/DirectoryPage.css";
 
+const PAGE_SIZE = 9;
+
 export class DirectoryPage extends Block<BlockOwnProps> {
   protected template = directoryPageTemplate;
   private query: PsychologistQuery = {};
+  private results: Psychologist[] = [];
+  private skip = 0;
+  private abortController: AbortController | undefined;
 
   protected componentDidMount() {
     this.mountInto("search", new SearchBox({
@@ -22,6 +28,10 @@ export class DirectoryPage extends Block<BlockOwnProps> {
 
     void this.loadFilters();
     void this.loadResults();
+  }
+
+  protected componentWillUnmount() {
+    this.abortController?.abort();
   }
 
   private async loadFilters() {
@@ -39,37 +49,59 @@ export class DirectoryPage extends Block<BlockOwnProps> {
 
   private async applyQuery(query: PsychologistQuery) {
     this.query = query;
+    this.skip = 0;
+    await this.loadResults();
+  }
+
+  private async loadMore() {
+    this.skip += PAGE_SIZE;
     await this.loadResults();
   }
 
   private async loadResults() {
-    this.replaceChildrenInto("results", [new Spinner({})]);
+    this.abortController?.abort();
+    const controller = new AbortController();
+    this.abortController = controller;
 
-    const result = await listPsychologists(this.query);
+    if (this.skip === 0)
+      this.replaceChildrenInto("results", [new Spinner({})]);
+
+    const result = await listPsychologists({ ...this.query, skip: this.skip, limit: PAGE_SIZE }, controller.signal);
+
+    if (controller.signal.aborted)
+      return;
 
     if (result.isErr()) {
-      this.replaceChildrenInto("results", [
-        new EmptyState({ title: "Ocurrió un error", description: "Intentá de nuevo en un momento." }),
-      ]);
+      if (this.skip === 0)
+        this.replaceChildrenInto("results", [
+          new EmptyState({ title: "Ocurrió un error", description: "Intentá de nuevo en un momento." }),
+        ]);
       return;
     }
 
-    this.renderPsychologists(result.value);
+    this.results = this.skip === 0 ? result.value : [...this.results, ...result.value];
+    this.renderPsychologists(result.value.length === PAGE_SIZE);
   }
 
-  private renderPsychologists(psychologists: Psychologist[]) {
-    if (psychologists.length === 0) {
+  private renderPsychologists(hasMore: boolean) {
+    if (this.results.length === 0) {
       this.replaceChildrenInto("results", [
         new EmptyState({ title: "No se encontraron especialistas", description: "Probá con otra palabra o ajustá los filtros." }),
       ]);
+      this.replaceChildrenInto("loadMore", []);
       return;
     }
 
     this.replaceChildrenInto(
       "results",
-      psychologists.map((psychologist) =>
+      this.results.map((psychologist) =>
         new PsychologistCard({ psychologist, onOpen: (id) => routerInstance.navigate(`/profile/${id}`) }),
       ),
+    );
+
+    this.replaceChildrenInto(
+      "loadMore",
+      hasMore ? [new Button({ label: "Cargar más", variant: "secondary", onClick: () => void this.loadMore() })] : [],
     );
   }
 }
