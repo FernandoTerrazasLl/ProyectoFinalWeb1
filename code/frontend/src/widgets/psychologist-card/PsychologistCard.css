@@ -8,10 +8,17 @@
   padding: var(--space-4);
 }
 
+.psychologist-card__top {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
 .psychologist-card__body {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  min-width: 0;
 }
 
 .psychologist-card__name {
@@ -27,14 +34,22 @@
   color: var(--color-muted);
 }
 
-.psychologist-card__rate {
-  font-family: var(--font-sans);
-  font-size: var(--font-size-base);
-  color: var(--color-text);
-}
-
 .psychologist-card__tags {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1);
+}
+
+.psychologist-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.psychologist-card__rate {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
 }

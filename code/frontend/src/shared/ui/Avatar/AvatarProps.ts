@@ -5,4 +5,5 @@ export interface AvatarProps extends BlockOwnProps {
   src?: string;
   initials?: string;
   size?: "sm" | "md" | "lg";
+  pixelSize?: number;
 }
