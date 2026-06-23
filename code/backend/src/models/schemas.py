@@ -23,6 +23,7 @@ class UserProfileResponse(BaseModel):
     birth_date: Optional[date] = None
     gender: Optional[str] = None
     phone_number: str
+    email: Optional[EmailStr] = None
 
 class UserProfileUpdate(BaseModel):
     first_name: str
@@ -32,6 +33,7 @@ class UserProfileUpdate(BaseModel):
     birth_date: Optional[date] = None
     gender: Optional[str] = None
     phone_number: str
+    email: Optional[EmailStr] = None
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -99,15 +101,27 @@ class ScheduleItemResponse(BaseModel):
     state: str
     patient_name: Optional[str] = None
 
-class ProviderProfileUpdate(BaseModel):
-    bio: str
-    session_price: float
-    tags: List[str]
+class ScheduleRuleCreate(BaseModel):
+    day_of_week: int
+    start_time: time
+    end_time: time
 
-class ProviderProfileResponse(BaseModel):
+class ScheduleRuleResponse(ScheduleRuleCreate):
+    id: UUID4
+
+class ProviderProfileUpdate(UserProfileUpdate):
     bio: str
     session_price: float
     tags: List[str]
+    specialty: Optional[str] = None
+    office_address: Optional[str] = ""
+
+class ProviderProfileResponse(UserProfileResponse):
+    bio: str
+    session_price: float
+    tags: List[str]
+    specialty: Optional[str] = None
+    office_address: Optional[str] = ""
 
 # --- PSYCHOLOGISTS SCHEMAS ---
 class PsychologistResponse(BaseModel):

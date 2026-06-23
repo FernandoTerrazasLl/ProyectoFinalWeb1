@@ -72,6 +72,7 @@ class ProviderProfile(Base):
     is_approved = Column(Boolean, default=False)
     average_rating = Column(Numeric(3, 2), default=0.00)
     review_count = Column(Integer, default=0)
+    office_address = Column(String, default="")
 
     user = relationship("User", back_populates="provider_profile")
     specialty = relationship("Specialty")
