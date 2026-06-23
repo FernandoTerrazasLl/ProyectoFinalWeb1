@@ -2,7 +2,6 @@ from pydantic import BaseModel, UUID4, EmailStr
 from typing import List, Optional, Dict, Any
 from datetime import date, time, datetime
 
-# --- AUTH SCHEMAS ---
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
@@ -48,7 +47,7 @@ class Token(BaseModel):
     token_type: str
     role: str
 
-# --- APPOINTMENT SCHEMAS ---
+
 class AppointmentCreate(BaseModel):
     provider_id: UUID4
     date: date
@@ -79,7 +78,7 @@ class PatientDetailResponse(BaseModel):
     created_at: datetime
     previous_appointments_count: int
 
-# --- ME (PROFILE/SCHEDULE) SCHEMAS ---
+
 class MyAppointmentResponse(BaseModel):
     id: UUID4
     provider_id: UUID4
@@ -123,7 +122,7 @@ class ProviderProfileResponse(UserProfileResponse):
     specialty: Optional[str] = None
     office_address: Optional[str] = ""
 
-# --- PSYCHOLOGISTS SCHEMAS ---
+
 class PsychologistResponse(BaseModel):
     id: str
     first_name: str
@@ -141,12 +140,12 @@ class AvailabilitySlot(BaseModel):
     time: str
     available: bool
 
-# --- SPECIALTIES SCHEMAS ---
+
 class SpecialtyResponse(BaseModel):
     id: str
     name: str
 
-# --- TRIAGE SCHEMAS ---
+
 class TriageScores(BaseModel):
     clinica: int = 0
     pareja: int = 0
@@ -162,7 +161,7 @@ class TriageResponse(BaseModel):
     risk_level: str
     recommended_providers: List[PsychologistResponse]
 
-# --- UGC SCHEMAS ---
+
 class ReviewPayload(BaseModel):
     provider_id: str
     user_id: str
@@ -173,3 +172,4 @@ class EventPayload(BaseModel):
     user_id: Optional[str] = None
     event_type: str
     metadata: Dict[str, Any]
+

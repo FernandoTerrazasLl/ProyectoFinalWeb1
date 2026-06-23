@@ -28,7 +28,7 @@ class Appointment(models.Model):
         super().clean()
         if self.time and (self.time.minute != 0 or self.time.second != 0):
             raise ValidationError({'time': 'Appointments can only be booked exactly on the hour (e.g., 14:00:00).'})
-            
+
         if self._state.adding and self.date and self.time:
             dt = datetime.combine(self.date, self.time)
             if timezone.is_naive(dt):
@@ -43,7 +43,7 @@ class ScheduleRule(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     provider = models.ForeignKey(ProviderProfile, on_delete=models.CASCADE, related_name='schedule_rules')
     day_of_week = models.IntegerField(choices=[
-        (1, 'Monday'), (2, 'Tuesday'), (3, 'Wednesday'), 
+        (1, 'Monday'), (2, 'Tuesday'), (3, 'Wednesday'),
         (4, 'Thursday'), (5, 'Friday'), (6, 'Saturday'), (7, 'Sunday')
     ])
     start_time = models.TimeField()
@@ -65,7 +65,7 @@ class ScheduleException(models.Model):
     class ExceptionType(models.TextChoices):
         EXTRA = 'EXTRA', 'Extra Slot'
         BLOCKED = 'BLOCKED', 'Blocked Slot'
-        
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     provider = models.ForeignKey(ProviderProfile, on_delete=models.CASCADE, related_name='schedule_exceptions')
     date = models.DateField()
@@ -83,3 +83,4 @@ class ScheduleException(models.Model):
 
     def __str__(self):
         return f"{self.provider} - {self.exception_type} on {self.date} ({self.start_time} - {self.end_time})"
+

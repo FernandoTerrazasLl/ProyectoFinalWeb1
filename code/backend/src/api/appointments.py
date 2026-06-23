@@ -18,47 +18,47 @@ def create_appointment(
     db: Session = Depends(get_db)
 ):
     naive_time = appt.time.replace(tzinfo=None)
-    
+
     existing = db.query(models.Appointment).filter(
         models.Appointment.provider_id == appt.provider_id,
         models.Appointment.date == appt.date,
         models.Appointment.time == naive_time,
         models.Appointment.status != "CANCELLED"
     ).first()
-    
+
     if existing:
         raise HTTPException(status_code=400, detail="Time slot is already booked")
-        
+
     weekday = appt.date.isoweekday()
     rules = db.query(models.ScheduleRule).filter(
         models.ScheduleRule.provider_id == appt.provider_id,
         models.ScheduleRule.day_of_week == weekday
     ).all()
-    
+
     exceptions = db.query(models.ScheduleException).filter(
         models.ScheduleException.provider_id == appt.provider_id,
         models.ScheduleException.date == appt.date
     ).all()
-    
+
     valid_slots = set()
     for rule in rules:
         valid_slots.update(generate_slots(rule.start_time, rule.end_time))
-        
+
     extra_exceptions = [e for e in exceptions if e.exception_type == "EXTRA"]
     for e in extra_exceptions:
         valid_slots.update(generate_slots(e.start_time, e.end_time))
-        
+
     if naive_time not in valid_slots:
         raise HTTPException(status_code=400, detail="Requested time is outside provider's working hours")
-        
+
     blocked_exceptions = [e for e in exceptions if e.exception_type == "BLOCKED"]
     for b in blocked_exceptions:
         if b.start_time <= naive_time < b.end_time:
             raise HTTPException(status_code=400, detail="Requested time is blocked by the provider")
-        
+
     provider_profile = db.query(models.ProviderProfile).filter(models.ProviderProfile.id == appt.provider_id).first()
     price = provider_profile.session_price if provider_profile else None
-        
+
     new_appt = models.Appointment(
         provider_id=appt.provider_id,
         patient_id=patient.id,
@@ -70,11 +70,11 @@ def create_appointment(
         created_at=datetime.now(timezone.utc).replace(tzinfo=None),
         updated_at=datetime.now(timezone.utc).replace(tzinfo=None)
     )
-    
+
     db.add(new_appt)
     db.commit()
     db.refresh(new_appt)
-    
+
     return {
         "id": new_appt.id,
         "provider_id": new_appt.provider_id,
@@ -95,25 +95,24 @@ def get_appointment_patient(
         models.Appointment.id == id,
         models.Appointment.provider_id == provider.id
     ).first()
-    
+
     if not appointment:
         raise HTTPException(status_code=404, detail="Appointment not found or not yours")
-        
+
     patient_profile = appointment.patient
     user = patient_profile.user
-    
-    # Calculate age naively
+
     age = 0
     if user.birth_date:
         today = date.today()
         age = today.year - user.birth_date.year - ((today.month, today.day) < (user.birth_date.month, user.birth_date.day))
-        
+
     past_count = db.query(models.Appointment).filter(
         models.Appointment.patient_id == patient_profile.id,
         models.Appointment.provider_id == provider.id,
         models.Appointment.status == "COMPLETED"
     ).count()
-        
+
     return {
         "name": f"{user.first_name} {user.last_name} {user.maternal_last_name}".strip().replace("  ", " "),
         "age": age,
@@ -139,18 +138,19 @@ def cancel_appointment(
     appointment = db.query(models.Appointment).filter(models.Appointment.id == id).first()
     if not appointment:
         raise HTTPException(status_code=404, detail="Appointment not found")
-        
+
     is_patient = current_user.patient_profile and current_user.patient_profile.id == appointment.patient_id
     is_provider = current_user.provider_profile and current_user.provider_profile.id == appointment.provider_id
-    
+
     if not (is_patient or is_provider):
         raise HTTPException(status_code=403, detail="Not authorized to cancel this appointment")
-        
+
     if appointment.status == "CANCELLED":
         raise HTTPException(status_code=400, detail="Appointment is already cancelled")
-        
+
     appointment.status = "CANCELLED"
     appointment.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
     db.commit()
-    
+
     return {"detail": "Appointment cancelled successfully"}
+

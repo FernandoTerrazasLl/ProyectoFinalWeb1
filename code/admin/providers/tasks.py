@@ -16,7 +16,7 @@ def sync_provider_to_es(provider_id: str):
     from providers.models import ProviderProfile
     try:
         provider = ProviderProfile.objects.select_related('user', 'specialty').get(id=provider_id)
-        
+
         doc = {
             "id": str(provider.id),
             "first_name": provider.user.first_name if provider.user else "",
@@ -30,11 +30,11 @@ def sync_provider_to_es(provider_id: str):
             "tags": [tag.name for tag in provider.tags.all()],
             "avatar_url": provider.user.avatar_url if provider.user else ""
         }
-        
+
         es = get_es_client()
         es.index(index=INDEX_NAME, id=str(provider.id), document=doc)
         logger.info(f"Successfully synced provider {provider_id} to ES.")
-        
+
     except ProviderProfile.DoesNotExist:
         logger.error(f"Provider {provider_id} does not exist.")
     except Exception as e:
@@ -48,3 +48,4 @@ def delete_provider_from_es(provider_id: str):
         logger.info(f"Successfully deleted provider {provider_id} from ES.")
     except Exception as e:
         logger.error(f"Failed to delete provider {provider_id} from ES (or not found): {str(e)}")
+

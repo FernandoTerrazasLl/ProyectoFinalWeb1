@@ -36,30 +36,30 @@ class Command(BaseCommand):
 
         self.stdout.write("Creating Providers...")
         providers_data = [
-            {"email": "provA@test.com", "first": "Carlos", "last": "Vega", "gender": "MALE", "price": 100, "rating": 4.8, "reviews": 12},
-            {"email": "provB@test.com", "first": "Mariana", "last": "Rios", "gender": "FEMALE", "price": 120, "rating": 4.0, "reviews": 3},
-            {"email": "provC@test.com", "first": "Fernando", "last": "Terrazas", "gender": "MALE", "price": 80, "rating": 0, "reviews": 0},
+            {"email": "provA@test.com", "first": "Carlos", "last": "Vega", "gender": "MALE", "price": 100, "rating": 4.8, "reviews": 12, "address": "Av. Arce 1234, Consultorio 12"},
+            {"email": "provB@test.com", "first": "Mariana", "last": "Rios", "gender": "FEMALE", "price": 120, "rating": 4.0, "reviews": 3, "address": "Edificio Los Pinos, Piso 3, Of 301"},
+            {"email": "provC@test.com", "first": "Fernando", "last": "Terrazas", "gender": "MALE", "price": 80, "rating": 0, "reviews": 0, "address": "Calle 21 de Calacoto, Centro Médico Integral"},
         ]
-        
+
         provider_profiles = []
         for p in providers_data:
             user = User.objects.create_user(
-                username=p["email"], email=p["email"], password="password", 
+                username=p["email"], email=p["email"], password="password",
                 first_name=p["first"], last_name=p["last"], role="PROVIDER", gender=p["gender"],
                 birth_date=date(1980, 1, 1), ci=str(random.randint(1000000, 9999999)), phone_number="70000000"
             )
             profile = ProviderProfile.objects.create(
                 user=user, bio=f"Soy {p['first']} {p['last']}.", session_price=p["price"],
-                specialty=random.choice(specialties), is_approved=True
+                specialty=random.choice(specialties), is_approved=True, office_address=p["address"]
             )
-            # We no longer spoof the average_rating and review_count.
-            # They will be populated via actual Kafka events.
-            
             profile.tags.set(random.sample(tags, k=random.randint(2, 5)))
-            
-            # Save target reviews to populate later
             p["profile_id"] = profile.id
             provider_profiles.append(profile)
+
+        self.stdout.write("Synchronously syncing providers to Elasticsearch...")
+        from providers.tasks import sync_provider_to_es
+        for profile in provider_profiles:
+            sync_provider_to_es(str(profile.id))
 
         self.stdout.write("Creating Patients...")
         patient_profiles = []
@@ -73,52 +73,50 @@ class Command(BaseCommand):
             patient_profiles.append(profile)
 
         self.stdout.write("Creating Schedule Rules...")
-        # Providers work Monday to Friday, 08:00 to 12:00 and 14:00 to 18:00
+
         for profile in provider_profiles:
-            for day in range(1, 6): # 1=Monday, 5=Friday
+            for day in range(1, 6):
                 ScheduleRule.objects.create(provider=profile, day_of_week=day, start_time=time(8, 0), end_time=time(12, 0))
                 ScheduleRule.objects.create(provider=profile, day_of_week=day, start_time=time(14, 0), end_time=time(18, 0))
-
         self.stdout.write("Creating Schedule Exceptions...")
         today = timezone.now().date()
-        # Prov A has a block tomorrow from 10 to 11
+
         ScheduleException.objects.create(
             provider=provider_profiles[0], date=today + timedelta(days=1),
             start_time=time(10, 0), end_time=time(11, 0), exception_type="BLOCKED"
         )
-        # Prov B has an extra shift on Sunday from 15 to 16
-        sunday = today + timedelta(days=(6 - today.weekday() + 7) % 7) # Next Sunday
+
+        sunday = today + timedelta(days=(6 - today.weekday() + 7) % 7)
         if sunday == today:
             sunday += timedelta(days=7)
-            
+
         ScheduleException.objects.create(
             provider=provider_profiles[1], date=sunday,
             start_time=time(15, 0), end_time=time(16, 0), exception_type="EXTRA"
         )
 
         self.stdout.write("Creating Appointments...")
-        # Past appointment
+
         Appointment.objects.create(
             provider=provider_profiles[0], patient=patient_profiles[0], date=today - timedelta(days=2),
             time=time(9, 0), status="COMPLETED", price_charged=100.00
         )
-        # Future appointment pending
+
         Appointment.objects.create(
             provider=provider_profiles[1], patient=patient_profiles[1], date=today + timedelta(days=2),
             time=time(14, 0), status="PENDING"
         )
-        # Future appointment confirmed
+
         Appointment.objects.create(
             provider=provider_profiles[2], patient=patient_profiles[2], date=today + timedelta(days=3),
             time=time(16, 0), status="CONFIRMED"
         )
-        # Cancelled appointment
+
         Appointment.objects.create(
             provider=provider_profiles[0], patient=patient_profiles[3], date=today + timedelta(days=4),
             time=time(11, 0), status="CANCELLED"
         )
-        
-        # Appointments for "Today"
+
         Appointment.objects.create(
             provider=provider_profiles[0], patient=patient_profiles[4], date=today,
             time=time(8, 0), status="COMPLETED"
@@ -129,7 +127,7 @@ class Command(BaseCommand):
         )
 
         self.stdout.write("Database seeded successfully with test appointments!")
-        
+
         self.stdout.write("Seeding reviews via Backend API to populate UGC pipeline...")
         import urllib.request
         import json
@@ -140,24 +138,25 @@ class Command(BaseCommand):
             if target_reviews > 0:
                 self.stdout.write(f"Generating {target_reviews} reviews for {p['first']} {p['last']}...")
                 for i in range(target_reviews):
-                    # Slight variation around the target rating
+
                     rating = int(p["rating"]) if i % 2 == 0 else min(5, int(p["rating"]) + 1)
-                    if rating == 0: rating = 4 # Fallback
-                    
+                    if rating == 0: rating = 4
+
                     data = json.dumps({
                         "provider_id": str(p["profile_id"]),
                         "user_id": str(uuid.uuid4()),
                         "rating": rating,
                         "comment": f"Mensaje de prueba #{i+1} para el doctor."
                     }).encode('utf-8')
-                    
+
                     req = urllib.request.Request("http://backend:8001/ugc/reviews", data=data, headers={'Content-Type': 'application/json'})
                     try:
                         urllib.request.urlopen(req)
                     except Exception as e:
                         self.stdout.write(self.style.ERROR(f"Failed to submit review: {e}"))
-                
-                # Small sleep to avoid bombarding Kafka simultaneously
+
+
                 time_mod.sleep(1)
-        
+
         self.stdout.write(self.style.SUCCESS('Successfully seeded reviews! Note: Kafka workers may take a few seconds to update Postgres/ES.'))
+

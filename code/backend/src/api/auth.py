@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from src.db.database import get_db
 import src.models.domain as models
 from src.core.security import (
-    verify_password, get_password_hash, create_access_token, 
+    verify_password, get_password_hash, create_access_token,
     create_refresh_token, decode_token, verify_google_token
 )
 from pydantic import BaseModel
@@ -22,9 +22,9 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
+
     hashed_password = get_password_hash(user.password)
-    
+
     new_user = models.User(
         email=user.email,
         username=user.email,
@@ -61,18 +61,18 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login")
 def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.email == user_credentials.email).first()
-    
+
     if not db_user or db_user.auth_provider != "local":
         raise HTTPException(status_code=401, detail="Invalid credentials or account belongs to OAuth")
-    
+
     if not verify_password(user_credentials.password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     access_token = create_access_token(data={"sub": db_user.email, "role": db_user.role})
     refresh_token = create_refresh_token(data={"sub": db_user.email})
-    
+
     return {
-        "access_token": access_token, 
+        "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "bearer",
         "role": db_user.role
@@ -83,14 +83,17 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
     idinfo = verify_google_token(data.id_token)
     if not idinfo:
         raise HTTPException(status_code=401, detail="Invalid Google Token")
-        
+
     email = idinfo.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Google no proporcionó un correo electrónico.")
+
     first_name = idinfo.get("given_name", "")
     last_name = idinfo.get("family_name", "")
     provider_id = idinfo.get("sub")
-    
+
     db_user = db.query(models.User).filter(models.User.email == email).first()
-    
+
     if not db_user:
         db_user = models.User(
             email=email,
@@ -119,9 +122,9 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
 
     access_token = create_access_token(data={"sub": db_user.email, "role": db_user.role})
     refresh_token = create_refresh_token(data={"sub": db_user.email})
-    
+
     return {
-        "access_token": access_token, 
+        "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "bearer",
         "role": db_user.role
@@ -129,24 +132,24 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
 
 @router.post("/refresh")
 async def refresh(
-    refresh_token: str = Header(...), 
+    refresh_token: str = Header(...),
     redis_client: redis.Redis = Depends(get_redis),
     db: Session = Depends(get_db)
 ):
     payload = decode_token(refresh_token)
     if not payload or payload.get("type") != "refresh":
         raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
-        
+
     jti = payload.get("jti")
     is_blacklisted = await redis_client.get(f"blacklist:{jti}")
     if is_blacklisted:
         raise HTTPException(status_code=401, detail="Token has been revoked")
-        
+
     email = payload.get("sub")
     db_user = db.query(models.User).filter(models.User.email == email).first()
     role = db_user.role if db_user else "PATIENT"
-    
-    new_access = create_access_token(data={"sub": email, "role": role}) 
+
+    new_access = create_access_token(data={"sub": email, "role": role})
     return {"access_token": new_access, "token_type": "bearer"}
 
 @router.post("/logout")
@@ -155,7 +158,7 @@ async def logout(refresh_token: str = Header(...), redis_client: redis.Redis = D
     if payload:
         jti = payload.get("jti")
         await redis_client.setex(f"blacklist:{jti}", 7 * 24 * 60 * 60, "true")
-    
+
     return {"message": "Successfully logged out"}
 
 class ForgotPasswordRequest(BaseModel):
@@ -171,13 +174,14 @@ class ChangePasswordRequest(BaseModel):
 
 @router.put("/change-password")
 def change_password(
-    request: ChangePasswordRequest, 
-    current_user: models.User = Depends(get_current_user), 
+    request: ChangePasswordRequest,
+    current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     if not verify_password(request.current_password, current_user.password):
         raise HTTPException(status_code=400, detail="Incorrect current password")
-        
+
     current_user.password = get_password_hash(request.new_password)
     db.commit()
     return {"message": "Password updated successfully"}
+

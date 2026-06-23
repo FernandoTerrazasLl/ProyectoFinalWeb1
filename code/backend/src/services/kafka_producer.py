@@ -31,3 +31,4 @@ class KafkaProducerClient:
 
 def get_kafka_producer() -> KafkaProducer:
     return KafkaProducerClient.get_producer()
+

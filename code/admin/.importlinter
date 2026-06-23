@@ -6,9 +6,9 @@ root_packages =
     config
 
 [importlinter:contract:1]
-name = Independence of domains
-type = independence
-modules =
-    users
-    providers
+name = Layered Architecture
+type = layers
+layers =
     appointments
+    providers
+    users

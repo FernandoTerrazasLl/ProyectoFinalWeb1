@@ -23,3 +23,4 @@ class ProviderProfileAdmin(admin.ModelAdmin):
         if obj is None:
             return ('average_rating', 'review_count')
         return super().get_exclude(request, obj)
+

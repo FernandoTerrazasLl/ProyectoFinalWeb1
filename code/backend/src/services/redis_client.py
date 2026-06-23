@@ -25,3 +25,4 @@ class RedisClient:
 
 async def get_redis() -> redis.Redis:
     return RedisClient.get_client()
+

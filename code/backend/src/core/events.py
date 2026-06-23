@@ -10,15 +10,16 @@ def dispatch_async_event(producer: KafkaProducer, event_type: str, data: Dict[st
     """Centralized dispatcher that formats and sends an event to Kafka."""
     if not producer:
         return
-        
+
     payload = {
         "type": event_type,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "data": data
     }
-    
+
     try:
         producer.send(KAFKA_TOPIC, payload)
         producer.flush()
     except Exception as e:
         logger.error(f"Error publishing to Kafka topic {KAFKA_TOPIC}: {e}")
+
