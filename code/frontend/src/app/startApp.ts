@@ -3,6 +3,7 @@ import { routes } from "@app/routing/routes";
 import { routerInstance } from "@shared/lib/router/routerInstance";
 import { mountPage } from "@shared/lib/router/mountPage";
 import { Header } from "@widgets/header";
+import { ToastHost } from "@widgets/toast-host";
 import { applySession, loadStoredSession } from "@entities/user";
 import "@app/styles/global.css";
 
@@ -19,10 +20,15 @@ export function startApp(root: Element) {
   const content = document.createElement("div");
   content.className = "app__content";
 
-  if (headerElement) 
+  if (headerElement)
     root.append(headerElement, content);
-  else 
+  else
     root.append(content);
+
+  const toastHostElement = new ToastHost({}).element();
+
+  if (toastHostElement)
+    root.append(toastHostElement);
 
   routes.forEach((route) => routerInstance.add(route));
 

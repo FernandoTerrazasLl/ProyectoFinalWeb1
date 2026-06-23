@@ -3,6 +3,7 @@ import type { BlockOwnProps } from "@shared/lib/block/BlockOwnProps";
 import { LoginForm, submitLogin } from "@features/auth-login";
 import { GoogleButton } from "@features/oauth-google";
 import { describeHttpError } from "@shared/api/describeHttpError";
+import { showToast } from "@shared/lib/toast/showToast";
 import { routerInstance } from "@shared/lib/router/routerInstance";
 import authPageTemplate from "@pages/auth/AuthPage.hbs?raw";
 import "@pages/auth/AuthPage.css";
@@ -18,7 +19,7 @@ export class AuthPage extends Block<BlockOwnProps> {
         if (result.isOk())
           routerInstance.navigate("/directory");
         else
-          loginForm.setProps({ error: describeHttpError(result.error) });
+          showToast(describeHttpError(result.error));
       },
     });
 
