@@ -57,7 +57,7 @@ async def get_psychologists(
         })
     if specialty:
         must_clauses.append({
-            "match": {"specialty": specialty}
+            "match_phrase": {"specialty": specialty}
         })
     if maxRate is not None:
         must_clauses.append({
