@@ -49,6 +49,8 @@ def verify_google_token(token: str):
     try:
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_CLIENT_ID)
         return idinfo
-    except ValueError:
+    except Exception as e:
+        import logging
+        logging.error(f"Google Token Verification Failed: {e}")
         return None
 
