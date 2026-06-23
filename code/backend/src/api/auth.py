@@ -85,6 +85,9 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid Google Token")
 
     email = idinfo.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Google no proporcionó un correo electrónico.")
+
     first_name = idinfo.get("given_name", "")
     last_name = idinfo.get("family_name", "")
     provider_id = idinfo.get("sub")
