@@ -23,6 +23,14 @@ class Command(BaseCommand):
         Tag.objects.all().delete()
         User.objects.all().delete()
 
+        self.stdout.write("Clearing Elasticsearch index...")
+        import urllib.request
+        try:
+            req = urllib.request.Request("http://elasticsearch:9200/providers", method="DELETE")
+            urllib.request.urlopen(req)
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f"Elasticsearch index check: {e}"))
+
         self.stdout.write("Creating Specialties...")
         specialty_names = ["Psicologia Clinica", "Terapia de Pareja", "Psicologia Laboral", "Psicologia Infantil"]
         specialties = [Specialty.objects.create(name=n, description=f"{n} description") for n in specialty_names]
