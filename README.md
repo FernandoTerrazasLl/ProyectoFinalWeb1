@@ -40,6 +40,9 @@ https://www.figma.com/design/HIcyIeiTdjp0YQahtMmy6z/Untitled?node-id=0-1&t=o3nOz
 
 <img width="722" height="874" alt="image" src="https://github.com/user-attachments/assets/c5732adc-82cd-4ced-ab95-8abec9beca5a" />
 
+### Diagrama Despliegue
+
+<img width="1271" height="963" alt="image" src="https://github.com/user-attachments/assets/22b82727-2e7d-4621-a493-c1428fba01f1" />
 
 ## Integrantes
 
