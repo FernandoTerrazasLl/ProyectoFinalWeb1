@@ -1,6 +1,6 @@
 import { Block } from "@shared/lib/block/Block";
 import type { EventListType } from "@shared/lib/block/EventListType";
-import type { TriageScores } from "@entities/triage";
+import { TriageScoring } from "@entities/triage";
 import type { TriageQuizProps } from "@features/triage-quiz/ui/TriageQuizProps";
 import triageQuizTemplate from "@features/triage-quiz/ui/TriageQuiz.hbs?raw";
 import "@features/triage-quiz/ui/TriageQuiz.css";
@@ -9,7 +9,7 @@ export class TriageQuiz extends Block<TriageQuizProps> {
   protected template = triageQuizTemplate;
   private currentIndex = 0;
   private selectedOptionId: string | null = null;
-  private scores: TriageScores = { clinica: 0, pareja: 0, laboral: 0, infantil: 0 };
+  private scoring = new TriageScoring();
   protected events: EventListType = {
     click: (event) => this.handleClick(event),
   };
@@ -58,23 +58,14 @@ export class TriageQuiz extends Block<TriageQuizProps> {
     const selectedOption = question?.options.find((option) => option.id === this.selectedOptionId);
 
     if (selectedOption)
-      this.addScores(selectedOption.scores);
+      this.scoring.add(selectedOption.scores);
 
     this.selectedOptionId = null;
     this.currentIndex += 1;
 
     if (this.currentIndex >= this.props.questions.length)
-      this.props.onComplete(this.scores);
+      this.props.onComplete(this.scoring.total());
     else
       this.showCurrentQuestion();
-  }
-
-  private addScores(partial: Partial<TriageScores>) {
-    this.scores = {
-      clinica: this.scores.clinica + (partial.clinica ?? 0),
-      pareja: this.scores.pareja + (partial.pareja ?? 0),
-      laboral: this.scores.laboral + (partial.laboral ?? 0),
-      infantil: this.scores.infantil + (partial.infantil ?? 0),
-    };
   }
 }
