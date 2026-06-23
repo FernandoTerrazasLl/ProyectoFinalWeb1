@@ -36,6 +36,11 @@ https://www.figma.com/design/HIcyIeiTdjp0YQahtMmy6z/Untitled?node-id=0-1&t=o3nOz
 
 <img width="1084" height="873" alt="image" src="https://github.com/user-attachments/assets/68684937-cea2-4c77-8713-615b77238e01" />
 
+### Diagrama ER
+
+<img width="720" height="870" alt="image" src="https://github.com/user-attachments/assets/4fd45672-405a-4de1-88a4-4f4c46402844" />
+
+
 ## Integrantes
 
 - Fernando Terrazas Llanos
