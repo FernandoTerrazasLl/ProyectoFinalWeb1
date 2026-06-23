@@ -51,8 +51,13 @@ export class HttpClient {
 
     if (response.status === 401 && allowRefresh && (await this.refreshAccessToken()))
       return this.send<T>(method, path, body, signal, false);
-    if (!response.ok)
-      return Err({ status: response.status, message: response.statusText });
+    if (!response.ok) {
+      const errorBody = await Result.wrapAsync<{ detail?: string }>(() => response.json());
+      const detail = errorBody.isOk() && typeof errorBody.value.detail === "string"
+        ? errorBody.value.detail
+        : response.statusText;
+      return Err({ status: response.status, message: detail });
+    }
     if (response.status === 204)
       return Ok(undefined as T);
 
@@ -63,6 +68,23 @@ export class HttpClient {
       : Ok(parsed.value);
   }
 
+  async logout(): Promise<boolean> {
+    if (!this.refreshToken)
+      return false;
+
+    const sent = await Result.wrapAsync(() =>
+      fetch(`${this.baseUrl}/auth/logout`, {
+        method: "POST",
+        headers: { "Refresh-Token": this.refreshToken as string },
+      }),
+    );
+
+    this.accessToken = null;
+    this.refreshToken = null;
+
+    return sent.isOk() && sent.value.ok;
+  }
+
   private async refreshAccessToken(): Promise<boolean> {
     if (!this.refreshToken)
       return false;
@@ -70,7 +92,7 @@ export class HttpClient {
     const sent = await Result.wrapAsync(() =>
       fetch(`${this.baseUrl}/auth/refresh`, {
         method: "POST",
-        headers: { refresh_token: this.refreshToken as string },
+        headers: { "Refresh-Token": this.refreshToken as string },
       }),
     );
 

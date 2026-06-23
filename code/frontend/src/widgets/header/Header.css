@@ -42,3 +42,14 @@
   color: var(--color-primary);
   text-decoration: none;
 }
+
+.header__logout {
+  border: none;
+  background: none;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-danger);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}

@@ -1,6 +1,7 @@
 import { Block } from "@shared/lib/block/Block";
 import type { BlockOwnProps } from "@shared/lib/block/BlockOwnProps";
 import { RegisterForm, submitRegister } from "@features/auth-register";
+import { describeHttpError } from "@shared/api/describeHttpError";
 import { routerInstance } from "@shared/lib/router/routerInstance";
 import signupPageTemplate from "@pages/signup/SignupPage.hbs?raw";
 import "@pages/signup/SignupPage.css";
@@ -15,8 +16,8 @@ export class SignupPage extends Block<BlockOwnProps> {
  
         if (result.isOk()) 
           routerInstance.navigate("/directory");
-        else 
-          registerForm.setProps({ error: result.error.message });
+        else
+          registerForm.setProps({ error: describeHttpError(result.error) });
       },
     });
 

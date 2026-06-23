@@ -18,6 +18,21 @@ export const routes: Route[] = [
     },
   },
   {
+    path: "/forgot-password",
+    loader: async () => {
+      const { ForgotPasswordPage } = await import("@pages/forgot-password");
+      return mountPage(ForgotPasswordPage, () => ({}));
+    },
+  },
+  {
+    path: "/account/password",
+    guard: hasActiveSession,
+    loader: async () => {
+      const { ChangePasswordPage } = await import("@pages/change-password");
+      return mountPage(ChangePasswordPage, () => ({}));
+    },
+  },
+  {
     path: "/directory",
     guard: hasActiveSession,
     loader: async () => {

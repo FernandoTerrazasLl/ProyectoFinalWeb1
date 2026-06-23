@@ -6,26 +6,35 @@ import { authenticateWithGoogle } from "@features/oauth-google/model/authenticat
 import googleButtonTemplate from "@features/oauth-google/ui/GoogleButton.hbs?raw";
 import "@features/oauth-google/ui/GoogleButton.css";
 
+let identityInitialized = false;
+
+function isOAuthConfigured(clientId: string | undefined): clientId is string {
+  return !!clientId && !clientId.includes("your-");
+}
+
 export class GoogleButton extends Block<GoogleButtonProps> {
   protected template = googleButtonTemplate;
 
   protected componentDidMount() {
-    if (env.oauthClientId)
-      void this.renderGoogleButton();
+    if (isOAuthConfigured(env.oauthClientId))
+      void this.renderGoogleButton(env.oauthClientId);
   }
 
-  private async renderGoogleButton() {
+  private async renderGoogleButton(clientId: string) {
     const identity = await loadGoogleIdentity();
     const container = this.refs.container as HTMLElement | undefined;
 
     if (!identity || !container)
       return;
 
-    identity.initialize({
-      client_id: env.oauthClientId,
-      callback: (response) => void this.handleCredential(response.credential),
-    });
-    
+    if (!identityInitialized) {
+      identity.initialize({
+        client_id: clientId,
+        callback: (response) => void this.handleCredential(response.credential),
+      });
+      identityInitialized = true;
+    }
+
     identity.renderButton(container, { type: "standard", theme: "outline", text: "continue_with", width: 320 });
   }
 

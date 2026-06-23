@@ -1,10 +1,25 @@
 <main class="auth-page">
+  <div class="auth-page__intro">
+    <svg class="auth-page__logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+      <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" />
+    </svg>
+    <h1 class="auth-page__title">Bienvenido a CuraMente</h1>
+    <p class="auth-page__subtitle">Accede a tu cuenta para continuar</p>
+  </div>
+
   <section class="auth-page__panel">
-    <h1 class="auth-page__title">Iniciar sesión</h1>
     <div ref="form"></div>
-    <div ref="google"></div>
-    <a class="auth-page__signup-link" href="/signup" data-link>
-      ¿No tenés cuenta? Registrate
+    <a class="auth-page__forgot-link" href="/forgot-password" data-link>
+      ¿Olvidaste tu contraseña?
     </a>
+
+    <div class="auth-page__divider"><span>O continuar con</span></div>
+    <div ref="google"></div>
+
+    <p class="auth-page__signup">
+      ¿No tenés cuenta?
+      <a class="auth-page__signup-link" href="/signup" data-link>Registrate</a>
+    </p>
   </section>
 </main>
