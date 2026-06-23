@@ -89,7 +89,18 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Google no proporcionó un correo electrónico.")
 
     first_name = idinfo.get("given_name", "")
-    last_name = idinfo.get("family_name", "")
+    full_last_name = idinfo.get("family_name", "").strip()
+    
+    # Split "family_name" into Paterno and Materno.
+    # Using rsplit(" ", 1) handles cases like "De La Cruz Perez" correctly.
+    last_name = full_last_name
+    maternal_last_name = ""
+    
+    if " " in full_last_name:
+        parts = full_last_name.rsplit(" ", 1)
+        last_name = parts[0]
+        maternal_last_name = parts[1]
+
     provider_id = idinfo.get("sub")
 
     db_user = db.query(models.User).filter(models.User.email == email).first()
@@ -101,6 +112,7 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
             password=get_password_hash(None),
             first_name=first_name,
             last_name=last_name,
+            maternal_last_name=maternal_last_name,
             role="PATIENT",
             is_staff=False,
             is_active=True,
