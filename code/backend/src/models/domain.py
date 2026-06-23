@@ -117,6 +117,5 @@ class ScheduleException(Base):
     start_time = Column(Time)
     end_time = Column(Time)
     exception_type = Column(String)
-    reason = Column(String)
 
     provider = relationship("ProviderProfile", back_populates="schedule_exceptions")

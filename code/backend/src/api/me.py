@@ -159,8 +159,7 @@ def create_exception(
         date=exc.date,
         start_time=exc.time,
         end_time=end_time,
-        exception_type=exc.exception_type,
-        reason="Manual exception"
+        exception_type=exc.exception_type
     )
     db.add(new_exc)
     db.commit()

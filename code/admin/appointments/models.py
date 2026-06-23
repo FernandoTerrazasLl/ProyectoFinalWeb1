@@ -72,7 +72,6 @@ class ScheduleException(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     exception_type = models.CharField(max_length=10, choices=ExceptionType.choices, default=ExceptionType.BLOCKED)
-    reason = models.CharField(max_length=255, blank=True)
 
     def clean(self):
         super().clean()
