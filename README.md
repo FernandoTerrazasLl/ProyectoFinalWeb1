@@ -38,7 +38,7 @@ https://www.figma.com/design/HIcyIeiTdjp0YQahtMmy6z/Untitled?node-id=0-1&t=o3nOz
 
 ### Diagrama ER
 
-<img width="720" height="870" alt="image" src="https://github.com/user-attachments/assets/4fd45672-405a-4de1-88a4-4f4c46402844" />
+<img width="722" height="874" alt="image" src="https://github.com/user-attachments/assets/c5732adc-82cd-4ced-ab95-8abec9beca5a" />
 
 
 ## Integrantes
