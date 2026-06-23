@@ -22,6 +22,7 @@ export class DashboardSidebar extends Block<DashboardSidebarProps> {
       ...props,
       isSchedule: props.active === "schedule",
       isProfile: props.active === "profile",
+      isConfiguration: props.active === "configuration",
       isOpen: false,
     });
   }

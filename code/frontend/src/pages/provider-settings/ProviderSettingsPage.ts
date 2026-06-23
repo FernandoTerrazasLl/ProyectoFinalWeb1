@@ -8,11 +8,15 @@ import { getMyProviderProfile } from "@entities/psychologist";
 import providerSettingsPageTemplate from "@pages/provider-settings/ProviderSettingsPage.hbs?raw";
 import "@pages/provider-settings/ProviderSettingsPage.css";
 
-export class ProviderSettingsPage extends Block<BlockOwnProps> {
+interface ProviderSettingsPageProps extends BlockOwnProps {
+  active?: "profile" | "configuration";
+}
+
+export class ProviderSettingsPage extends Block<ProviderSettingsPageProps> {
   protected template = providerSettingsPageTemplate;
 
   protected componentDidMount() {
-    this.mountInto("sidebar", new DashboardSidebar({ active: "profile" }));
+    this.mountInto("sidebar", new DashboardSidebar({ active: this.props.active ?? "profile" }));
     this.mountInto("form", new Spinner({}));
     void this.loadProfile();
   }

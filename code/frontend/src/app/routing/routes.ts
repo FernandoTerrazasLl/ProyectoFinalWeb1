@@ -4,6 +4,14 @@ import { hasActiveSession, isProvider } from "@entities/user";
 
 export const routes: Route[] = [
   {
+    path: "/",
+    loader: async () => ({
+      mount() {
+        window.location.replace(`${window.location.origin}/directory`);
+      },
+    }),
+  },
+  {
     path: "/auth",
     loader: async () => {
       const { AuthPage } = await import("@pages/auth");
@@ -85,7 +93,15 @@ export const routes: Route[] = [
     guard: isProvider,
     loader: async () => {
       const { ProviderSettingsPage } = await import("@pages/provider-settings");
-      return mountPage(ProviderSettingsPage, () => ({}));
+      return mountPage(ProviderSettingsPage, () => ({ active: "profile" as const }));
+    },
+  },
+  {
+    path: "/dashboard/configuration",
+    guard: isProvider,
+    loader: async () => {
+      const { ProviderSettingsPage } = await import("@pages/provider-settings");
+      return mountPage(ProviderSettingsPage, () => ({ active: "configuration" as const }));
     },
   },
 ];
