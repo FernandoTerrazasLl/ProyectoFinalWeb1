@@ -44,6 +44,8 @@ export class Router {
 
     const pathname = window.location.pathname;
 
+    document.body.classList.toggle("app--dashboard", pathname.startsWith("/dashboard"));
+
     for (const route of this.routes) {
       const match = this.match(route.path, pathname);
 

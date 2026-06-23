@@ -40,3 +40,7 @@ img {
   font-size: var(--font-size-base);
   color: var(--color-danger);
 }
+
+body.app--dashboard .header {
+  display: none;
+}
