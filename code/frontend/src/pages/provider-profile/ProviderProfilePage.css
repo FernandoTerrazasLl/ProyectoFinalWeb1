@@ -1,8 +1,8 @@
 .provider-profile-page {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: var(--space-6);
-  padding: var(--space-4);
+  padding: var(--space-8) var(--space-4) 4rem;
   max-width: 80rem;
   margin: 0 auto;
 }
@@ -16,12 +16,13 @@
 .provider-profile-page__reviews {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-6);
 }
 
 .provider-profile-page__title {
   font-family: var(--font-sans);
-  font-size: var(--font-size-base);
+  font-size: 1.5rem;
+  line-height: 1.75rem;
   font-weight: 700;
   color: var(--color-text);
 }
@@ -29,59 +30,74 @@
 .provider-profile-page__booking {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
   align-self: start;
   background-color: var(--color-surface);
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-md);
-  padding: var(--space-4);
+  overflow: hidden;
 }
 
 .provider-profile-page__price-label {
   font-family: var(--font-sans);
   font-size: var(--font-size-sm);
   color: var(--color-muted);
+  margin: 0;
 }
 
 .provider-profile-page__price-value {
   font-family: var(--font-sans);
-  font-size: var(--font-size-2xl);
+  font-size: 1.875rem;
+  line-height: 2.25rem;
   font-weight: 700;
   color: var(--color-text);
+  margin: var(--space-1) 0 0;
 }
 
 .provider-profile-page__price-value span {
-  margin-left: var(--space-1);
-  font-size: var(--font-size-sm);
+  margin-left: var(--space-2);
+  font-size: var(--font-size-base);
   font-weight: 400;
   color: var(--color-muted);
 }
 
-.provider-profile-page__divider {
-  border: none;
-  border-top: 1px solid var(--color-border);
+.provider-profile-page__price {
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.provider-profile-page__booking-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
 }
 
 @media (width >= 768px) {
   .provider-profile-page {
-    padding: var(--space-6);
+    padding: var(--space-8) var(--space-8) 4rem;
   }
 }
 
 @media (width >= 1024px) {
   .provider-profile-page {
-    flex-direction: row;
-    align-items: flex-start;
+    grid-template-columns: minmax(0, 49.5rem) 22.75rem;
+    align-items: start;
+    column-gap: 4rem;
   }
 
   .provider-profile-page__main {
-    flex: 1;
+    grid-column: 1;
   }
 
   .provider-profile-page__booking {
-    width: 22rem;
+    grid-column: 2;
     flex-shrink: 0;
     position: sticky;
-    top: var(--space-6);
+    top: var(--space-8);
+  }
+
+  .provider-profile-page__reviews {
+    grid-column: 1;
   }
 }

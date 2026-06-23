@@ -1,9 +1,18 @@
 <div class="provider-settings-page">
   <div ref="sidebar"></div>
   <main class="provider-settings-page__content">
+    <section class="provider-settings-page__header">
+      <div>
+        <h1 class="provider-settings-page__title">Edición de Perfil Profesional</h1>
+        <p class="provider-settings-page__subtitle">Actualiza los datos de tu perfil público que los pacientes verán en el directorio.</p>
+      </div>
+    </section>
     <section class="provider-settings-page__panel">
-      <h1 class="provider-settings-page__title">Edición de perfil</h1>
       <div ref="form"></div>
     </section>
+    <div class="provider-settings-page__actions">
+      <a class="button button--secondary" href="/directory" data-link>Descartar cambios</a>
+      <button class="button button--ink" type="submit" form="provider-profile-form">Guardar Perfil</button>
+    </div>
   </main>
 </div>

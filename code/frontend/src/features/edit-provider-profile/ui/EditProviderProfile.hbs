@@ -1,15 +1,78 @@
-<form class="edit-provider-profile">
+<form class="edit-provider-profile" id="provider-profile-form">
   {{#if saved}}
     <p class="edit-provider-profile__success">Tus cambios ya son visibles para los pacientes.</p>
   {{else}}
-    {{{ Label text="Biografía" forId="edit-bio" }}}
-    {{{ Textarea id="edit-bio" name="bio" ref="bio" }}}
-    {{{ Label text="Precio por sesión (Bs.)" forId="edit-rate" }}}
-    {{{ Input id="edit-rate" type="text" name="rate" ref="rate" }}}
-    {{{ Label text="Problemas que tratás (máximo 5)" forId="edit-tag" }}}
-    <div class="edit-provider-profile__chips" ref="chips"></div>
-    {{{ Input id="edit-tag" type="text" placeholder="Escribí un problema y presioná Enter" ref="tagInput" }}}
-    <p class="edit-provider-profile__limit" ref="limit"></p>
-    <button class="button button--primary" type="submit">Guardar cambios</button>
+    <section class="edit-provider-profile__section">
+      <h2 class="edit-provider-profile__title">Información Básica</h2>
+      <div class="edit-provider-profile__photo-row">
+        {{{ Avatar initials=draft.firstName size="lg" }}}
+        <div>
+          <button class="button button--secondary" type="button">Cambiar foto</button>
+          <p class="edit-provider-profile__hint">JPG, GIF o PNG. Max 2MB.</p>
+        </div>
+      </div>
+      <div class="edit-provider-profile__grid">
+        <div class="edit-provider-profile__field edit-provider-profile__field--full">
+          {{{ Label text="Nombre(s)" forId="edit-first-name" }}}
+          {{{ Input id="edit-first-name" name="firstName" ref="firstName" }}}
+        </div>
+        <div class="edit-provider-profile__field">
+          {{{ Label text="Apellido Paterno" forId="edit-last-name" }}}
+          {{{ Input id="edit-last-name" name="lastName" ref="lastName" }}}
+        </div>
+        <div class="edit-provider-profile__field">
+          {{{ Label text="Apellido Materno (Opcional)" forId="edit-maternal-last-name" }}}
+          {{{ Input id="edit-maternal-last-name" name="maternalLastName" ref="maternalLastName" }}}
+        </div>
+        <div class="edit-provider-profile__field">
+          {{{ Label text="Cédula de Identidad (CI)" forId="edit-ci" }}}
+          {{{ Input id="edit-ci" name="ci" ref="ci" }}}
+        </div>
+        <div class="edit-provider-profile__field">
+          {{{ Label text="Fecha de Nacimiento" forId="edit-birth-date" }}}
+          {{{ Input id="edit-birth-date" type="date" name="birthDate" ref="birthDate" }}}
+        </div>
+        <div class="edit-provider-profile__field">
+          {{{ Label text="Género / Sexo Biológico" forId="edit-gender" }}}
+          {{{ Input id="edit-gender" name="gender" ref="gender" }}}
+        </div>
+        <div class="edit-provider-profile__field">
+          {{{ Label text="Teléfono de Contacto" forId="edit-phone" }}}
+          {{{ Input id="edit-phone" type="tel" name="phoneNumber" ref="phoneNumber" }}}
+        </div>
+        <div class="edit-provider-profile__field edit-provider-profile__field--full">
+          {{{ Label text="Correo Electrónico" forId="edit-email" }}}
+          {{{ Input id="edit-email" type="email" name="email" ref="email" }}}
+        </div>
+      </div>
+    </section>
+    <section class="edit-provider-profile__section">
+      <h2 class="edit-provider-profile__title">Perfil Profesional</h2>
+      <div class="edit-provider-profile__grid">
+        <div class="edit-provider-profile__field edit-provider-profile__field--full">
+          {{{ Label text="Biografía" forId="edit-bio" }}}
+          {{{ Textarea id="edit-bio" name="bio" ref="bio" }}}
+        </div>
+        <div class="edit-provider-profile__field">
+          {{{ Label text="Precio por sesión (Bs.)" forId="edit-rate" }}}
+          {{{ Input id="edit-rate" type="text" name="rate" ref="rate" }}}
+        </div>
+        <div class="edit-provider-profile__field">
+          {{{ Label text="Especialidad Clínica" forId="edit-specialty" }}}
+          {{{ Input id="edit-specialty" name="specialty" ref="specialty" }}}
+        </div>
+        <div class="edit-provider-profile__field edit-provider-profile__field--full">
+          {{{ Label text="Dirección de Consultorio" forId="edit-office-address" }}}
+          {{{ Input id="edit-office-address" name="officeAddress" ref="officeAddress" }}}
+        </div>
+      </div>
+    </section>
+    <section class="edit-provider-profile__section">
+      <h2 class="edit-provider-profile__title">Especialidades y Enfoque</h2>
+      {{{ Label text="Problemas que tratás (máximo 5)" forId="edit-tag" }}}
+      <div class="edit-provider-profile__chips" ref="chips"></div>
+      {{{ Input id="edit-tag" type="text" placeholder="Escribí un problema y presioná Enter" ref="tagInput" }}}
+      <p class="edit-provider-profile__limit" ref="limit"></p>
+    </section>
   {{/if}}
 </form>

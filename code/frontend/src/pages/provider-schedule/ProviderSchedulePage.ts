@@ -19,6 +19,14 @@ export class ProviderSchedulePage extends Block<BlockOwnProps> {
   protected template = providerSchedulePageTemplate;
   protected events: EventListType = {
     change: () => void this.loadSchedule((this.refs.date as HTMLInputElement).value),
+    click: (event) => {
+      if (!(event.target as Element).closest(".provider-schedule-page__today"))
+        return;
+
+      const dateInput = this.refs.date as HTMLInputElement;
+      dateInput.value = today();
+      void this.loadSchedule(today());
+    },
   };
 
   protected componentDidMount() {

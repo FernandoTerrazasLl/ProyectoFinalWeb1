@@ -9,6 +9,13 @@ function today(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+function isPastSlot(date: string, time: string): boolean {
+  const [hours = "0", minutes = "0"] = time.split(":");
+  const slotDate = new Date(`${date}T${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:00`);
+
+  return slotDate.getTime() <= Date.now();
+}
+
 export class BookingCalendar extends Block<BookingCalendarProps> {
   protected template = bookingCalendarTemplate;
   protected events: EventListType = {
@@ -17,6 +24,9 @@ export class BookingCalendar extends Block<BookingCalendarProps> {
       const slot = (event.target as Element).closest("[data-time]");
 
       if (!slot)
+        return;
+
+      if (slot instanceof HTMLButtonElement && slot.disabled)
         return;
 
       slot.parentElement
@@ -40,7 +50,17 @@ export class BookingCalendar extends Block<BookingCalendarProps> {
 
     const result = await getAvailability(this.props.psychologistId, date);
     const slots = result.isOk()
-      ? result.value.map((slot) => ({ ...slot, label: formatTimeLabel(slot.time) }))
+      ? result.value.map((slot) => {
+        const past = isPastSlot(date, slot.time);
+
+        return {
+          ...slot,
+          available: slot.available && !past,
+          label: formatTimeLabel(slot.time),
+          isPast: past,
+          status: past ? "Horario pasado" : "",
+        };
+      })
       : [];
 
     this.setProps({ loading: false, slots });

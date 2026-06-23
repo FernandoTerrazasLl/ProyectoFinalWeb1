@@ -8,8 +8,18 @@ export async function getMyProviderProfile(): Promise<Result<ProviderProfileDraf
   const result = await http.request<ProviderProfileResponse>("GET", "/me/provider-profile");
 
   return result.map((response) => ({
+    firstName: response.first_name,
+    lastName: response.last_name,
+    maternalLastName: response.maternal_last_name,
+    ci: response.ci,
+    birthDate: response.birth_date ?? "",
+    gender: response.gender ?? "",
+    phoneNumber: response.phone_number,
+    email: response.email ?? "",
     bio: response.bio,
     sessionPrice: response.session_price,
     tags: response.tags,
+    specialty: response.specialty ?? "",
+    officeAddress: response.office_address,
   }));
 }

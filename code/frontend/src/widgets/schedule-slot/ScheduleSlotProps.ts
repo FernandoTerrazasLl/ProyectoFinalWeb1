@@ -10,4 +10,7 @@ export interface ScheduleSlotProps extends BlockOwnProps {
   isFree?: boolean;
   isBlocked?: boolean;
   canCancel?: boolean;
+  stateLabel?: string;
+  stateClass?: string;
+  stateBodyClass?: string;
 }

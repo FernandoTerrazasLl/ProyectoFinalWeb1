@@ -1,8 +1,19 @@
 <div class="provider-schedule-page">
   <div ref="sidebar"></div>
   <main class="provider-schedule-page__content">
-    <h1 class="provider-schedule-page__title">Mi agenda</h1>
-    <input class="provider-schedule-page__date" type="date" ref="date">
-    <div class="provider-schedule-page__list" ref="list"></div>
+    <header class="provider-schedule-page__header">
+      <div>
+        <h1 class="provider-schedule-page__title">Mi Agenda de Consultas</h1>
+        <p class="provider-schedule-page__subtitle">Gestiona tus horarios y pacientes del día.</p>
+      </div>
+      <div class="provider-schedule-page__controls">
+        <button class="button button--secondary provider-schedule-page__today" type="button">Hoy</button>
+        <label class="provider-schedule-page__date-wrap">
+          {{{ Icon name="calendar" }}}
+          <input class="provider-schedule-page__date" type="date" ref="date">
+        </label>
+      </div>
+    </header>
+    <section class="provider-schedule-page__timeline" ref="list"></section>
   </main>
 </div>

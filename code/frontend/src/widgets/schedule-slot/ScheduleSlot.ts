@@ -20,6 +20,15 @@ export class ScheduleSlot extends Block<ScheduleSlotProps> {
   };
 
   constructor(props: ScheduleSlotProps) {
+    const stateLabels = {
+      available: "Libre para reserva",
+      pending: "Pendiente",
+      confirmed: "Confirmada",
+      completed: "Completada",
+      blocked: "Horario bloqueado",
+      cancelled: "Cancelada",
+    };
+
     super({
       isReserved:
         props.entry.state === "pending" ||
@@ -28,6 +37,9 @@ export class ScheduleSlot extends Block<ScheduleSlotProps> {
       isFree: props.entry.state === "available",
       isBlocked: props.entry.state === "blocked",
       canCancel: props.entry.state === "pending" || props.entry.state === "confirmed",
+      stateLabel: stateLabels[props.entry.state],
+      stateClass: `schedule-slot__state--${props.entry.state}`,
+      stateBodyClass: `schedule-slot__body--${props.entry.state}`,
       ...props,
     });
   }

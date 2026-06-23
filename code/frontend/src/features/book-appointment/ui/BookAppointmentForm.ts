@@ -17,6 +17,13 @@ export class BookAppointmentForm extends Block<BookAppointmentFormProps> {
   };
 
   selectSlot(date: string, time: string) {
+    if (this.isPastSelection(date, time)) {
+      this.date = null;
+      this.time = null;
+      this.setProps({ error: "Ese horario ya pasó. Elegí una fecha y hora disponible." });
+      return;
+    }
+
     this.date = date;
     this.time = time;
     const slot = this.element()?.querySelector(".book-appointment__slot");
@@ -34,6 +41,11 @@ export class BookAppointmentForm extends Block<BookAppointmentFormProps> {
     if (!this.date || !this.time)
       return;
 
+    if (this.isPastSelection(this.date, this.time)) {
+      this.setProps({ error: "No se puede agendar una cita en una fecha u hora pasada." });
+      return;
+    }
+
     const reason = (this.refs.reason as HTMLTextAreaElement).value;
     const result = await bookAppointment({ psychologistId: this.props.psychologistId, date: this.date, time: this.time, reason });
 
@@ -43,5 +55,12 @@ export class BookAppointmentForm extends Block<BookAppointmentFormProps> {
     } else {
       this.setProps({ error: "No pudimos agendar la cita. Intentá de nuevo." });
     }
+  }
+
+  private isPastSelection(date: string, time: string): boolean {
+    const [hours = "0", minutes = "0"] = time.split(":");
+    const selectedDate = new Date(`${date}T${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:00`);
+
+    return selectedDate.getTime() <= Date.now();
   }
 }

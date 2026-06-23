@@ -23,8 +23,18 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
     if (this.props.saved)
       return;
 
+    (this.refs.firstName as HTMLInputElement).value = this.props.draft.firstName;
+    (this.refs.lastName as HTMLInputElement).value = this.props.draft.lastName;
+    (this.refs.maternalLastName as HTMLInputElement).value = this.props.draft.maternalLastName;
+    (this.refs.ci as HTMLInputElement).value = this.props.draft.ci;
+    (this.refs.birthDate as HTMLInputElement).value = this.props.draft.birthDate;
+    (this.refs.gender as HTMLInputElement).value = this.props.draft.gender;
+    (this.refs.phoneNumber as HTMLInputElement).value = this.props.draft.phoneNumber;
+    (this.refs.email as HTMLInputElement).value = this.props.draft.email;
     (this.refs.bio as HTMLTextAreaElement).value = this.props.draft.bio;
     (this.refs.rate as HTMLInputElement).value = String(this.props.draft.sessionPrice);
+    (this.refs.specialty as HTMLInputElement).value = this.props.draft.specialty;
+    (this.refs.officeAddress as HTMLInputElement).value = this.props.draft.officeAddress;
     this.tags = [...this.props.draft.tags];
     this.renderChips();
   }
@@ -87,9 +97,19 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
 
   private async save() {
     const result = await updateProviderProfile({
+      firstName: (this.refs.firstName as HTMLInputElement).value,
+      lastName: (this.refs.lastName as HTMLInputElement).value,
+      maternalLastName: (this.refs.maternalLastName as HTMLInputElement).value,
+      ci: (this.refs.ci as HTMLInputElement).value,
+      birthDate: (this.refs.birthDate as HTMLInputElement).value,
+      gender: (this.refs.gender as HTMLInputElement).value,
+      phoneNumber: (this.refs.phoneNumber as HTMLInputElement).value,
+      email: (this.refs.email as HTMLInputElement).value,
       bio: (this.refs.bio as HTMLTextAreaElement).value,
       sessionPrice: Number((this.refs.rate as HTMLInputElement).value),
       tags: this.tags,
+      specialty: (this.refs.specialty as HTMLInputElement).value,
+      officeAddress: (this.refs.officeAddress as HTMLInputElement).value,
     });
 
     if (result.isOk())

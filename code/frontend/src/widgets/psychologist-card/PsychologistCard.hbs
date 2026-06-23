@@ -18,7 +18,10 @@
     {{/each}}
   </div>
   <div class="psychologist-card__footer">
-    <p class="psychologist-card__rate">Bs. {{psychologist.rate}} / sesión</p>
+    <div class="psychologist-card__price">
+      <span class="psychologist-card__price-label">Por sesión</span>
+      <span class="psychologist-card__rate">{{psychologist.rate}} Bs.</span>
+    </div>
     <button class="button button--secondary psychologist-card__open" type="button">
       Ver perfil
     </button>

@@ -20,12 +20,13 @@
       <div class="booking-calendar__slots">
         {{#each slots}}
           <button
-            class="booking-calendar__slot"
+            class="booking-calendar__slot {{#if isPast}}booking-calendar__slot--past{{/if}}"
             type="button"
             data-time="{{time}}"
             {{#unless available}}disabled{{/unless}}
           >
             {{label}}
+            {{#if status}}<span class="booking-calendar__slot-status">{{status}}</span>{{/if}}
           </button>
         {{/each}}
       </div>
