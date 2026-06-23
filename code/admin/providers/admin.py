@@ -13,7 +13,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(ProviderProfile)
 class ProviderProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'specialty', 'session_price', 'is_approved')
+    list_display = ('user', 'specialty', 'session_price', 'office_address', 'is_approved')
     list_filter = ('is_approved', 'specialty')
     search_fields = ('user__username', 'user__email')
     filter_horizontal = ('tags',)

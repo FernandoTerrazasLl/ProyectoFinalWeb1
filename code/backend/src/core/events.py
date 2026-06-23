@@ -19,5 +19,6 @@ def dispatch_async_event(producer: KafkaProducer, event_type: str, data: Dict[st
     
     try:
         producer.send(KAFKA_TOPIC, payload)
+        producer.flush()
     except Exception as e:
         logger.error(f"Error publishing to Kafka topic {KAFKA_TOPIC}: {e}")

@@ -82,8 +82,8 @@ def get_my_appointments(
             "id": appt.id,
             "provider_id": appt.provider_id,
             "provider_name": f"{user.first_name} {user.last_name}".strip(),
-            "provider_phone": "N/A",  # Not in provider schema
-            "provider_address": "N/A",  # Not in provider schema
+            "provider_phone": user.phone_number or "No provisto",
+            "provider_address": getattr(provider_profile, "office_address", "No provista"),
             "date": appt.date,
             "time": appt.time,
             "state": appt.status

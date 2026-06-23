@@ -12,7 +12,7 @@ class OneStepUserCreationForm(forms.ModelForm):
         model = User
         fields = (
             'first_name', 'last_name', 'maternal_last_name', 'ci',
-            'birth_date', 'gender', 'phone_number',
+            'birth_date', 'gender', 'phone_number', 'avatar_url',
             'email', 'role'
         )
 
@@ -49,7 +49,7 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('first_name', 'last_name', 'maternal_last_name', 'ci')
         }),
         ('2. Datos Clínicos y Contacto', {
-            'fields': ('birth_date', 'gender', 'phone_number')
+            'fields': ('birth_date', 'gender', 'phone_number', 'avatar_url')
         }),
         ('3. Credenciales de Acceso', {
             'fields': ('email', 'password', 'password_confirm', 'role')
@@ -61,7 +61,7 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('first_name', 'last_name', 'maternal_last_name', 'ci')
         }),
         ('2. Datos Clínicos y Contacto', {
-            'fields': ('birth_date', 'gender', 'phone_number')
+            'fields': ('birth_date', 'gender', 'phone_number', 'avatar_url')
         }),
         ('3. Credenciales de Acceso', {
             'fields': ('email', 'role', 'is_active', 'is_staff', 'is_superuser')
