@@ -9,6 +9,15 @@ const PIXEL_SIZES: Record<"sm" | "md" | "lg", number> = {
   lg: 152,
 };
 
+function toInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
 export class Avatar extends Block<AvatarProps> {
   static componentName = "Avatar";
   protected template = avatarTemplate;
@@ -16,6 +25,6 @@ export class Avatar extends Block<AvatarProps> {
   constructor(props: AvatarProps) {
     const size = props.size ?? "md";
 
-    super({ size, pixelSize: PIXEL_SIZES[size], ...props });
+    super({ size, pixelSize: PIXEL_SIZES[size], ...props, initials: props.initials ? toInitials(props.initials) : "" });
   }
 }

@@ -8,4 +8,6 @@ export interface PsychologistResponse {
   is_approved: boolean;
   average_rating: number;
   review_count: number;
+  tags?: string[];
+  avatar_url?: string | null;
 }
