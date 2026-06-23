@@ -37,8 +37,7 @@
   flex-direction: column;
 }
 
-.register-form__error {
-  font-family: var(--font-sans);
-  font-size: var(--font-size-base);
-  color: var(--color-danger);
+.register-form__submit {
+  margin-top: var(--space-4);
+  width: 100%;
 }

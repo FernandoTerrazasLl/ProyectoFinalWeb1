@@ -8,6 +8,7 @@ import { Avatar } from "@shared/ui/Avatar/Avatar";
 import { StarRating } from "@shared/ui/StarRating/StarRating";
 import { Tag } from "@shared/ui/Tag/Tag";
 import { Select } from "@shared/ui/Select/Select";
+import { GenderSelect } from "@shared/ui/GenderSelect/GenderSelect";
 import { RangeSlider } from "@shared/ui/RangeSlider/RangeSlider";
 import { ProgressBar } from "@shared/ui/ProgressBar/ProgressBar";
 import { Textarea } from "@shared/ui/Textarea/Textarea";
@@ -23,6 +24,7 @@ export function registerComponents() {
   ComponentRegistry.register(StarRating);
   ComponentRegistry.register(Tag);
   ComponentRegistry.register(Select);
+  ComponentRegistry.register(GenderSelect);
   ComponentRegistry.register(RangeSlider);
   ComponentRegistry.register(ProgressBar);
   ComponentRegistry.register(Textarea);

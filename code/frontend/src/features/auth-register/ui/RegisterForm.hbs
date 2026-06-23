@@ -28,14 +28,9 @@
         {{{ Label text="Fecha de Nacimiento" forId="register-birth-date" }}}
         {{{ Input id="register-birth-date" type="date" name="birthDate" ref="birthDate" }}}
       </div>
-      <div class="register-form__field" style="display: flex; flex-direction: column; gap: 8px;">
-        {{{ Label text="Género / Sexo Biológico" forId="register-gender" }}}
-        <select id="register-gender" name="gender" class="input" ref="gender" style="padding: 12px; border-radius: 8px; border: 1px solid var(--color-border); font-family: inherit; font-size: 16px; background-color: var(--color-background); color: var(--color-text);">
-          <option value="">Seleccione una opción</option>
-          <option value="MALE">Masculino</option>
-          <option value="FEMALE">Femenino</option>
-          <option value="OTHER">Otro</option>
-        </select>
+      <div class="register-form__field">
+        {{{ Label text="Género / Sexo Biológico" }}}
+        {{{ GenderSelect ref="gender" }}}
       </div>
     </div>
     <div class="register-form__field">
@@ -61,11 +56,10 @@
   </div>
 
   {{#if error}}
-    <p class="register-form__error">{{error}}</p>
+    <p class="form-error">{{error}}</p>
   {{/if}}
   <button
-    class="button button--primary"
-    style="margin-top: 16px; width: 100%;"
+    class="button button--primary register-form__submit"
     type="submit"
     ref="submit"
     disabled

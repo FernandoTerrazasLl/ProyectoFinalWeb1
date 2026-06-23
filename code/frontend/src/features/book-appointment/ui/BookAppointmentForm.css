@@ -10,12 +10,6 @@
   color: var(--color-text);
 }
 
-.book-appointment__error {
-  font-family: var(--font-sans);
-  font-size: var(--font-size-base);
-  color: var(--color-danger);
-}
-
 .book-appointment__success {
   font-family: var(--font-sans);
   font-size: var(--font-size-base);

@@ -38,7 +38,7 @@ export class RegisterForm extends Block<RegisterFormProps> {
       maternalLastName: (this.refs.maternalLastName as HTMLInputElement).value,
       ci: (this.refs.ci as HTMLInputElement).value,
       birthDate: (this.refs.birthDate as HTMLInputElement).value,
-      gender: (this.refs.gender as HTMLSelectElement).value,
+      gender: (this.refs.gender as HTMLElement).dataset.value ?? "",
       phoneNumber: (this.refs.phoneNumber as HTMLInputElement).value,
       email: (this.refs.email as HTMLInputElement).value,
       password: (this.refs.password as HTMLInputElement).value,

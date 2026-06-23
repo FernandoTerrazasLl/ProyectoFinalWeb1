@@ -34,3 +34,9 @@ img {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
+
+.form-error {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-danger);
+}

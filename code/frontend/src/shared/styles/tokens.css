@@ -23,5 +23,7 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
   --font-sans: system-ui, -apple-system, "Segoe UI", roboto, sans-serif;
+  --font-size-sm: 0.875rem;
   --font-size-base: 16px;
+  --font-size-2xl: 1.5rem;
 }
