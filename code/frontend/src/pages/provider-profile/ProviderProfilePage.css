@@ -1,36 +1,87 @@
 .provider-profile-page {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-6);
   padding: var(--space-4);
-  max-width: 48rem;
+  max-width: 80rem;
   margin: 0 auto;
 }
 
-.provider-profile-page__card {
+.provider-profile-page__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.provider-profile-page__reviews {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  background-color: var(--color-surface);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-4);
-}
-
-@media (width >= 768px) {
-  .provider-profile-page {
-    gap: var(--space-6);
-    padding: var(--space-6);
-  }
-
-  .provider-profile-page__card {
-    padding: var(--space-6);
-  }
 }
 
 .provider-profile-page__title {
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
+}
+
+.provider-profile-page__booking {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-self: start;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-4);
+}
+
+.provider-profile-page__price-label {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+}
+
+.provider-profile-page__price-value {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.provider-profile-page__price-value span {
+  margin-left: var(--space-1);
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+.provider-profile-page__divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
+@media (width >= 768px) {
+  .provider-profile-page {
+    padding: var(--space-6);
+  }
+}
+
+@media (width >= 1024px) {
+  .provider-profile-page {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .provider-profile-page__main {
+    flex: 1;
+  }
+
+  .provider-profile-page__booking {
+    width: 22rem;
+    flex-shrink: 0;
+    position: sticky;
+    top: var(--space-6);
+  }
 }

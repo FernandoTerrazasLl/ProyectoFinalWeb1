@@ -13,8 +13,13 @@ import "@pages/provider-profile/ProviderProfilePage.css";
 
 export class ProviderProfilePage extends Block<ProviderProfilePageProps> {
   protected template = providerProfilePageTemplate;
+  private mounted = false;
 
   protected componentDidMount() {
+    if (this.mounted)
+      return;
+
+    this.mounted = true;
     this.mountInto("detail", new Spinner({}));
     void this.loadProfile();
   }
@@ -27,7 +32,10 @@ export class ProviderProfilePage extends Block<ProviderProfilePageProps> {
       return;
     }
 
-    this.mountInto("detail", new PsychologistDetail({ psychologist: result.value }));
+    const psychologist = result.value;
+
+    this.setProps({ psychologist });
+    this.mountInto("detail", new PsychologistDetail({ psychologist }));
     this.setupBooking();
     void this.loadReviews();
   }
@@ -52,8 +60,7 @@ export class ProviderProfilePage extends Block<ProviderProfilePageProps> {
   }
 
   private showNotFound() {
-    this.refs.booking?.remove();
-    this.refs.reviews?.remove();
+    this.setProps({ notFound: true });
     this.mountInto("detail", new EmptyState({
       title: "Profesional no encontrado",
       description: "Volvé al directorio para seguir buscando.",

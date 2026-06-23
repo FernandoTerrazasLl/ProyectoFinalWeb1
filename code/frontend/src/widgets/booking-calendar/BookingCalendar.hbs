@@ -1,19 +1,31 @@
 <div class="booking-calendar">
-  <input class="booking-calendar__date" type="date" value="{{date}}" min="{{date}}" ref="date">
+  <p class="booking-calendar__label">
+    {{{ Icon name="calendar" }}}
+    Selecciona una fecha
+  </p>
+  <input class="booking-calendar__date" type="date" value="{{date}}" min="{{min}}" ref="date">
   {{#if loading}}
     <p class="booking-calendar__status">Cargando horarios…</p>
   {{else}}
-    <div class="booking-calendar__slots">
-      {{#each slots}}
-        <button
-          class="booking-calendar__slot"
-          type="button"
-          data-time="{{time}}"
-          {{#unless available}}disabled{{/unless}}
-        >
-          {{time}}
-        </button>
-      {{/each}}
-    </div>
+    {{#if slots.length}}
+      <p class="booking-calendar__label">
+        {{{ Icon name="clock" }}}
+        Horarios disponibles
+      </p>
+      <div class="booking-calendar__slots">
+        {{#each slots}}
+          <button
+            class="booking-calendar__slot"
+            type="button"
+            data-time="{{time}}"
+            {{#unless available}}disabled{{/unless}}
+          >
+            {{label}}
+          </button>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="booking-calendar__empty">Selecciona una fecha primero para ver los horarios.</p>
+    {{/if}}
   {{/if}}
 </div>

@@ -2,12 +2,16 @@
   {{#each reviews}}
     <li class="reviews-list__item">
       <div class="reviews-list__header">
-        <span class="reviews-list__author">{{author}}</span>
-        {{#if verified}}{{{ Badge text="Paciente verificado" tone="success" }}}{{/if}}
+        <span class="reviews-list__author">
+          {{author}}
+          {{#if verified}}{{{ Icon name="check-circle" }}}{{/if}}
+        </span>
+        <span class="reviews-list__date">{{relativeDate}}</span>
       </div>
-      {{{ StarRating value=rating }}}
-      <p class="reviews-list__comment">{{comment}}</p>
-      <span class="reviews-list__date">{{date}}</span>
+      <div class="reviews-list__rating">
+        {{{ StarRating value=rating }}}
+      </div>
+      <p class="reviews-list__comment">&ldquo;{{comment}}&rdquo;</p>
     </li>
   {{/each}}
 </ul>

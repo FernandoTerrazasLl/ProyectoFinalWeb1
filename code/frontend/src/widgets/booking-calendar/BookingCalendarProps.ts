@@ -5,6 +5,7 @@ export interface BookingCalendarProps extends BlockOwnProps {
   psychologistId: string;
   onSelectSlot: (date: string, time: string) => void;
   date?: string;
-  slots?: AvailabilitySlot[];
+  min?: string;
+  slots?: Array<AvailabilitySlot & { label: string }>;
   loading?: boolean;
 }
