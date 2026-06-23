@@ -15,6 +15,24 @@ class UserCreate(BaseModel):
     phone_number: str
     role: str
 
+class UserProfileResponse(BaseModel):
+    first_name: str
+    last_name: str
+    maternal_last_name: str
+    ci: str
+    birth_date: Optional[date] = None
+    gender: Optional[str] = None
+    phone_number: str
+
+class UserProfileUpdate(BaseModel):
+    first_name: str
+    last_name: str
+    maternal_last_name: str
+    ci: str
+    birth_date: Optional[date] = None
+    gender: Optional[str] = None
+    phone_number: str
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str

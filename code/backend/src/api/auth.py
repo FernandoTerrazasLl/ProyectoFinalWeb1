@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from typing import Optional
 from src.services.redis_client import get_redis
 import redis.asyncio as redis
+from src.core.dependencies import get_current_user
 
 from datetime import datetime
 from src.models.schemas import *
@@ -127,7 +128,11 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
     }
 
 @router.post("/refresh")
-async def refresh(refresh_token: str = Header(...), redis_client: redis.Redis = Depends(get_redis)):
+async def refresh(
+    refresh_token: str = Header(...), 
+    redis_client: redis.Redis = Depends(get_redis),
+    db: Session = Depends(get_db)
+):
     payload = decode_token(refresh_token)
     if not payload or payload.get("type") != "refresh":
         raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
@@ -138,7 +143,10 @@ async def refresh(refresh_token: str = Header(...), redis_client: redis.Redis = 
         raise HTTPException(status_code=401, detail="Token has been revoked")
         
     email = payload.get("sub")
-    new_access = create_access_token(data={"sub": email, "role": "PATIENT"}) 
+    db_user = db.query(models.User).filter(models.User.email == email).first()
+    role = db_user.role if db_user else "PATIENT"
+    
+    new_access = create_access_token(data={"sub": email, "role": role}) 
     return {"access_token": new_access, "token_type": "bearer"}
 
 @router.post("/logout")
@@ -149,3 +157,27 @@ async def logout(refresh_token: str = Header(...), redis_client: redis.Redis = D
         await redis_client.setex(f"blacklist:{jti}", 7 * 24 * 60 * 60, "true")
     
     return {"message": "Successfully logged out"}
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+@router.post("/forgot-password", status_code=202)
+def forgot_password(request: ForgotPasswordRequest):
+    return {"message": "If the email is registered, a recovery link has been sent."}
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+@router.put("/change-password")
+def change_password(
+    request: ChangePasswordRequest, 
+    current_user: models.User = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
+    if not verify_password(request.current_password, current_user.password):
+        raise HTTPException(status_code=400, detail="Incorrect current password")
+        
+    current_user.password = get_password_hash(request.new_password)
+    db.commit()
+    return {"message": "Password updated successfully"}

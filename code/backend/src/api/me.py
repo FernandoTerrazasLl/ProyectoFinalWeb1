@@ -5,7 +5,7 @@ from typing import List, Optional
 from pydantic import BaseModel, UUID4
 import src.models.domain as models
 from src.db.database import get_db
-from src.core.dependencies import get_current_patient, get_current_provider
+from src.core.dependencies import get_current_patient, get_current_provider, get_current_user
 from src.services.es_client import get_es
 from elasticsearch import AsyncElasticsearch
 import logging
@@ -17,6 +17,36 @@ from src.services.schedule_service import generate_slots
 
 router = APIRouter(prefix="/me", tags=["me"])
 
+@router.get("/profile", response_model=UserProfileResponse)
+def get_user_profile(current_user: models.User = Depends(get_current_user)):
+    return {
+        "first_name": current_user.first_name or "",
+        "last_name": current_user.last_name or "",
+        "maternal_last_name": current_user.maternal_last_name or "",
+        "ci": current_user.ci or "",
+        "birth_date": current_user.birth_date,
+        "gender": current_user.gender,
+        "phone_number": current_user.phone_number or ""
+    }
+
+@router.put("/profile", response_model=UserProfileResponse)
+def update_user_profile(
+    profile_data: UserProfileUpdate, 
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    current_user.first_name = profile_data.first_name
+    current_user.last_name = profile_data.last_name
+    current_user.maternal_last_name = profile_data.maternal_last_name
+    current_user.ci = profile_data.ci
+    current_user.birth_date = profile_data.birth_date
+    current_user.gender = profile_data.gender
+    current_user.phone_number = profile_data.phone_number
+    
+    db.commit()
+    db.refresh(current_user)
+    
+    return current_user
 
 @router.get("/appointments", response_model=List[MyAppointmentResponse])
 def get_my_appointments(
