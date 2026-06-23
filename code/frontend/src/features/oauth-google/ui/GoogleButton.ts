@@ -18,6 +18,8 @@ export class GoogleButton extends Block<GoogleButtonProps> {
   protected componentDidMount() {
     if (isOAuthConfigured(env.oauthClientId))
       void this.renderGoogleButton(env.oauthClientId);
+    else if (!this.props.error)
+      this.setProps({ error: "Google no está configurado para este entorno." });
   }
 
   private async renderGoogleButton(clientId: string) {
@@ -31,6 +33,7 @@ export class GoogleButton extends Block<GoogleButtonProps> {
       identity.initialize({
         client_id: clientId,
         callback: (response) => void this.handleCredential(response.credential),
+        ux_mode: "popup",
       });
       identityInitialized = true;
     }
@@ -39,7 +42,17 @@ export class GoogleButton extends Block<GoogleButtonProps> {
   }
 
   private async handleCredential(idToken: string) {
-    if (await authenticateWithGoogle(idToken))
+    const result = await authenticateWithGoogle(idToken);
+
+    if (result.isOk()) {
       this.props.onAuthenticated();
+      return;
+    }
+
+    this.setProps({
+      error: result.error.status === 401
+        ? "Google rechazó el token. Revisá que el client ID del frontend coincida con el backend."
+        : "No pudimos iniciar sesión con Google. Intentá de nuevo.",
+    });
   }
 }

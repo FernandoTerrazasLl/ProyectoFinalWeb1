@@ -1,1 +1,6 @@
-<div class="google-button" ref="container"></div>
+<div class="google-button">
+  <div class="google-button__control" ref="container"></div>
+  {{#if error}}
+    <p class="google-button__error">{{error}}</p>
+  {{/if}}
+</div>
