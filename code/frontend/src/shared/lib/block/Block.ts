@@ -35,8 +35,10 @@ export abstract class Block<Props extends BlockOwnProps = BlockOwnProps> {
     const slot = this.refs[refName];
     const element = child.element();
 
-    if (slot && element)
+    if (slot && element) {
       slot.replaceWith(element);
+      this.refs[refName] = element;
+    }
   }
 
   protected replaceChildrenInto(refName: string, children: Block[]) {

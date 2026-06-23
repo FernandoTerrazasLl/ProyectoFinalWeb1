@@ -1,9 +1,17 @@
 <main class="signup-page">
+  <div class="signup-page__intro">
+    {{{ Icon name="heart-pulse" }}}
+    <h1 class="signup-page__title">Crea tu cuenta de paciente</h1>
+    <p class="signup-page__subtitle">
+      Completa tus datos de identidad para acceder a servicios de telemedicina verificados y seguros.
+    </p>
+  </div>
+
   <section class="signup-page__panel">
-    <h1 class="signup-page__title">Crear cuenta</h1>
     <div ref="form"></div>
-    <a class="signup-page__login-link" href="/auth" data-link>
-      ¿Ya tenés cuenta? Iniciá sesión
-    </a>
+    <p class="signup-page__login">
+      ¿Ya tenés cuenta?
+      <a class="signup-page__login-link" href="/auth" data-link>Iniciá sesión</a>
+    </p>
   </section>
 </main>

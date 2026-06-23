@@ -36,12 +36,13 @@ export class DirectoryPage extends Block<BlockOwnProps> {
 
   private async loadFilters() {
     const result = await listSpecialties();
-
-    if (result.isErr())
-      return;
+    const specialties = result.isOk() ? result.value : [];
 
     this.mountInto("filters", new FiltersPanel({
-      specialtyOptions: result.value.map((specialty) => ({ value: specialty.id, label: specialty.name })),
+      specialtyOptions: [
+        { value: "", label: "Todas las especialidades" },
+        ...specialties.map((specialty) => ({ value: specialty.name, label: specialty.name })),
+      ],
       maxRate: 1000,
       onChange: (filters) => this.applyQuery({ ...this.query, ...filters }),
     }));

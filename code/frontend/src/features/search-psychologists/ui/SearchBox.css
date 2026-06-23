@@ -7,3 +7,8 @@
 .search-box__submit {
   flex-shrink: 0;
 }
+
+.search-box__submit .icon {
+  width: 1rem;
+  height: 1rem;
+}
