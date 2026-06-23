@@ -9,6 +9,7 @@ import { ReviewForm } from "@features/leave-review";
 import { listMyAppointments, cancelAppointment, type PatientAppointment } from "@entities/appointment";
 import { submitReview } from "@entities/review";
 import { sessionStore, getMyProfile } from "@entities/user";
+import { routerInstance } from "@shared/lib/router/routerInstance";
 import type { PatientProfilePageProps } from "@pages/patient-profile/PatientProfilePageProps";
 import patientProfilePageTemplate from "@pages/patient-profile/PatientProfilePage.hbs?raw";
 import "@pages/patient-profile/PatientProfilePage.css";
@@ -27,12 +28,13 @@ export class PatientProfilePage extends Block<PatientProfilePageProps> {
   };
 
   constructor(props: PatientProfilePageProps) {
-    super({ isDataTab: false, isAppointmentsTab: true, ...props });
+    super({ isDataTab: true, isAppointmentsTab: false, ...props });
   }
 
   protected componentDidMount() {
     if (this.props.isAppointmentsTab) {
-      this.replaceChildrenInto("list", [new Spinner({})]);
+      this.replaceChildrenInto("upcomingList", [new Spinner({})]);
+      this.replaceChildrenInto("historyList", []);
       void this.loadAppointments();
     }
     if (this.props.isDataTab) {
@@ -44,20 +46,41 @@ export class PatientProfilePage extends Block<PatientProfilePageProps> {
   private async loadAppointments() {
     const result = await listMyAppointments();
 
-    if (result.isErr() || result.value.length === 0) {
-      this.replaceChildrenInto("list", [new EmptyState({ title: "Todavía no tenés citas agendadas" })]);
+    if (result.isErr()) {
+      this.replaceChildrenInto("upcomingList", [new EmptyState({ title: "No pudimos cargar tus citas" })]);
+      this.replaceChildrenInto("historyList", []);
       return;
     }
 
+    const upcoming = result.value.filter((appointment) => this.isUpcoming(appointment));
+    const history = result.value.filter((appointment) => !this.isUpcoming(appointment));
+
     this.replaceChildrenInto(
-      "list",
-      result.value.map((appointment) =>
-        new AppointmentCard({
-          appointment,
-          onReview: (target) => this.openReview(target),
-          onCancel: (target) => void this.handleCancel(target),
-        }),
-      ),
+      "upcomingList",
+      upcoming.length > 0
+        ? upcoming.map((appointment) =>
+          new AppointmentCard({
+            appointment,
+            onReview: (target) => this.openReview(target),
+            onCancel: (target) => void this.handleCancel(target),
+            onBookAgain: (target) => routerInstance.navigate(`/profile/${target.providerId}`),
+          }),
+        )
+        : [new EmptyState({ title: "No tenés citas próximas" })],
+    );
+
+    this.replaceChildrenInto(
+      "historyList",
+      history.length > 0
+        ? history.map((appointment) =>
+          new AppointmentCard({
+            appointment,
+            onReview: (target) => this.openReview(target),
+            onCancel: (target) => void this.handleCancel(target),
+            onBookAgain: (target) => routerInstance.navigate(`/profile/${target.providerId}`),
+          }),
+        )
+        : [new EmptyState({ title: "Todavía no tenés historial de citas" })],
     );
   }
 
@@ -66,6 +89,13 @@ export class PatientProfilePage extends Block<PatientProfilePageProps> {
 
     if (result.isOk())
       await this.loadAppointments();
+  }
+
+  private isUpcoming(appointment: PatientAppointment): boolean {
+    if (appointment.state !== "pending" && appointment.state !== "confirmed")
+      return false;
+
+    return new Date(`${appointment.date}T${appointment.time}`).getTime() >= Date.now();
   }
 
   private async loadProfile() {
