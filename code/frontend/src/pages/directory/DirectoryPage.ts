@@ -12,7 +12,7 @@ import { routerInstance } from "@shared/lib/router/routerInstance";
 import directoryPageTemplate from "@pages/directory/DirectoryPage.hbs?raw";
 import "@pages/directory/DirectoryPage.css";
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 5;
 
 export class DirectoryPage extends Block<BlockOwnProps> {
   protected template = directoryPageTemplate;
