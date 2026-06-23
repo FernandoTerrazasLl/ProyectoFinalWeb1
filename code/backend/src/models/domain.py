@@ -120,3 +120,4 @@ class ScheduleException(Base):
     exception_type = Column(String)
 
     provider = relationship("ProviderProfile", back_populates="schedule_exceptions")
+

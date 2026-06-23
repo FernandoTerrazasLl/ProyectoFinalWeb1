@@ -6,10 +6,9 @@ from motor.motor_asyncio import AsyncIOMotorClient
 async def seed_mongodb():
     client = AsyncIOMotorClient("mongodb://mongodb:27017")
     db = client["curamente_ugc"]
-    
+
     provider_id = "d4c91e0c-e786-4d0f-8e63-65f27d7874e1"
-    
-    # Check if already seeded
+
     count = await db.reviews.count_documents({"provider_id": provider_id})
     if count > 0:
         print(f"Already seeded {count} reviews.")
@@ -29,9 +28,10 @@ async def seed_mongodb():
         {"provider_id": provider_id, "user_id": str(uuid.uuid4()), "rating": 5, "comment": "100% recomendado.", "date": "2026-05-10"},
         {"provider_id": provider_id, "user_id": str(uuid.uuid4()), "rating": 5, "comment": "Una gran persona y profesional.", "date": "2026-05-05"},
     ]
-    
+
     await db.reviews.insert_many(reviews)
     print(f"Successfully seeded {len(reviews)} reviews to MongoDB for provider {provider_id}.")
 
 if __name__ == "__main__":
     asyncio.run(seed_mongodb())
+

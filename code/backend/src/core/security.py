@@ -51,3 +51,4 @@ def verify_google_token(token: str):
         return idinfo
     except ValueError:
         return None
+

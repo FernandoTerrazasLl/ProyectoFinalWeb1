@@ -10,12 +10,12 @@ class User(AbstractUser):
         ADMIN = 'ADMIN', 'Admin'
         PATIENT = 'PATIENT', 'Patient'
         PROVIDER = 'PROVIDER', 'Provider'
-        
+
     class Gender(models.TextChoices):
         MALE = 'MALE', 'Male'
         FEMALE = 'FEMALE', 'Female'
         OTHER = 'OTHER', 'Other'
-    
+
     username = models.CharField(max_length=150, blank=True, null=True)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.PATIENT)
@@ -42,3 +42,4 @@ class PatientProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.get_full_name()} (Patient)"
+

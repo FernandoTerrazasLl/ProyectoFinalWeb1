@@ -9,7 +9,7 @@ DATABASE_NAME = "curamente_ugc"
 
 class MongoClient:
     client: AsyncIOMotorClient = None
-    
+
     @classmethod
     def get_db(cls):
         if cls.client is None:
@@ -19,3 +19,4 @@ class MongoClient:
 
 async def get_mongo_db():
     return MongoClient.get_db()
+

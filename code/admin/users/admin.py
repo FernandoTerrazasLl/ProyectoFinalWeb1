@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django import forms
 from .models import User, PatientProfile
-from providers.models import ProviderProfile
 
 class OneStepUserCreationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
@@ -23,11 +22,11 @@ class OneStepUserCreationForm(forms.ModelForm):
 
         if password and password_confirm and password != password_confirm:
             self.add_error('password_confirm', "Las contraseñas no coinciden")
-            
+
         email = cleaned_data.get("email")
         if email:
             cleaned_data['username'] = email
-            
+
         return cleaned_data
 
     def save(self, commit=True):
@@ -40,7 +39,7 @@ class OneStepUserCreationForm(forms.ModelForm):
 
 class CustomUserAdmin(UserAdmin):
     add_form = OneStepUserCreationForm
-    
+
     list_display = ('email', 'first_name', 'last_name', 'role', 'is_staff')
     list_filter = ('role', 'is_staff', 'is_superuser', 'is_active')
 
@@ -69,3 +68,4 @@ class CustomUserAdmin(UserAdmin):
     )
 
 admin.site.register(User, CustomUserAdmin)
+

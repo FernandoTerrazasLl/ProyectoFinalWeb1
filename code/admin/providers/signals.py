@@ -24,3 +24,4 @@ def limit_tags(sender, instance, action, **kwargs):
         current_tags_count = instance.tags.count()
         if current_tags_count + new_tags_count > 5:
             raise ValidationError("Un psicólogo no puede tener más de 5 etiquetas (tags) asignadas.")
+

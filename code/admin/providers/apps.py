@@ -7,3 +7,4 @@ class ProvidersConfig(AppConfig):
 
     def ready(self):
         import providers.signals
+

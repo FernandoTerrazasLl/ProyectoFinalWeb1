@@ -27,8 +27,8 @@ logger = logging.getLogger(__name__)
 
 @router.get("/", response_model=List[PsychologistResponse])
 async def get_psychologists(
-    skip: int = 0, 
-    limit: int = 10, 
+    skip: int = 0,
+    limit: int = 10,
     q: Optional[str] = None,
     specialty: Optional[str] = None,
     maxRate: Optional[float] = None,
@@ -36,18 +36,18 @@ async def get_psychologists(
     redis_client: redis.Redis = Depends(get_redis)
 ):
     cache_key = f"psychs:list:skip_{skip}:limit_{limit}:q_{q}:spec_{specialty}:max_{maxRate}"
-    
+
     try:
         cached_data = await redis_client.get(cache_key)
         if cached_data:
             return json.loads(cached_data)
     except Exception as e:
         logger.error(f"Redis error: {e}")
-        
+
     must_clauses = [
         {"match": {"is_approved": True}}
     ]
-    
+
     if q:
         must_clauses.append({
             "multi_match": {
@@ -65,7 +65,7 @@ async def get_psychologists(
                 "session_price": {"lte": maxRate}
             }
         })
-        
+
     es_query = {"bool": {"must": must_clauses}} if must_clauses else {"match_all": {}}
 
     try:
@@ -87,7 +87,7 @@ async def get_psychologists(
         raise HTTPException(status_code=503, detail="Service Unavailable")
 
     result = [p.dict() for p in parse_es_hits(es_response, PsychologistResponse)]
-        
+
     try:
         await redis_client.setex(cache_key, 60, json.dumps(result))
     except Exception as e:
@@ -97,12 +97,12 @@ async def get_psychologists(
 
 @router.get("/{psychologist_id}", response_model=PsychologistResponse)
 async def get_psychologist(
-    psychologist_id: str, 
+    psychologist_id: str,
     es: AsyncElasticsearch = Depends(get_es),
     redis_client: redis.Redis = Depends(get_redis)
 ):
     cache_key = f"psychs:detail:{psychologist_id}"
-    
+
     try:
         cached_data = await redis_client.get(cache_key)
         if cached_data:
@@ -140,61 +140,61 @@ def get_availability(
         prov_uuid = uuid.UUID(psychologist_id)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid provider ID")
-        
+
     weekday = target_date.isoweekday()
-    
+
     rules = db.query(models.ScheduleRule).filter(
         models.ScheduleRule.provider_id == prov_uuid,
         models.ScheduleRule.day_of_week == weekday
     ).all()
-    
+
     exceptions = db.query(models.ScheduleException).filter(
         models.ScheduleException.provider_id == prov_uuid,
         models.ScheduleException.date == target_date
     ).all()
-    
+
     if not rules and not exceptions:
         return []
-        
+
     appointments = db.query(models.Appointment).filter(
         models.Appointment.provider_id == prov_uuid,
         models.Appointment.date == target_date,
         models.Appointment.status != "CANCELLED"
     ).all()
-    
+
     booked_times = {app.time for app in appointments}
-    
+
     all_slots_set = set()
     for rule in rules:
         slots = generate_slots(rule.start_time, rule.end_time)
         all_slots_set.update(slots)
-        
+
     extra_exceptions = [e for e in exceptions if e.exception_type == "EXTRA"]
     for e in extra_exceptions:
         slots = generate_slots(e.start_time, e.end_time)
         all_slots_set.update(slots)
-        
+
     blocked_exceptions = [e for e in exceptions if e.exception_type == "BLOCKED"]
-    
+
     availability = []
     for slot in all_slots_set:
         slot_str = slot.strftime("%H:%M")
-        
+
         is_blocked = False
         for b in blocked_exceptions:
             if b.start_time <= slot < b.end_time:
                 is_blocked = True
                 break
-                
+
         if is_blocked:
             availability.append({"time": slot_str, "available": False})
             continue
-            
+
         if slot in booked_times:
             availability.append({"time": slot_str, "available": False})
         else:
             availability.append({"time": slot_str, "available": True})
-            
+
     return sorted(availability, key=lambda x: x["time"])
 
 @router.get("/{psychologist_id}/reviews")
@@ -204,16 +204,16 @@ async def get_reviews(
 ):
     cursor = mongo_db.reviews.find({"provider_id": psychologist_id}).sort("rating", -1)
     reviews = await cursor.to_list(length=50)
-    
+
     result = []
     for r in reviews:
-        # Map MongoDB _id object to string if needed
         result.append({
             "id": str(r.get("_id")),
-            "author": "Paciente Anónimo", # Fallback since we only have user_id
+            "author": "Paciente Anónimo",
             "rating": r.get("rating", 0),
             "comment": r.get("comment", ""),
             "date": r.get("date", "2026-06-21"),
             "verified": True
         })
     return result
+

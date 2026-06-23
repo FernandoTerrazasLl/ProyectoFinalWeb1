@@ -17,3 +17,4 @@ class ScheduleExceptionAdmin(admin.ModelAdmin):
     list_display = ('provider', 'exception_type', 'date', 'start_time', 'end_time')
     list_filter = ('exception_type', 'date')
     search_fields = ('provider__user__username', 'provider__user__email')
+
