@@ -1,4 +1,15 @@
 <main class="patient-profile-page">
-  <h1 class="patient-profile-page__title">Mis citas</h1>
-  <div class="patient-profile-page__list" ref="list"></div>
+  <h1 class="patient-profile-page__title">Mi Perfil</h1>
+  <nav class="patient-profile-page__tabs">
+    <button type="button" class="patient-profile-page__tab {{#if isDataTab}}patient-profile-page__tab--active{{/if}}" data-tab="data">Mis Datos</button>
+    <button type="button" class="patient-profile-page__tab {{#if isAppointmentsTab}}patient-profile-page__tab--active{{/if}}" data-tab="appointments">Mis Citas</button>
+  </nav>
+  {{#if isDataTab}}
+    <div class="patient-profile-page__panel">
+      <div ref="profileForm"></div>
+    </div>
+  {{/if}}
+  {{#if isAppointmentsTab}}
+    <div class="patient-profile-page__list" ref="list"></div>
+  {{/if}}
 </main>

@@ -2,7 +2,12 @@
   <span class="schedule-slot__time">{{entry.time}}</span>
   {{#if isReserved}}
     <span class="schedule-slot__patient">{{entry.patientName}}</span>
-    <button class="button button--ink schedule-slot__info" type="button">Ver información</button>
+    <div class="schedule-slot__actions">
+      {{#if canCancel}}
+        <button class="button button--secondary schedule-slot__cancel" type="button">Cancelar cita</button>
+      {{/if}}
+      <button class="button button--ink schedule-slot__info" type="button">Ver información</button>
+    </div>
   {{/if}}
   {{#if isFree}}
     <button class="button button--secondary schedule-slot__block" type="button">Bloquear</button>

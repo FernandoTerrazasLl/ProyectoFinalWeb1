@@ -21,8 +21,44 @@
   color: var(--color-text);
 }
 
+.patient-profile-page__tabs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.patient-profile-page__tab {
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-surface);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.patient-profile-page__tab--active {
+  background-color: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.patient-profile-page__panel {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-4);
+}
+
 .patient-profile-page__list {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+}
+
+@media (width >= 768px) {
+  .patient-profile-page__tabs {
+    flex-direction: row;
+  }
 }

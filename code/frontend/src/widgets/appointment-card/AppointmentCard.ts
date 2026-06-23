@@ -29,6 +29,8 @@ export class AppointmentCard extends Block<AppointmentCardProps> {
     click: (event) => {
       if ((event.target as Element).closest(".appointment-card__review"))
         this.props.onReview(this.props.appointment);
+      if ((event.target as Element).closest(".appointment-card__cancel"))
+        this.props.onCancel(this.props.appointment);
     },
   };
 
@@ -36,6 +38,7 @@ export class AppointmentCard extends Block<AppointmentCardProps> {
     super({
       stateLabel: STATE_LABELS[props.appointment.state],
       stateTone: STATE_TONES[props.appointment.state],
+      canCancel: props.appointment.state === "pending" || props.appointment.state === "confirmed",
       ...props,
     });
   }

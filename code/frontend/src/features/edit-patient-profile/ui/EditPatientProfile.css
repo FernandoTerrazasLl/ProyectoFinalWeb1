@@ -1,0 +1,43 @@
+.edit-patient-profile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.edit-patient-profile__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (width >= 768px) {
+  .edit-patient-profile__row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.edit-patient-profile__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.edit-patient-profile__readonly {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-bg);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-muted);
+}
+
+.edit-patient-profile__success {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-success);
+}
+
+.edit-patient-profile__submit {
+  align-self: flex-start;
+}

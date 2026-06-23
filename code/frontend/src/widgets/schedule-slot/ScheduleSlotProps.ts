@@ -5,7 +5,9 @@ export interface ScheduleSlotProps extends BlockOwnProps {
   entry: ScheduleEntry;
   onViewInfo: (appointmentId: string) => void;
   onBlock: (time: string) => void;
+  onCancel: (appointmentId: string) => void;
   isReserved?: boolean;
   isFree?: boolean;
   isBlocked?: boolean;
+  canCancel?: boolean;
 }

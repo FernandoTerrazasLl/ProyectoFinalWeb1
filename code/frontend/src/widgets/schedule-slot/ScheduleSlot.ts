@@ -14,6 +14,8 @@ export class ScheduleSlot extends Block<ScheduleSlotProps> {
         this.props.onViewInfo(this.props.entry.appointmentId);
       if (target.closest(".schedule-slot__block"))
         this.props.onBlock(this.props.entry.time);
+      if (target.closest(".schedule-slot__cancel") && this.props.entry.appointmentId)
+        this.props.onCancel(this.props.entry.appointmentId);
     },
   };
 
@@ -25,6 +27,7 @@ export class ScheduleSlot extends Block<ScheduleSlotProps> {
         props.entry.state === "completed",
       isFree: props.entry.state === "available",
       isBlocked: props.entry.state === "blocked",
+      canCancel: props.entry.state === "pending" || props.entry.state === "confirmed",
       ...props,
     });
   }

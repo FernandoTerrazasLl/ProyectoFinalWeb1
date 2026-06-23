@@ -20,6 +20,9 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
   };
 
   protected componentDidMount() {
+    if (this.props.saved)
+      return;
+
     (this.refs.bio as HTMLTextAreaElement).value = this.props.draft.bio;
     (this.refs.rate as HTMLInputElement).value = String(this.props.draft.sessionPrice);
     this.tags = [...this.props.draft.tags];

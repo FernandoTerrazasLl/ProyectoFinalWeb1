@@ -5,7 +5,12 @@
   </div>
   <p class="appointment-card__when">{{appointment.date}} · {{appointment.time}}</p>
   <p class="appointment-card__contact">{{appointment.providerAddress}} · {{appointment.providerPhone}}</p>
-  {{#if appointment.reviewable}}
-    <button class="button button--secondary appointment-card__review" type="button">Dejar reseña</button>
-  {{/if}}
+  <div class="appointment-card__actions">
+    {{#if appointment.reviewable}}
+      <button class="button button--secondary appointment-card__review" type="button">Dejar reseña</button>
+    {{/if}}
+    {{#if canCancel}}
+      <button class="button button--secondary appointment-card__cancel" type="button">Cancelar cita</button>
+    {{/if}}
+  </div>
 </article>

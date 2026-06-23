@@ -33,9 +33,18 @@
   color: var(--color-muted);
 }
 
+.appointment-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
 .appointment-card__review {
-  align-self: flex-start;
   background-color: #ccfbf1;
   border-color: transparent;
   color: var(--color-primary-hover);
+}
+
+.appointment-card__cancel {
+  color: var(--color-danger);
 }

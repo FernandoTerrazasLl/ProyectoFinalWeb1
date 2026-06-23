@@ -12,3 +12,4 @@ export { listMyAppointments } from "@entities/appointment/api/listMyAppointments
 export { getProviderSchedule } from "@entities/appointment/api/getProviderSchedule";
 export { getAppointmentPatient } from "@entities/appointment/api/getAppointmentPatient";
 export { blockSlot } from "@entities/appointment/api/blockSlot";
+export { cancelAppointment } from "@entities/appointment/api/cancelAppointment";
