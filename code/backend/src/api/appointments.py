@@ -19,6 +19,11 @@ def create_appointment(
 ):
     naive_time = appt.time.replace(tzinfo=None)
 
+    now = datetime.now()
+    appointment_dt = datetime.combine(appt.date, naive_time)
+    if appointment_dt < now:
+        raise HTTPException(status_code=400, detail="No se puede reservar una cita en el pasado.")
+
     existing = db.query(models.Appointment).filter(
         models.Appointment.provider_id == appt.provider_id,
         models.Appointment.date == appt.date,
