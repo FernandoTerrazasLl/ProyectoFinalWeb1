@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CuraMente - Presentación Final</title>
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --line: #dbe6ef;
+        --teal: #0f766e;
+        --teal-soft: #ccfbf1;
+        --card: #ffffff;
+        --shadow: 0 24px 80px rgb(15 23 42 / 10%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+
+      body {
+        overflow: hidden;
+      }
+
+      .deck {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        transition: transform 280ms ease;
+      }
+
+      .slide {
+        flex: 0 0 100vw;
+        height: 100vh;
+        padding: 5.5vh 6vw;
+        display: grid;
+        place-items: center;
+      }
+
+      .slide__frame {
+        width: min(1180px, 100%);
+        min-height: min(720px, 88vh);
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 30px;
+        box-shadow: var(--shadow);
+        padding: clamp(34px, 5vw, 64px);
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .slide__frame::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto;
+        height: 8px;
+        background: linear-gradient(90deg, var(--teal), #14b8a6);
+      }
+
+      .cover {
+        justify-content: space-between;
+        background:
+          radial-gradient(circle at 85% 20%, rgb(204 251 241 / 65%), transparent 32%),
+          linear-gradient(135deg, #ffffff 0%, #f8fafc 72%);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        font-weight: 800;
+        letter-spacing: 0;
+        color: var(--teal);
+      }
+
+      .brand__mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        background: var(--teal);
+        color: #ffffff;
+        font-size: 25px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(64px, 9vw, 118px);
+        line-height: 0.94;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        max-width: 920px;
+        font-size: clamp(38px, 5vw, 66px);
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        font-size: 22px;
+        line-height: 1.2;
+      }
+
+      .eyebrow {
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--teal);
+      }
+
+      .lead {
+        max-width: 790px;
+        font-size: clamp(22px, 2.3vw, 32px);
+        line-height: 1.35;
+        color: var(--muted);
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .names {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .pill {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 12px 18px;
+        background: #ffffff;
+        font-weight: 700;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px;
+      }
+
+      .grid--three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 24px;
+        background: #ffffff;
+      }
+
+      .card strong {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--teal);
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 1.2rem;
+        color: var(--muted);
+        font-size: 22px;
+        line-height: 1.45;
+      }
+
+      li + li {
+        margin-top: 8px;
+      }
+
+      .metric-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .metric {
+        border-radius: 20px;
+        padding: 22px;
+        background: var(--teal-soft);
+      }
+
+      .metric__value {
+        display: block;
+        font-size: 34px;
+        font-weight: 850;
+        color: var(--teal);
+      }
+
+      .metric__label {
+        display: block;
+        margin-top: 6px;
+        color: #115e59;
+        font-weight: 700;
+      }
+
+      .diagram {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .diagram img {
+        width: 100%;
+        max-height: 440px;
+        object-fit: contain;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #ffffff;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .flow__step {
+        min-height: 104px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        background: #ffffff;
+        font-weight: 750;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 16px;
+        font-size: 18px;
+      }
+
+      .table th,
+      .table td {
+        border-bottom: 1px solid var(--line);
+        padding: 14px 16px;
+        text-align: left;
+      }
+
+      .table th {
+        color: var(--teal);
+        background: #f0fdfa;
+      }
+
+      .footer {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .controls {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px;
+        background: rgb(255 255 255 / 86%);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 10px 40px rgb(15 23 42 / 12%);
+      }
+
+      .controls button {
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 14px;
+        background: var(--teal);
+        color: #ffffff;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .counter {
+        min-width: 64px;
+        text-align: center;
+        color: var(--muted);
+        font-weight: 800;
+      }
+
+      @media (width <= 860px) {
+        body {
+          overflow: auto;
+        }
+
+        .deck {
+          height: auto;
+          display: block;
+          transform: none !important;
+        }
+
+        .slide {
+          height: auto;
+          min-height: 100vh;
+          padding: 20px;
+        }
+
+        .slide__frame {
+          min-height: auto;
+          border-radius: 22px;
+        }
+
+        .grid,
+        .grid--three,
+        .diagram,
+        .metric-row,
+        .flow {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          display: none;
+        }
+      }
+
+      @media print {
+        body {
+          overflow: visible;
+          background: #ffffff;
+        }
+
+        .deck {
+          display: block;
+          height: auto;
+          transform: none !important;
+        }
+
+        .slide {
+          width: 100%;
+          height: 100vh;
+          page-break-after: always;
+        }
+
+        .controls {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="deck" id="deck">
+      <section class="slide">
+        <div class="slide__frame cover">
+          <div class="brand">
+            <span class="brand__mark">+</span>
+            <span>Proyecto Final - Aplicaciones Web I</span>
+          </div>
+          <div>
+            <p class="eyebrow">Plataforma de telemedicina psicológica</p>
+            <h1>CuraMente</h1>
+            <p class="lead">Catálogo de psicólogos, triage automatizado, gestión de citas, reseñas y administración integrada.</p>
+          </div>
+          <div>
+            <p class="muted">Integrantes</p>
+            <div class="names">
+              <span class="pill">Alejandro Ramirez</span>
+              <span class="pill">Fernando Terrazas</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame">
+          <p class="eyebrow">Producto</p>
+          <h2>Problema y valor de negocio</h2>
+          <div class="grid">
+            <div class="card">
+              <strong>Dolor</strong>
+              <ul>
+                <li>Pacientes necesitan encontrar apoyo psicológico confiable sin fricción.</li>
+                <li>La elección del especialista suele ser lenta y poco guiada.</li>
+                <li>La agenda debe evitar errores: pasado, horarios bloqueados o citas duplicadas.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <strong>Solución</strong>
+              <ul>
+                <li>Directorio público con búsqueda, filtros y detalle profesional.</li>
+                <li>Triage que recomienda una especialidad clínica desde respuestas del paciente.</li>
+                <li>Flujo de reserva con disponibilidad real y control de estados de cita.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer">
+            <span>Dominio: telemedicina</span>
+            <span>Módulo nuevo: triage y agenda inteligente</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame">
+          <p class="eyebrow">Alcance</p>
+          <h2>Módulos obligatorios cubiertos</h2>
+          <div class="grid grid--three">
+            <div class="card"><strong>Auth</strong><p class="muted">Registro, login local, OAuth Google, roles y JWT.</p></div>
+            <div class="card"><strong>API pública</strong><p class="muted">Listado, búsqueda, filtros, paginación y detalle de psicólogos.</p></div>
+            <div class="card"><strong>Admin</strong><p class="muted">Django Admin para usuarios, perfiles, especialidades y catálogo.</p></div>
+            <div class="card"><strong>UGC</strong><p class="muted">Reseñas, calificaciones e historial visible para pacientes.</p></div>
+            <div class="card"><strong>Citas</strong><p class="muted">Reserva, agenda de proveedor, bloqueo de horarios y completado.</p></div>
+            <div class="card"><strong>Triage</strong><p class="muted">Cuestionario visual, análisis y recomendación de especialidad.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame">
+          <p class="eyebrow">Arquitectura</p>
+          <h2>Monolito modular con servicios especializados</h2>
+          <div class="diagram">
+            <div>
+              <ul>
+                <li>Django resuelve el panel administrativo con CRUD maduro.</li>
+                <li>FastAPI expone Auth, catálogo, citas, triage y UGC por HTTP/JSON.</li>
+                <li>PostgreSQL mantiene consistencia fuerte para usuarios y citas.</li>
+                <li>Nginx unifica frontend y backend bajo el mismo punto de entrada.</li>
+              </ul>
+            </div>
+            <img src="https://github.com/user-attachments/assets/6a00adc2-ddfc-4fea-b2a3-5a1095a044c7" alt="Diagrama C2 de contenedores de CuraMente">
+          </div>
+          <div class="footer">
+            <span>ADR-001: Django + FastAPI</span>
+            <span>ADR-002: base compartida</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame">
+          <p class="eyebrow">C4 y datos</p>
+          <h2>Diagramas requeridos para defender modularidad</h2>
+          <div class="grid">
+            <div class="card">
+              <strong>C1, C2 y C3</strong>
+              <p class="muted">El README incluye contexto, contenedores y componentes del sistema. El C3 abre el monolito en módulos internos.</p>
+            </div>
+            <div class="card">
+              <strong>ER y despliegue</strong>
+              <p class="muted">La documentación muestra entidades principales, persistencia y contenedores Docker expuestos por Nginx.</p>
+            </div>
+          </div>
+          <div class="diagram">
+            <img src="https://github.com/user-attachments/assets/68684937-cea2-4c77-8713-615b77238e01" alt="Diagrama C3 de componentes">
+            <img src="https://github.com/user-attachments/assets/c5732adc-82cd-4ced-ab95-8abec9beca5a" alt="Diagrama ER de base de datos">
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame">
+          <p class="eyebrow">Frontend</p>
+          <h2>Dos clientes conviviendo detrás de Nginx</h2>
+          <div class="grid">
+            <div class="card">
+              <strong>TypeScript + Handlebars</strong>
+              <ul>
+                <li>Arquitectura Feature-Sliced Design.</li>
+                <li>Componentes Block, store Observer y router custom.</li>
+                <li>CSS BEM, PostCSS, ESLint, Stylelint y Vitest.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <strong>React</strong>
+              <ul>
+                <li>Migración separada para comparar tecnologías.</li>
+                <li>Misma UI y funcionalidades principales.</li>
+                <li>Build, tests, coverage y servicio Docker propio.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer">
+            <span>ADR-004: Vanilla TS + Handlebars + FSD</span>
+            <span>Rutas: / y /react/</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame">
+          <p class="eyebrow">Módulo nuevo</p>
+          <h2>Triage como entrada inteligente al catálogo</h2>
+          <div class="flow">
+            <div class="flow__step">Paciente responde cuestionario</div>
+            <div class="flow__step">Frontend calcula avance y envía respuestas</div>
+            <div class="flow__step">API evalúa especialidad recomendada</div>
+            <div class="flow__step">Resultado guía al directorio filtrado</div>
+            <div class="flow__step">Paciente agenda con un profesional</div>
+          </div>
+          <div class="diagram">
+            <img src="https://github.com/user-attachments/assets/31d3b67e-7895-44f5-a7a0-ec75c7e299e5" alt="Diagrama de secuencia del módulo encuesta">
+            <img src="https://github.com/user-attachments/assets/efe445ae-f58d-49bd-8166-7dbc53ef95bb" alt="Diagrama de transición al home filtrado por evaluación">
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame">
+          <p class="eyebrow">Citas</p>
+          <h2>Reserva segura y ciclo de vida controlado</h2>
+          <div class="diagram">
+            <img src="https://github.com/user-attachments/assets/f90f4731-0d35-4bcd-8f05-11f1f8c95fd1" alt="Diagrama de actividad de reserva de citas">
+            <img src="https://github.com/user-attachments/assets/b0be70c7-1efd-4134-a36f-367d83aa1199" alt="Diagrama de estados del ciclo de vida de una cita">
+          </div>
+          <div class="grid">
+            <div class="card"><strong>Reglas UI</strong><p class="muted">No permite fechas pasadas, horarios pasados, horarios bloqueados ni citas ya reservadas.</p></div>
+            <div class="card"><strong>Reglas de rol</strong><p class="muted">Un proveedor puede reservar, pero no puede agendar una cita consigo mismo.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame">
+          <p class="eyebrow">Trazabilidad</p>
+          <h2>Historias, endpoints, pantallas y pruebas</h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Módulo</th>
+                <th>Historia visible</th>
+                <th>Endpoint principal</th>
+                <th>Pantalla</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Auth</td><td>Registro/login/OAuth</td><td>/api/auth/*</td><td>/auth, /signup</td></tr>
+              <tr><td>API pública</td><td>Directorio y filtros</td><td>/api/psychologists</td><td>/directory</td></tr>
+              <tr><td>UGC</td><td>Crear y listar reseñas</td><td>/api/ugc/reviews</td><td>/patient-profile, /provider-profile</td></tr>
+              <tr><td>Triage</td><td>Evaluar respuestas</td><td>/api/triage/evaluate</td><td>/triage</td></tr>
+              <tr><td>Citas</td><td>Reserva y agenda</td><td>/api/appointments</td><td>/provider-profile, /provider-schedule</td></tr>
+            </tbody>
+          </table>
+          <p class="muted">La tabla completa está en el README con ID de historia, commit, autor, endpoint, pantalla y test.</p>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame">
+          <p class="eyebrow">Calidad</p>
+          <h2>Definition of Done técnica</h2>
+          <div class="metric-row">
+            <div class="metric"><span class="metric__value">TS</span><span class="metric__label">strict</span></div>
+            <div class="metric"><span class="metric__value">FSD</span><span class="metric__label">boundaries</span></div>
+            <div class="metric"><span class="metric__value">BEM</span><span class="metric__label">stylelint</span></div>
+            <div class="metric"><span class="metric__value">CI</span><span class="metric__label">validate</span></div>
+          </div>
+          <div class="grid">
+            <div class="card">
+              <strong>Frontend</strong>
+              <ul>
+                <li>npm run validate</li>
+                <li>npm run test:coverage</li>
+                <li>Estados loading, empty y error.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <strong>Backend</strong>
+              <ul>
+                <li>OpenAPI expuesto por FastAPI.</li>
+                <li>Tests por módulo y endpoints críticos.</li>
+                <li>Docker Compose levanta el sistema completo.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame">
+          <p class="eyebrow">Demo final</p>
+          <h2>Recorrido propuesto en vivo</h2>
+          <div class="flow">
+            <div class="flow__step">1. Entrar como anónimo al directorio</div>
+            <div class="flow__step">2. Buscar y filtrar psicólogos</div>
+            <div class="flow__step">3. Registrarse o iniciar sesión</div>
+            <div class="flow__step">4. Completar triage</div>
+            <div class="flow__step">5. Reservar cita</div>
+          </div>
+          <div class="grid">
+            <div class="card"><strong>Paciente</strong><p class="muted">Edita perfil, revisa citas y deja reseña.</p></div>
+            <div class="card"><strong>Psicólogo</strong><p class="muted">Gestiona perfil, disponibilidad y agenda diaria.</p></div>
+            <div class="card"><strong>Admin</strong><p class="muted">Administra catálogo desde Django Admin.</p></div>
+            <div class="card"><strong>Comparativa</strong><p class="muted">Mostrar frontend Handlebars y versión React conviviendo.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame cover">
+          <p class="eyebrow">Cierre</p>
+          <h2>CuraMente integra producto, arquitectura y demo verificable</h2>
+          <div class="grid">
+            <div class="card"><strong>Valor</strong><p class="muted">Reduce fricción para elegir especialista y agendar atención psicológica.</p></div>
+            <div class="card"><strong>Técnica</strong><p class="muted">Monolito modular documentado con C4, UML, ER, ADRs, CI y Docker.</p></div>
+            <div class="card"><strong>Defensa</strong><p class="muted">Demo centrada en historias visibles desde el frontend.</p></div>
+            <div class="card"><strong>Preguntas</strong><p class="muted">Restricciones, escalabilidad, fallos, decisiones descartadas y evolución.</p></div>
+          </div>
+          <div class="footer">
+            <span>Alejandro Ramirez</span>
+            <span>Fernando Terrazas</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="controls" aria-label="Controles de presentación">
+      <button type="button" id="prev">Anterior</button>
+      <span class="counter" id="counter">1 / 12</span>
+      <button type="button" id="next">Siguiente</button>
+    </nav>
+
+    <script>
+      const deck = document.querySelector("#deck");
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const counter = document.querySelector("#counter");
+      const prev = document.querySelector("#prev");
+      const next = document.querySelector("#next");
+      let currentSlide = 0;
+
+      function renderSlide() {
+        deck.style.transform = `translateX(-${currentSlide * 100}vw)`;
+        counter.textContent = `${currentSlide + 1} / ${slides.length}`;
+      }
+
+      function goToSlide(index) {
+        currentSlide = Math.max(0, Math.min(index, slides.length - 1));
+        renderSlide();
+      }
+
+      prev.addEventListener("click", () => goToSlide(currentSlide - 1));
+      next.addEventListener("click", () => goToSlide(currentSlide + 1));
+
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowRight" || event.key === "PageDown")
+          goToSlide(currentSlide + 1);
+
+        if (event.key === "ArrowLeft" || event.key === "PageUp")
+          goToSlide(currentSlide - 1);
+
+        if (event.key === "Home")
+          goToSlide(0);
+
+        if (event.key === "End")
+          goToSlide(slides.length - 1);
+      });
+
+      renderSlide();
+    </script>
+  </body>
+</html>
