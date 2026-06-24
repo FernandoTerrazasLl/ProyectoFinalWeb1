@@ -8,7 +8,9 @@ import { completeAppointment } from "@entities/appointment/api/completeAppointme
 import { getAppointmentPatient } from "@entities/appointment/api/getAppointmentPatient";
 import { getAvailability } from "@entities/appointment/api/getAvailability";
 import { getProviderSchedule } from "@entities/appointment/api/getProviderSchedule";
+import { getScheduleRules } from "@entities/appointment/api/getScheduleRules";
 import { listMyAppointments } from "@entities/appointment/api/listMyAppointments";
+import { updateScheduleRules } from "@entities/appointment/api/updateScheduleRules";
 
 vi.mock("@shared/api/http", () => ({ http: { request: vi.fn() } }));
 
@@ -63,6 +65,22 @@ describe("Disponibilidad horaria del psicólogo [US-BKG-01]", () => {
     await getAvailability("p1", "2026-06-23");
 
     expect(request).toHaveBeenCalledWith("GET", "/psychologists/p1/availability?date=2026-06-23");
+  });
+
+  it("consulta las reglas recurrentes de agenda [AC-2]", async () => {
+    request.mockResolvedValue(Ok([]));
+
+    await getScheduleRules();
+
+    expect(request).toHaveBeenCalledWith("GET", "/me/schedule-rules");
+  });
+
+  it("guarda las reglas recurrentes con snake_case [AC-3]", async () => {
+    await updateScheduleRules([{ dayOfWeek: 1, startTime: "08:00", endTime: "09:00" }]);
+
+    expect(request).toHaveBeenCalledWith("POST", "/me/schedule-rules", [
+      { day_of_week: 1, start_time: "08:00", end_time: "09:00" },
+    ]);
   });
 });
 

@@ -114,7 +114,7 @@ describe("Edición del perfil profesional [US-BKG-05]", () => {
     expect(request).toHaveBeenCalledWith(
       "PUT",
       "/me/provider-profile",
-      expect.objectContaining({ birth_date: null, gender: null, email: null, specialty: null }),
+      expect.objectContaining({ birth_date: null, gender: null, email: null, specialty: null, avatar_url: "" }),
     );
   });
 });

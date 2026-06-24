@@ -128,7 +128,7 @@ describe("Datos personales del paciente [US-AUTH-01]", () => {
     expect(request).toHaveBeenCalledWith(
       "PUT",
       "/me/profile",
-      expect.objectContaining({ first_name: "Ana", phone_number: "70000000" }),
+      expect.objectContaining({ first_name: "Ana", phone_number: "70000000", avatar_url: "" }),
     );
   });
 });
