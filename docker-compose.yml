@@ -135,6 +135,21 @@ services:
         limits:
           memory: 128M
 
+  react:
+    build:
+      context: ./code/react
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api}
+        VITE_OAUTH_CLIENT_ID: ${VITE_OAUTH_CLIENT_ID:-}
+        VITE_BASE_PATH: /react/
+    networks:
+      - private_network
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
     environment:
@@ -235,6 +250,7 @@ services:
       - "443:443"
     depends_on:
       - frontend
+      - react
       - admin
       - backend
     networks:
