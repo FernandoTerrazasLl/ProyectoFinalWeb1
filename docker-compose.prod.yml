@@ -240,5 +240,4 @@ networks:
   public_network:
     driver: bridge
   private_network:
-    internal: true
     driver: bridge
