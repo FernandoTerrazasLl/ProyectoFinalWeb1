@@ -12,6 +12,7 @@ import src.models.domain as models
 from src.models.schemas import *
 from src.services.mongo_client import get_mongo_db
 from src.services.schedule_service import generate_slots
+from src.services.availability_service import get_provider_slots, is_slot_blocked
 
 router = APIRouter(prefix="/psychologists", tags=["psychologists"])
 
@@ -130,19 +131,9 @@ def get_availability(
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid provider ID")
 
-    weekday = target_date.isoweekday()
+    all_slots_set, blocked_exceptions = get_provider_slots(db, prov_uuid, target_date)
 
-    rules = db.query(models.ScheduleRule).filter(
-        models.ScheduleRule.provider_id == prov_uuid,
-        models.ScheduleRule.day_of_week == weekday
-    ).all()
-
-    exceptions = db.query(models.ScheduleException).filter(
-        models.ScheduleException.provider_id == prov_uuid,
-        models.ScheduleException.date == target_date
-    ).all()
-
-    if not rules and not exceptions:
+    if not all_slots_set and not blocked_exceptions:
         return []
 
     appointments = db.query(models.Appointment).filter(
@@ -153,29 +144,11 @@ def get_availability(
 
     booked_times = {app.time for app in appointments}
 
-    all_slots_set = set()
-    for rule in rules:
-        slots = generate_slots(rule.start_time, rule.end_time)
-        all_slots_set.update(slots)
-
-    extra_exceptions = [e for e in exceptions if e.exception_type == "EXTRA"]
-    for e in extra_exceptions:
-        slots = generate_slots(e.start_time, e.end_time)
-        all_slots_set.update(slots)
-
-    blocked_exceptions = [e for e in exceptions if e.exception_type == "BLOCKED"]
-
     availability = []
     for slot in all_slots_set:
         slot_str = slot.strftime("%H:%M")
 
-        is_blocked = False
-        for b in blocked_exceptions:
-            if b.start_time <= slot < b.end_time:
-                is_blocked = True
-                break
-
-        if is_blocked:
+        if is_slot_blocked(slot, blocked_exceptions):
             availability.append({"time": slot_str, "available": False})
             continue
 

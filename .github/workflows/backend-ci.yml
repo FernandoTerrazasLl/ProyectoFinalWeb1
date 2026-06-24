@@ -47,6 +47,12 @@ jobs:
         if: failure()
         run: docker compose logs backend
 
+      - name: Verificar arquitectura con import-linter (Backend)
+        run: docker compose exec -T backend sh -c "lint-imports"
+
+      - name: Verificar arquitectura con import-linter (Admin)
+        run: docker compose exec -T admin sh -c "lint-imports"
+
       - name: Ejecutar Tests de Backend (pytest)
         run: |
           mkdir -p code/backend/test-artifacts/htmlcov

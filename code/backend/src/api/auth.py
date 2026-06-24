@@ -12,7 +12,7 @@ from src.services.redis_client import get_redis
 import redis.asyncio as redis
 from src.core.dependencies import get_current_user
 
-from datetime import datetime
+from datetime import datetime, timezone
 from src.models.schemas import *
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -41,7 +41,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         is_superuser=False,
         is_active=True,
         auth_provider="local",
-        date_joined=datetime.utcnow()
+        date_joined=datetime.now(timezone.utc).replace(tzinfo=None)
     )
     db.add(new_user)
     db.commit()

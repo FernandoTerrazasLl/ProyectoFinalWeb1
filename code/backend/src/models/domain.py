@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from src.db.database import Base
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 class User(Base):
     __tablename__ = "users_user"
@@ -21,7 +21,7 @@ class User(Base):
     role = Column(String)
     auth_provider = Column(String, default="local")
     provider_id = Column(String, default="")
-    date_joined = Column(DateTime, default=datetime.utcnow)
+    date_joined = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
     avatar_url = Column(String, default="")
     phone_number = Column(String, default="")
     ci = Column(String, default="")

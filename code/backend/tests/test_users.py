@@ -1,9 +1,4 @@
-from fastapi.testclient import TestClient
-from main import app
-
-client = TestClient(app)
-
-def test_profile_updates():
+def test_profile_updates(client):
     res = client.post("/auth/login", json={"email": "patient2@test.com", "password": "password"})
     assert res.status_code == 200
     patient_token = res.json()["access_token"]

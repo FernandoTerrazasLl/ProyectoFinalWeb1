@@ -8,25 +8,24 @@ from src.db.database import get_db
 from src.core.dependencies import get_current_patient, get_current_provider, get_current_user
 from src.services.mongo_client import get_mongo_db
 from motor.motor_asyncio import AsyncIOMotorDatabase
+from elasticsearch import AsyncElasticsearch
+import redis.asyncio as redis
+import logging
+
+from src.services.es_client import get_es
+from src.services.redis_client import get_redis
 
 from src.models.schemas import *
 from src.services.schedule_service import generate_slots
+from src.services.availability_service import get_provider_slots, is_slot_blocked
+from src.services.profile_service import build_user_profile_response, build_provider_profile_response
 
 router = APIRouter(prefix="/me", tags=["me"])
+logger = logging.getLogger(__name__)
 
 @router.get("/profile", response_model=UserProfileResponse)
 def get_user_profile(current_user: models.User = Depends(get_current_user)):
-    return {
-        "first_name": current_user.first_name or "",
-        "last_name": current_user.last_name or "",
-        "maternal_last_name": current_user.maternal_last_name or "",
-        "ci": current_user.ci or "",
-        "birth_date": current_user.birth_date,
-        "gender": current_user.gender,
-        "phone_number": current_user.phone_number or "",
-        "email": current_user.email,
-        "avatar_url": current_user.avatar_url or ""
-    }
+    return build_user_profile_response(current_user)
 
 @router.put("/profile", response_model=UserProfileResponse)
 def update_user_profile(
@@ -52,17 +51,7 @@ def update_user_profile(
     db.commit()
     db.refresh(current_user)
 
-    return {
-        "first_name": current_user.first_name or "",
-        "last_name": current_user.last_name or "",
-        "maternal_last_name": current_user.maternal_last_name or "",
-        "ci": current_user.ci or "",
-        "birth_date": current_user.birth_date,
-        "gender": current_user.gender,
-        "phone_number": current_user.phone_number or "",
-        "email": current_user.email,
-        "avatar_url": current_user.avatar_url or ""
-    }
+    return build_user_profile_response(current_user)
 
 @router.get("/appointments", response_model=List[MyAppointmentResponse])
 async def get_my_appointments(
@@ -112,17 +101,7 @@ def get_my_schedule(
     provider: models.ProviderProfile = Depends(get_current_provider),
     db: Session = Depends(get_db)
 ):
-    weekday = target_date.isoweekday()
-
-    rules = db.query(models.ScheduleRule).filter(
-        models.ScheduleRule.provider_id == provider.id,
-        models.ScheduleRule.day_of_week == weekday
-    ).all()
-
-    exceptions = db.query(models.ScheduleException).filter(
-        models.ScheduleException.provider_id == provider.id,
-        models.ScheduleException.date == target_date
-    ).all()
+    all_slots_set, blocked_exceptions = get_provider_slots(db, provider.id, target_date)
 
     appointments = db.query(models.Appointment).filter(
         models.Appointment.provider_id == provider.id,
@@ -132,27 +111,9 @@ def get_my_schedule(
 
     booked_map = {app.time: app for app in appointments}
 
-    all_slots_set = set()
-    for rule in rules:
-        slots = generate_slots(rule.start_time, rule.end_time)
-        all_slots_set.update(slots)
-
-    extra_exceptions = [e for e in exceptions if e.exception_type == "EXTRA"]
-    for e in extra_exceptions:
-        slots = generate_slots(e.start_time, e.end_time)
-        all_slots_set.update(slots)
-
-    blocked_exceptions = [e for e in exceptions if e.exception_type == "BLOCKED"]
-
     schedule_items = []
     for slot in all_slots_set:
-        is_blocked = False
-        for b in blocked_exceptions:
-            if b.start_time <= slot < b.end_time:
-                is_blocked = True
-                break
-
-        if is_blocked:
+        if is_slot_blocked(slot, blocked_exceptions):
             schedule_items.append({
                 "time": slot,
                 "state": "blocked"
@@ -238,28 +199,15 @@ def update_schedule_rules(
 def get_provider_profile(
     provider: models.ProviderProfile = Depends(get_current_provider)
 ):
-    return {
-        "first_name": provider.user.first_name or "",
-        "last_name": provider.user.last_name or "",
-        "maternal_last_name": provider.user.maternal_last_name or "",
-        "ci": provider.user.ci or "",
-        "birth_date": provider.user.birth_date,
-        "gender": provider.user.gender,
-        "phone_number": provider.user.phone_number or "",
-        "email": provider.user.email,
-        "avatar_url": provider.user.avatar_url or "",
-        "bio": provider.bio or "",
-        "session_price": float(provider.session_price) if provider.session_price else 0.0,
-        "tags": [tag.name for tag in provider.tags],
-        "specialty": provider.specialty.name if provider.specialty else None,
-        "office_address": getattr(provider, "office_address", "")
-    }
+    return build_provider_profile_response(provider)
 
 @router.put("/provider-profile", response_model=ProviderProfileResponse)
-def update_provider_profile(
+async def update_provider_profile(
     profile_update: ProviderProfileUpdate,
     provider: models.ProviderProfile = Depends(get_current_provider),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    es: AsyncElasticsearch = Depends(get_es),
+    redis_client: redis.Redis = Depends(get_redis)
 ):
     current_user = provider.user
 
@@ -307,20 +255,33 @@ def update_provider_profile(
     tags_list = [tag.name for tag in provider.tags]
     price = float(provider.session_price) if provider.session_price else 0.0
 
-    return {
-        "first_name": current_user.first_name or "",
-        "last_name": current_user.last_name or "",
-        "maternal_last_name": current_user.maternal_last_name or "",
-        "ci": current_user.ci or "",
-        "birth_date": current_user.birth_date,
-        "gender": current_user.gender,
-        "phone_number": current_user.phone_number or "",
-        "email": current_user.email,
-        "avatar_url": current_user.avatar_url or "",
-        "bio": provider.bio or "",
-        "session_price": price,
-        "tags": tags_list,
-        "specialty": profile_update.specialty,
-        "office_address": getattr(provider, "office_address", "")
-    }
+    try:
+        await es.update(
+            index="providers",
+            id=str(provider.id),
+            body={
+                "doc": {
+                    "first_name": current_user.first_name,
+                    "last_name": current_user.last_name,
+                    "bio": provider.bio,
+                    "session_price": price,
+                    "tags": tags_list,
+                    "specialty": profile_update.specialty,
+                    "avatar_url": current_user.avatar_url or ""
+                }
+            },
+            refresh=True
+        )
+    except Exception as e:
+        logger.error(f"Failed to sync provider profile update to ES: {e}")
+
+    try:
+        await redis_client.delete(f"psychs:detail:{str(provider.id)}")
+        keys = await redis_client.keys("psychs:list:*")
+        if keys:
+            await redis_client.delete(*keys)
+    except Exception as e:
+        logger.error(f"Failed to clear redis cache: {e}")
+
+    return build_provider_profile_response(provider)
 
