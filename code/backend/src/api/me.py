@@ -8,8 +8,10 @@ from src.db.database import get_db
 from src.core.dependencies import get_current_patient, get_current_provider, get_current_user
 from src.services.es_client import get_es
 from src.services.mongo_client import get_mongo_db
+from src.services.redis_client import get_redis
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from elasticsearch import AsyncElasticsearch
+import redis.asyncio as redis
 import logging
 
 logger = logging.getLogger(__name__)
@@ -264,7 +266,8 @@ async def update_provider_profile(
     profile_update: ProviderProfileUpdate,
     provider: models.ProviderProfile = Depends(get_current_provider),
     db: Session = Depends(get_db),
-    es: AsyncElasticsearch = Depends(get_es)
+    es: AsyncElasticsearch = Depends(get_es),
+    redis_client: redis.Redis = Depends(get_redis)
 ):
     current_user = provider.user
 
@@ -326,10 +329,19 @@ async def update_provider_profile(
                     "specialty": profile_update.specialty,
                     "avatar_url": current_user.avatar_url or ""
                 }
-            }
+            },
+            refresh=True
         )
     except Exception as e:
         logger.error(f"Failed to sync provider profile update to ES: {e}")
+
+    try:
+        await redis_client.delete(f"psychs:detail:{str(provider.id)}")
+        keys = await redis_client.keys("psychs:list:*")
+        if keys:
+            await redis_client.delete(*keys)
+    except Exception as e:
+        logger.error(f"Failed to clear redis cache: {e}")
 
     return {
         "first_name": current_user.first_name or "",

@@ -1,9 +1,6 @@
-<form class="edit-provider-profile" id="provider-profile-form">
-  {{#if saved}}
-    <p class="edit-provider-profile__success">Tus cambios ya son visibles para los pacientes.</p>
-  {{else}}
-    <section class="edit-provider-profile__section">
-      <h2 class="edit-provider-profile__title">Información Básica</h2>
+<form class="edit-provider-profile" id="provider-profile-form" ref="form">
+  <section class="edit-provider-profile__section">
+    <h2 class="edit-provider-profile__title">Información de Identidad</h2>
       <div class="edit-provider-profile__photo-row">
         <div class="edit-provider-profile__avatar">
           <img class="edit-provider-profile__avatar-image" ref="avatarPreview" alt="Foto de perfil" src="{{draft.avatarUrl}}">
@@ -37,8 +34,8 @@
           {{{ Input id="edit-birth-date" type="date" name="birthDate" ref="birthDate" }}}
         </div>
         <div class="edit-provider-profile__field">
-          {{{ Label text="Género / Sexo Biológico" forId="edit-gender" }}}
-          {{{ Input id="edit-gender" name="gender" ref="gender" }}}
+          {{{ Label text="Género / Sexo Biológico" }}}
+          {{{ GenderSelect ref="gender" value=draft.gender }}}
         </div>
         <div class="edit-provider-profile__field">
           {{{ Label text="Teléfono de Contacto" forId="edit-phone" }}}
@@ -63,7 +60,9 @@
         </div>
         <div class="edit-provider-profile__field">
           {{{ Label text="Especialidad Clínica" forId="edit-specialty" }}}
-          {{{ Input id="edit-specialty" name="specialty" ref="specialty" }}}
+          <select id="edit-specialty" name="specialty" ref="specialty" class="input">
+            <option value="{{draft.specialty}}" selected>{{draft.specialty}}</option>
+          </select>
         </div>
         <div class="edit-provider-profile__field edit-provider-profile__field--full">
           {{{ Label text="Dirección de Consultorio" forId="edit-office-address" }}}
@@ -78,5 +77,4 @@
       {{{ Input id="edit-tag" type="text" placeholder="Escribí un problema y presioná Enter" ref="tagInput" }}}
       <p class="edit-provider-profile__limit" ref="limit"></p>
     </section>
-  {{/if}}
 </form>

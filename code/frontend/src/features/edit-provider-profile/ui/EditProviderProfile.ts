@@ -1,6 +1,9 @@
 import { Block } from "@shared/lib/block/Block";
 import type { EventListType } from "@shared/lib/block/EventListType";
 import { updateProviderProfile } from "@entities/psychologist";
+import { listSpecialties } from "@entities/specialty";
+import { showToast } from "@shared/lib/toast/showToast";
+import { sessionStore } from "@entities/user";
 import type { EditProviderProfileProps } from "@features/edit-provider-profile/ui/EditProviderProfileProps";
 import editProviderProfileTemplate from "@features/edit-provider-profile/ui/EditProviderProfile.hbs?raw";
 import "@features/edit-provider-profile/ui/EditProviderProfile.css";
@@ -21,26 +24,35 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
     },
   };
 
-  protected componentDidMount() {
-    if (this.props.saved)
-      return;
-
+  protected async componentDidMount() {
     (this.refs.firstName as HTMLInputElement).value = this.props.draft.firstName;
     (this.refs.lastName as HTMLInputElement).value = this.props.draft.lastName;
     (this.refs.maternalLastName as HTMLInputElement).value = this.props.draft.maternalLastName;
     (this.refs.ci as HTMLInputElement).value = this.props.draft.ci;
     (this.refs.birthDate as HTMLInputElement).value = this.props.draft.birthDate;
-    (this.refs.gender as HTMLInputElement).value = this.props.draft.gender;
+    (this.refs.birthDate as HTMLInputElement).max = new Date().toISOString().substring(0, 10);
     (this.refs.phoneNumber as HTMLInputElement).value = this.props.draft.phoneNumber;
     (this.refs.email as HTMLInputElement).value = this.props.draft.email;
     (this.refs.bio as HTMLTextAreaElement).value = this.props.draft.bio;
     (this.refs.rate as HTMLInputElement).value = String(this.props.draft.sessionPrice);
-    (this.refs.specialty as HTMLInputElement).value = this.props.draft.specialty;
     (this.refs.officeAddress as HTMLInputElement).value = this.props.draft.officeAddress;
     this.avatarUrl = this.props.draft.avatarUrl;
     this.setAvatarInitial();
     this.tags = [...this.props.draft.tags];
     this.renderChips();
+
+    const specResult = await listSpecialties();
+    if (specResult.isOk()) {
+      const select = this.refs.specialty as HTMLSelectElement;
+      select.innerHTML = "";
+      specResult.value.forEach((spec) => {
+        const option = document.createElement("option");
+        option.value = spec.name;
+        option.textContent = spec.name;
+        if (spec.name === this.props.draft.specialty) option.selected = true;
+        select.append(option);
+      });
+    }
   }
 
   private setAvatarInitial() {
@@ -142,13 +154,16 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
   }
 
   private async save() {
+    const firstName = (this.refs.firstName as HTMLInputElement).value;
+    const lastName = (this.refs.lastName as HTMLInputElement).value;
+
     const result = await updateProviderProfile({
-      firstName: (this.refs.firstName as HTMLInputElement).value,
-      lastName: (this.refs.lastName as HTMLInputElement).value,
+      firstName,
+      lastName,
       maternalLastName: (this.refs.maternalLastName as HTMLInputElement).value,
       ci: (this.refs.ci as HTMLInputElement).value,
       birthDate: (this.refs.birthDate as HTMLInputElement).value,
-      gender: (this.refs.gender as HTMLInputElement).value,
+      gender: (this.refs.gender as HTMLElement).dataset.value ?? "",
       phoneNumber: (this.refs.phoneNumber as HTMLInputElement).value,
       email: (this.refs.email as HTMLInputElement).value,
       avatarUrl: this.avatarUrl,
@@ -159,7 +174,14 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
       officeAddress: (this.refs.officeAddress as HTMLInputElement).value,
     });
 
-    if (result.isOk())
-      this.setProps({ saved: true });
+    if (result.isOk()) {
+      showToast("Tus datos fueron actualizados.", "success", 1500);
+      const user = sessionStore.getState().user;
+      if (user) {
+        sessionStore.setState({ user: { ...user, name: `${firstName} ${lastName}` } });
+      }
+    } else {
+      showToast("No pudimos guardar tus cambios. Revisa los campos.", "error");
+    }
   }
 }
