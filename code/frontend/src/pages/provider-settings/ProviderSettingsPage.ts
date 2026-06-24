@@ -6,6 +6,7 @@ import { DashboardSidebar } from "@widgets/dashboard-sidebar";
 import { Spinner } from "@shared/ui/Spinner/Spinner";
 import { EmptyState } from "@shared/ui/EmptyState/EmptyState";
 import { getMyProviderProfile } from "@entities/psychologist";
+import { routerInstance } from "@shared/lib/router/routerInstance";
 import providerSettingsPageTemplate from "@pages/provider-settings/ProviderSettingsPage.hbs?raw";
 import "@pages/provider-settings/ProviderSettingsPage.css";
 
@@ -37,6 +38,11 @@ export class ProviderSettingsPage extends Block<ProviderSettingsPageProps> {
     const result = await getMyProviderProfile();
 
     if (result.isErr()) {
+      if (result.error.status === 401) {
+        routerInstance.navigate("/auth");
+        return;
+      }
+
       this.mountInto("form", new EmptyState({ title: "No pudimos cargar tu perfil" }));
       return;
     }
