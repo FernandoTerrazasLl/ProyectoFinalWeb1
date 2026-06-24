@@ -5,5 +5,6 @@ import type { PsychologistQuery } from "@entities/psychologist";
 export interface FiltersPanelProps extends BlockOwnProps {
   specialtyOptions: SelectOption[];
   maxRate: number;
+  specialty?: string;
   onChange: (filters: PsychologistQuery) => void;
 }

@@ -16,7 +16,10 @@ const PAGE_SIZE = 5;
 
 export class DirectoryPage extends Block<BlockOwnProps> {
   protected template = directoryPageTemplate;
-  private query: PsychologistQuery = {};
+  private query: PsychologistQuery = (() => {
+    const specialty = new URLSearchParams(window.location.search).get("specialty");
+    return specialty ? { specialty } : {};
+  })();
   private results: Psychologist[] = [];
   private skip = 0;
   private abortController: AbortController | undefined;
@@ -44,6 +47,7 @@ export class DirectoryPage extends Block<BlockOwnProps> {
         { value: "", label: "Todas las especialidades" },
         ...specialties.map((specialty) => ({ value: specialty.name, label: specialty.name })),
       ],
+      ...(this.query.specialty ? { specialty: this.query.specialty } : {}),
       maxRate: 1000,
       onChange: (filters) => {
         this.query = { ...this.query, ...filters };

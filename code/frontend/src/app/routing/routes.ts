@@ -73,14 +73,6 @@ export const routes: Route[] = [
     },
   },
   {
-    path: "/triage/result",
-    guard: hasActiveSession,
-    loader: async () => {
-      const { TriageResultPage } = await import("@pages/triage-result");
-      return mountPage(TriageResultPage, () => ({}));
-    },
-  },
-  {
     path: "/dashboard/schedule",
     guard: isProvider,
     loader: async () => {
