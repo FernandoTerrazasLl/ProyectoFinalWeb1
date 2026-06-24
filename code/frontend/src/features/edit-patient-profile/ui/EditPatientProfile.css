@@ -43,6 +43,13 @@
   gap: 1.5rem;
 }
 
+.edit-patient-profile__photo-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 .edit-patient-profile__avatar {
   display: inline-flex;
   align-items: center;
@@ -70,10 +77,6 @@
   font-family: var(--font-sans);
   font-size: 1.875rem;
   font-weight: 800;
-}
-
-.edit-patient-profile__photo-input {
-  display: none;
 }
 
 .edit-patient-profile__field {

@@ -9,10 +9,10 @@
           <img class="edit-patient-profile__avatar-image" ref="avatarPreview" alt="Foto de perfil" src="{{draft.avatarUrl}}">
           <span class="edit-patient-profile__avatar-initial" ref="avatarInitial">{{draft.firstName}}</span>
         </div>
-        <div>
-          <button class="button button--secondary edit-patient-profile__photo-button" type="button">Cambiar foto</button>
-          <input class="edit-patient-profile__photo-input" type="file" accept="image/png,image/jpeg,image/gif" ref="avatarInput">
-          <p class="edit-patient-profile__hint">JPG, GIF o PNG. Max 2MB.</p>
+        <div class="edit-patient-profile__photo-field">
+          {{{ Label text="URL de la foto" forId="profile-avatar-url" }}}
+          {{{ Input id="profile-avatar-url" type="url" name="avatarUrl" placeholder="https://..." ref="avatarUrl" }}}
+          <p class="edit-patient-profile__hint">Pegá el enlace público de tu imagen.</p>
         </div>
       </div>
       <div class="edit-patient-profile__grid">

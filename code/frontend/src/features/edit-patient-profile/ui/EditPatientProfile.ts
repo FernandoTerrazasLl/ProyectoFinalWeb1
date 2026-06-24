@@ -1,6 +1,5 @@
 import { Block } from "@shared/lib/block/Block";
 import type { EventListType } from "@shared/lib/block/EventListType";
-import { previewProfileImage } from "@shared/lib/image/prepareProfileImage";
 import { updateMyProfile } from "@entities/user";
 import { showToast } from "@shared/lib/toast/showToast";
 import { sessionStore } from "@entities/user";
@@ -10,13 +9,8 @@ import "@features/edit-patient-profile/ui/EditPatientProfile.css";
 
 export class EditPatientProfile extends Block<EditPatientProfileProps> {
   protected template = editPatientProfileTemplate;
-  private avatarUrl = "";
   protected events: EventListType = {
-    click: (event) => {
-      if ((event.target as Element).closest(".edit-patient-profile__photo-button"))
-        (this.refs.avatarInput as HTMLInputElement).click();
-    },
-    change: (event) => this.handlePhotoChange(event),
+    input: (event) => this.handleAvatarUrlInput(event),
     submit: (event) => {
       event.preventDefault();
       void this.save();
@@ -33,7 +27,7 @@ export class EditPatientProfile extends Block<EditPatientProfileProps> {
     (this.refs.birthDate as HTMLInputElement).value = draft.birthDate;
     (this.refs.birthDate as HTMLInputElement).max = new Date().toISOString().substring(0, 10);
     (this.refs.phoneNumber as HTMLInputElement).value = draft.phoneNumber;
-    this.avatarUrl = draft.avatarUrl;
+    (this.refs.avatarUrl as HTMLInputElement).value = draft.avatarUrl;
     this.setAvatarInitial();
   }
 
@@ -48,14 +42,22 @@ export class EditPatientProfile extends Block<EditPatientProfileProps> {
       element.style.display = "none";
   }
 
-  private async handlePhotoChange(event: Event) {
+  private handleAvatarUrlInput(event: Event) {
     const input = event.target as HTMLInputElement;
+
+    if (input !== this.refs.avatarUrl)
+      return;
+
+    this.syncAvatarPreview(input.value.trim());
+  }
+
+  private syncAvatarPreview(imageUrl: string) {
     const preview = this.refs.avatarPreview as HTMLImageElement;
     const initial = this.refs.avatarInitial as HTMLElement;
-    const imageUrl = await previewProfileImage(input.files?.[0], preview, initial);
 
-    if (imageUrl)
-      this.avatarUrl = imageUrl;
+    preview.src = imageUrl;
+    preview.style.display = imageUrl ? "block" : "none";
+    initial.style.display = imageUrl ? "none" : "inline";
   }
 
   private async save() {
@@ -71,7 +73,7 @@ export class EditPatientProfile extends Block<EditPatientProfileProps> {
       gender: (this.refs.gender as HTMLElement).dataset.value ?? "",
       phoneNumber: (this.refs.phoneNumber as HTMLInputElement).value,
       email: this.props.draft.email,
-      avatarUrl: this.avatarUrl,
+      avatarUrl: (this.refs.avatarUrl as HTMLInputElement).value.trim(),
     });
 
     if (result.isOk()) {
