@@ -108,7 +108,49 @@ async def get_psychologists(
     except Exception as e:
         logger.error(f"Redis error: {e}")
 
-    result = _query_psychologists_from_db(db, skip, limit, q, specialty, maxRate)
+    must_clauses = [
+        {"match": {"is_approved": True}}
+    ]
+
+    if q:
+        must_clauses.append({
+            "multi_match": {
+                "query": q,
+                "fields": ["first_name", "last_name", "bio", "tags", "specialty"]
+            }
+        })
+    if specialty:
+        must_clauses.append({
+            "match_phrase": {"specialty": specialty}
+        })
+    if maxRate is not None:
+        must_clauses.append({
+            "range": {
+                "session_price": {"lte": maxRate}
+            }
+        })
+
+    es_query = {"bool": {"must": must_clauses}} if must_clauses else {"match_all": {}}
+
+    try:
+        es_response = await es.search(
+            index="providers",
+            body={
+                "query": es_query,
+                "sort": [
+                    {"average_rating": {"order": "desc"}}
+                ],
+                "from": skip,
+                "size": limit
+            }
+        )
+    except NotFoundError:
+        return []
+    except Exception as e:
+        logger.error(f"Elasticsearch error: {e}")
+        raise HTTPException(status_code=503, detail="Service Unavailable")
+
+    result = [p.dict() for p in parse_es_hits(es_response, PsychologistResponse)]
 
     try:
         await redis_client.setex(cache_key, 60, json.dumps(result))
