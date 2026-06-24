@@ -1,5 +1,5 @@
 import uuid
-from datetime import date
+from datetime import date, datetime, timezone
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -15,6 +15,22 @@ from src.services.schedule_service import generate_slots
 from src.services.availability_service import get_provider_slots, is_slot_blocked
 
 router = APIRouter(prefix="/psychologists", tags=["psychologists"])
+
+def _review_date(review: dict) -> str:
+    created_at = review.get("created_at") or review.get("date")
+
+    if isinstance(created_at, datetime):
+        return created_at.isoformat()
+    if isinstance(created_at, str) and created_at:
+        return created_at
+
+    object_id = review.get("_id")
+    generation_time = getattr(object_id, "generation_time", None)
+
+    if isinstance(generation_time, datetime):
+        return generation_time.isoformat()
+
+    return datetime.now(timezone.utc).isoformat()
 
 def _to_psychologist_response(provider: models.ProviderProfile) -> dict:
     user = provider.user
@@ -158,7 +174,7 @@ async def get_reviews(
     psychologist_id: str,
     mongo_db: AsyncIOMotorDatabase = Depends(get_mongo_db)
 ):
-    cursor = mongo_db.reviews.find({"provider_id": psychologist_id}).sort("rating", -1)
+    cursor = mongo_db.reviews.find({"provider_id": psychologist_id}).sort([("created_at", -1), ("_id", -1)])
     reviews = await cursor.to_list(length=50)
 
     result = []
@@ -168,7 +184,7 @@ async def get_reviews(
             "author": "Paciente Anónimo",
             "rating": r.get("rating", 0),
             "comment": r.get("comment", ""),
-            "date": r.get("date", "2026-06-21"),
+            "date": _review_date(r),
             "verified": True
         })
     return result

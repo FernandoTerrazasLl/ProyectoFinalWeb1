@@ -1,12 +1,14 @@
 const DAY_MS = 1000 * 60 * 60 * 24;
 
 export function formatRelativeDate(isoDate: string): string {
-  const days = Math.floor((Date.now() - new Date(isoDate).getTime()) / DAY_MS);
+  const reviewDate = new Date(isoDate);
+  const today = new Date();
+  const days = Math.floor((startOfDay(today) - startOfDay(reviewDate)) / DAY_MS);
 
   if (days <= 0) 
     return "Hoy";
   if (days === 1) 
-    return "Hace 1 día";
+    return "Ayer";
   if (days < 7) 
     return `Hace ${days} días`;
 
@@ -27,4 +29,8 @@ export function formatRelativeDate(isoDate: string): string {
   const years = Math.floor(days / 365);
 
   return years === 1 ? "Hace 1 año" : `Hace ${years} años`;
+}
+
+function startOfDay(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
 }

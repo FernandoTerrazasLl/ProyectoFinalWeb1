@@ -25,12 +25,20 @@ describe("Antigüedad de una reseña [US-UGC-02]", () => {
     expect(etiqueta).toBe("Hoy");
   });
 
-  it("muestra 'Hace 1 día' en singular [AC-1]", () => {
+  it("muestra 'Ayer' para una reseña del día anterior [AC-1]", () => {
     const fecha = daysAgo(1);
 
     const etiqueta = formatRelativeDate(fecha);
 
-    expect(etiqueta).toBe("Hace 1 día");
+    expect(etiqueta).toBe("Ayer");
+  });
+
+  it("muestra 'Ayer' por calendario aunque hayan pasado menos de 24 horas [AC-1]", () => {
+    const fecha = "2026-06-22T23:30:00-04:00";
+
+    const etiqueta = formatRelativeDate(fecha);
+
+    expect(etiqueta).toBe("Ayer");
   });
 
   it("muestra días en plural antes de la semana [AC-1]", () => {

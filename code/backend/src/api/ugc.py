@@ -32,9 +32,14 @@ async def submit_review(
     if existing:
         raise HTTPException(status_code=400, detail="You have already submitted a review for this professional.")
 
-    await mongo_db.reviews.insert_one(review.dict())
+    review_data = review.dict()
+    review_data["created_at"] = datetime.now(timezone.utc)
 
-    background_tasks.add_task(dispatch_async_event, producer, "review", review.dict())
+    await mongo_db.reviews.insert_one(review_data)
+
+    event_data = {key: value for key, value in review_data.items() if key != "_id"}
+    event_data["created_at"] = review_data["created_at"].isoformat()
+    background_tasks.add_task(dispatch_async_event, producer, "review", event_data)
     return {"status": "accepted", "message": "Review submitted successfully"}
 
 @router.post("/events", status_code=202)
