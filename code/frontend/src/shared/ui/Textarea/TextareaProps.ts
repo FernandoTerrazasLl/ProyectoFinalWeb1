@@ -5,4 +5,5 @@ export interface TextareaProps extends BlockOwnProps {
   name?: string;
   placeholder?: string;
   rows?: number;
+  className?: string;
 }

@@ -1,7 +1,13 @@
 .patient-info-card {
   display: flex;
   flex-direction: column;
+}
+
+.patient-info-card__content {
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
+  padding: 1.5rem;
 }
 
 .patient-info-card__person {
@@ -81,4 +87,16 @@
 .patient-info-card__reason .patient-info-card__value {
   color: #115e59;
   line-height: 1.5;
+}
+
+.patient-info-card__footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  border-top: 1px solid #eef2f7;
+}
+
+.patient-info-card__close {
+  min-width: 6rem;
 }

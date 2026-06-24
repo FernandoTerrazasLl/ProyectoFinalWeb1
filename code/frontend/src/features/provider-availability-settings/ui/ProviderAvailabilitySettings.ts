@@ -13,6 +13,7 @@ interface ProviderAvailabilitySettingsProps extends BlockOwnProps {
 const DAY_SLOTS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
 const NIGHT_SLOTS = ["20:00", "21:00", "22:00", "23:00", "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00"];
 const ALL_DAYS = [1, 2, 3, 4, 5, 6, 7];
+const DEFAULT_BLOCKED_SLOTS = new Set(["12:00", "13:00", ...NIGHT_SLOTS]);
 
 function addHour(time: string): string {
   const hour = Number(time.split(":")[0] ?? "0");
@@ -21,7 +22,7 @@ function addHour(time: string): string {
 
 export class ProviderAvailabilitySettings extends Block<ProviderAvailabilitySettingsProps> {
   protected template = providerAvailabilitySettingsTemplate;
-  private blockedSlots = new Set<string>();
+  private blockedSlots = new Set<string>(DEFAULT_BLOCKED_SLOTS);
   private allSlots = [...DAY_SLOTS, ...NIGHT_SLOTS];
   protected events: EventListType = {
     click: (event) => {
@@ -48,6 +49,12 @@ export class ProviderAvailabilitySettings extends Block<ProviderAvailabilitySett
 
     if (result.isErr()) {
       this.setProps({ error: "No pudimos cargar tus preferencias de agenda." });
+      return;
+    }
+
+    if (result.value.length === 0) {
+      this.blockedSlots = new Set(DEFAULT_BLOCKED_SLOTS);
+      this.renderSlots();
       return;
     }
 

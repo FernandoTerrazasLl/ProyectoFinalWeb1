@@ -1,20 +1,20 @@
 .psychologist-detail {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: 3rem;
 }
 
 .psychologist-detail__header {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-6);
+  gap: 2rem;
 }
 
 .psychologist-detail__heading {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-2);
+  gap: 0.75rem;
   padding-top: var(--space-2);
 }
 
@@ -83,10 +83,11 @@
 
 .psychologist-detail__bio {
   font-family: var(--font-sans);
-  font-size: var(--font-size-base);
+  font-size: 1rem;
   color: var(--color-muted);
-  line-height: 1.625;
+  line-height: 1.65;
   margin: 0;
+  max-width: 46rem;
 }
 
 .psychologist-detail__tags {

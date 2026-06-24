@@ -4,7 +4,7 @@
   {{else}}
     <p class="book-appointment__slot" ref="slot">Elegí un horario disponible</p>
     <label class="book-appointment__label" for="reason">Motivo de la consulta</label>
-    {{{ Textarea id="reason" name="reason" placeholder="¿Cuál es el motivo principal de tu cita?" ref="reason" }}}
+    {{{ Textarea id="reason" name="reason" placeholder="¿Cuál es el motivo principal de tu cita?" className="book-appointment__reason" ref="reason" }}}
     {{#if error}}<p class="form-error">{{error}}</p>{{/if}}
     <button class="button button--ink book-appointment__submit" type="submit" ref="submit" disabled>
       Agendar Cita

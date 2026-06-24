@@ -1,7 +1,7 @@
 .book-appointment {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 1rem;
 }
 
 .book-appointment__slot {
@@ -15,7 +15,18 @@
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-text);
-  margin-top: var(--space-2);
+  margin-top: 0.25rem;
+}
+
+.book-appointment__reason {
+  min-height: 5.375rem;
+  border-radius: 0.875rem;
+}
+
+.book-appointment__submit {
+  min-height: 3.5rem;
+  border-radius: 0.875rem;
+  margin-top: 0.75rem;
 }
 
 .book-appointment__disclaimer {
