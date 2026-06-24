@@ -42,3 +42,23 @@ export async function prepareProfileImage(file: File): Promise<string | null> {
 
   return canvas.toDataURL("image/jpeg", JPEG_QUALITY);
 }
+
+export async function previewProfileImage(
+  file: File | undefined,
+  preview: HTMLImageElement,
+  fallback: HTMLElement,
+): Promise<string | null> {
+  if (!file || file.size > 5 * 1024 * 1024)
+    return null;
+
+  const imageUrl = await prepareProfileImage(file);
+
+  if (!imageUrl)
+    return null;
+
+  preview.src = imageUrl;
+  preview.style.display = "block";
+  fallback.style.display = "none";
+
+  return imageUrl;
+}

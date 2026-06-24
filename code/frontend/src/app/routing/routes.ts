@@ -42,7 +42,6 @@ export const routes: Route[] = [
   },
   {
     path: "/directory",
-    guard: hasActiveSession,
     loader: async () => {
       const { DirectoryPage } = await import("@pages/directory");
       return mountPage(DirectoryPage, () => ({}));
@@ -50,7 +49,6 @@ export const routes: Route[] = [
   },
   {
     path: "/profile/:id",
-    guard: hasActiveSession,
     loader: async () => {
       const { ProviderProfilePage } = await import("@pages/provider-profile");
       return mountPage(ProviderProfilePage, (params) => ({ id: params.id ?? "" }));
