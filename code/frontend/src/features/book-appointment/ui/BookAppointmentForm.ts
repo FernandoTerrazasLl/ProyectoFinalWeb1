@@ -28,11 +28,6 @@ export class BookAppointmentForm extends Block<BookAppointmentFormProps> {
 
     this.date = date;
     this.time = time;
-    const slot = this.element()?.querySelector(".book-appointment__slot");
-
-    if (slot)
-      slot.textContent = `Horario elegido: ${date} a las ${time}`;
-
     const submit = this.element()?.querySelector(".book-appointment__submit") as HTMLButtonElement | null;
 
     if (submit)

@@ -6,7 +6,12 @@ import bookingCalendarTemplate from "@widgets/booking-calendar/BookingCalendar.h
 import "@widgets/booking-calendar/BookingCalendar.css";
 
 function today(): string {
-  return new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 function isPastSlot(date: string, time: string): boolean {
@@ -19,7 +24,8 @@ function isPastSlot(date: string, time: string): boolean {
 export class BookingCalendar extends Block<BookingCalendarProps> {
   protected template = bookingCalendarTemplate;
   protected events: EventListType = {
-    change: () => this.loadSlots((this.refs.date as HTMLInputElement).value),
+    change: () => void this.handleDateChange(),
+    input: () => void this.handleDateChange(),
     click: (event) => {
       const slot = (event.target as Element).closest("[data-time]");
 
@@ -34,15 +40,34 @@ export class BookingCalendar extends Block<BookingCalendarProps> {
         .forEach((selected) => selected.classList.remove("booking-calendar__slot--selected"));
       slot.classList.add("booking-calendar__slot--selected");
 
-      this.props.onSelectSlot(this.props.date ?? today(), slot.getAttribute("data-time") ?? "");
+      if (this.props.date)
+        this.props.onSelectSlot(this.props.date, slot.getAttribute("data-time") ?? "");
     },
   };
 
   constructor(props: BookingCalendarProps) {
-    const initialDate = props.date ?? today();
+    const initialDate = props.date ?? "";
 
-    super({ date: initialDate, min: today(), dateLabel: formatDateLabel(initialDate), ...props });
-    void this.loadSlots(initialDate);
+    super({
+      date: initialDate,
+      min: today(),
+      dateLabel: initialDate ? formatDateLabel(initialDate) : "Elegir en el calendario",
+      slots: [],
+      ...props,
+    });
+
+    if (initialDate)
+      void this.loadSlots(initialDate);
+  }
+
+  private async handleDateChange() {
+    const dateInput = this.refs.date as HTMLInputElement;
+    const selectedDate = dateInput.value;
+
+    if (!selectedDate)
+      return;
+
+    await this.loadSlots(selectedDate < today() ? today() : selectedDate);
   }
 
   private async loadSlots(date: string) {
