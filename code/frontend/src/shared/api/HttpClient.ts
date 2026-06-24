@@ -34,6 +34,7 @@ export class HttpClient {
   ): Promise<Result<T, HttpError>> {
     const init: RequestInit = {
       method,
+      cache: "no-store",
       headers: {
         "Content-Type": "application/json",
         ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {}),

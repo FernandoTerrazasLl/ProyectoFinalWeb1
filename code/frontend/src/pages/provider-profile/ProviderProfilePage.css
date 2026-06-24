@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-6);
-  padding: 2rem var(--space-4) 4rem;
+  padding: 1.5rem var(--space-4) 3rem;
   max-width: 76rem;
   margin: 0 auto;
 }
@@ -10,13 +10,13 @@
 .provider-profile-page__main {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: 1.5rem;
 }
 
 .provider-profile-page__reviews {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: 1.5rem;
 }
 
 .provider-profile-page__title {
@@ -63,20 +63,20 @@
 }
 
 .provider-profile-page__price {
-  padding: 1.75rem 1.5rem;
+  padding: 1.125rem 1.25rem;
   border-bottom: 1px solid var(--color-border);
 }
 
 .provider-profile-page__booking-body {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 1.5rem;
+  gap: 0.875rem;
+  padding: 1rem 1.25rem 1.25rem;
 }
 
 @media (width >= 768px) {
   .provider-profile-page {
-    padding: 2rem var(--space-8) 4rem;
+    padding: 1.5rem var(--space-8) 3rem;
   }
 }
 

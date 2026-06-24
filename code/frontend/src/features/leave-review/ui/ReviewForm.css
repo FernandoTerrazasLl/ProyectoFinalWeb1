@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  padding: 1.5rem;
 }
 
 .review-form__stars {
@@ -26,4 +27,6 @@
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
   color: var(--color-success);
+  line-height: 1.5;
+  margin: 0;
 }

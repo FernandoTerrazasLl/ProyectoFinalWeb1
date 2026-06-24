@@ -10,12 +10,24 @@
 
 .toast {
   max-width: 22rem;
-  padding: var(--space-3) var(--space-4);
+  padding: 1rem 1.25rem;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   font-family: var(--font-sans);
   font-size: var(--font-size-sm);
+  line-height: 1.5;
   color: var(--color-surface);
+}
+
+@media (width < 640px) {
+  .toast-host {
+    right: var(--space-3);
+    left: var(--space-3);
+  }
+
+  .toast {
+    max-width: none;
+  }
 }
 
 .toast--error {

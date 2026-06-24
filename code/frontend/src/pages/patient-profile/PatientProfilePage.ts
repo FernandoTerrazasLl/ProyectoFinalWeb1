@@ -10,6 +10,7 @@ import { listMyAppointments, cancelAppointment, type PatientAppointment } from "
 import { submitReview } from "@entities/review";
 import { clearStoredSession, sessionStore, getMyProfile } from "@entities/user";
 import { routerInstance } from "@shared/lib/router/routerInstance";
+import { showToast } from "@shared/lib/toast/showToast";
 import type { PatientProfilePageProps } from "@pages/patient-profile/PatientProfilePageProps";
 import patientProfilePageTemplate from "@pages/patient-profile/PatientProfilePage.hbs?raw";
 import "@pages/patient-profile/PatientProfilePage.css";
@@ -121,8 +122,11 @@ export class PatientProfilePage extends Block<PatientProfilePageProps> {
         const userId = sessionStore.getState().user?.id ?? "";
         const result = await submitReview({ providerId: appointment.providerId, userId, ...draft });
 
-        if (result.isOk())
+        if (result.isOk()) {
           reviewForm.setProps({ submitted: true });
+          showToast("Reseña creada con éxito", "success");
+          await this.loadAppointments();
+        }
       },
     });
 
