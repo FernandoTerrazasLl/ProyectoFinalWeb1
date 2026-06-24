@@ -397,6 +397,42 @@
 
       <section class="slide">
         <div class="slide__frame">
+          <p class="eyebrow">Investigación y Público Objetivo</p>
+          <h2>Mucha necesidad, demasiada fricción</h2>
+          
+          <div class="metric-row" style="grid-template-columns: 1fr;">
+            <div class="metric" style="background: #fee2e2;">
+              <span class="metric__value" style="color: #991b1b; font-size: 42px;">71.4% de Brecha de Tratamiento</span>
+              <span class="metric__label" style="color: #7f1d1d; font-size: 20px; margin-bottom: 12px;">De cada 100 personas que necesitan ayuda clínica, <strong>más de 71 no la reciben por falta de acceso, estigma o barreras tecnológicas</strong>.</span>
+              <div style="font-size: 13px; color: #991b1b; opacity: 0.85; line-height: 1.4; border-top: 1px solid #fca5a5; padding-top: 8px;">
+                * Fuente: Kohn, R., Levav, I., Caldas de Almeida, J. M., Vicente, B., Andrade, L., Caraveo-Anduaga, J. J., ... & Saraceno, B. (2005). Los trastornos mentales en América Latina y el Caribe: asunto prioritario para la salud pública. <em>Revista Panamericana de Salud Pública</em>, 18(4), 229-240.
+              </div>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="card">
+              <strong>Público Objetivo</strong>
+              <p class="muted"><strong>Psicólogos Independientes:</strong> Profesionales que buscan digitalizar su consulta sin depender de grandes clínicas, pero que carecen de herramientas automatizadas para gestionar su agenda y captar pacientes eficientemente.</p>
+            </div>
+            <div class="card">
+              <strong>Análisis de Soluciones Actuales</strong>
+              <ul>
+                <li><strong>Embudos rotos:</strong> Landing pages básicas que terminan en un simple redireccionamiento a WhatsApp.</li>
+                <li><strong>Falta de elección:</strong> Plataformas donde pides reserva pero el sistema te asigna un profesional al azar.</li>
+                <li><strong>Gestión manual:</strong> Procesos lentos donde el psicólogo revisa su agenda a mano, define cupos y avisa horas después.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer">
+            <span>Objetivo principal: Eliminar la fricción de reserva</span>
+            <span>Metodología: Análisis de competidores y flujos de usuario</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide__frame">
           <p class="eyebrow">Producto</p>
           <h2>Problema y valor de negocio</h2>
           <div class="grid">
@@ -484,35 +520,6 @@
 
       <section class="slide">
         <div class="slide__frame">
-          <p class="eyebrow">Frontend</p>
-          <h2>Dos clientes conviviendo detrás de Nginx</h2>
-          <div class="grid">
-            <div class="card">
-              <strong>TypeScript + Handlebars</strong>
-              <ul>
-                <li>Arquitectura Feature-Sliced Design.</li>
-                <li>Componentes Block, store Observer y router custom.</li>
-                <li>CSS BEM, PostCSS, ESLint, Stylelint y Vitest.</li>
-              </ul>
-            </div>
-            <div class="card">
-              <strong>React</strong>
-              <ul>
-                <li>Migración separada para comparar tecnologías.</li>
-                <li>Misma UI y funcionalidades principales.</li>
-                <li>Build, tests, coverage y servicio Docker propio.</li>
-              </ul>
-            </div>
-          </div>
-          <div class="footer">
-            <span>ADR-004: Vanilla TS + Handlebars + FSD</span>
-            <span>Rutas: / y /react/</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide">
-        <div class="slide__frame">
           <p class="eyebrow">Módulo nuevo</p>
           <h2>Triage como entrada inteligente al catálogo</h2>
           <div class="flow">
@@ -545,102 +552,30 @@
       </section>
 
       <section class="slide">
-        <div class="slide__frame">
-          <p class="eyebrow">Trazabilidad</p>
-          <h2>Historias, endpoints, pantallas y pruebas</h2>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Módulo</th>
-                <th>Historia visible</th>
-                <th>Endpoint principal</th>
-                <th>Pantalla</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>Auth</td><td>Registro/login/OAuth</td><td>/api/auth/*</td><td>/auth, /signup</td></tr>
-              <tr><td>API pública</td><td>Directorio y filtros</td><td>/api/psychologists</td><td>/directory</td></tr>
-              <tr><td>UGC</td><td>Crear y listar reseñas</td><td>/api/ugc/reviews</td><td>/patient-profile, /provider-profile</td></tr>
-              <tr><td>Triage</td><td>Evaluar respuestas</td><td>/api/triage/evaluate</td><td>/triage</td></tr>
-              <tr><td>Citas</td><td>Reserva y agenda</td><td>/api/appointments</td><td>/provider-profile, /provider-schedule</td></tr>
-            </tbody>
-          </table>
-          <p class="muted">La tabla completa está en el README con ID de historia, commit, autor, endpoint, pantalla y test.</p>
-        </div>
-      </section>
-
-      <section class="slide">
-        <div class="slide__frame">
-          <p class="eyebrow">Calidad</p>
-          <h2>Definition of Done técnica</h2>
-          <div class="metric-row">
-            <div class="metric"><span class="metric__value">TS</span><span class="metric__label">strict</span></div>
-            <div class="metric"><span class="metric__value">FSD</span><span class="metric__label">boundaries</span></div>
-            <div class="metric"><span class="metric__value">BEM</span><span class="metric__label">stylelint</span></div>
-            <div class="metric"><span class="metric__value">CI</span><span class="metric__label">validate</span></div>
-          </div>
-          <div class="grid">
-            <div class="card">
-              <strong>Frontend</strong>
-              <ul>
-                <li>npm run validate</li>
-                <li>npm run test:coverage</li>
-                <li>Estados loading, empty y error.</li>
-              </ul>
-            </div>
-            <div class="card">
-              <strong>Backend</strong>
-              <ul>
-                <li>OpenAPI expuesto por FastAPI.</li>
-                <li>Tests por módulo y endpoints críticos.</li>
-                <li>Docker Compose levanta el sistema completo.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide">
-        <div class="slide__frame">
-          <p class="eyebrow">Demo final</p>
-          <h2>Recorrido propuesto en vivo</h2>
-          <div class="flow">
-            <div class="flow__step">1. Entrar como anónimo al directorio</div>
-            <div class="flow__step">2. Buscar y filtrar psicólogos</div>
-            <div class="flow__step">3. Registrarse o iniciar sesión</div>
-            <div class="flow__step">4. Completar triage</div>
-            <div class="flow__step">5. Reservar cita</div>
-          </div>
-          <div class="grid">
-            <div class="card"><strong>Paciente</strong><p class="muted">Edita perfil, revisa citas y deja reseña.</p></div>
-            <div class="card"><strong>Psicólogo</strong><p class="muted">Gestiona perfil, disponibilidad y agenda diaria.</p></div>
-            <div class="card"><strong>Admin</strong><p class="muted">Administra catálogo desde Django Admin.</p></div>
-            <div class="card"><strong>Comparativa</strong><p class="muted">Mostrar frontend Handlebars y versión React conviviendo.</p></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide">
         <div class="slide__frame cover">
-          <p class="eyebrow">Cierre</p>
-          <h2>CuraMente integra producto, arquitectura y demo verificable</h2>
-          <div class="grid">
-            <div class="card"><strong>Valor</strong><p class="muted">Reduce fricción para elegir especialista y agendar atención psicológica.</p></div>
-            <div class="card"><strong>Técnica</strong><p class="muted">Monolito modular documentado con C4, UML, ER, ADRs, CI y Docker.</p></div>
-            <div class="card"><strong>Defensa</strong><p class="muted">Demo centrada en historias visibles desde el frontend.</p></div>
-            <div class="card"><strong>Preguntas</strong><p class="muted">Restricciones, escalabilidad, fallos, decisiones descartadas y evolución.</p></div>
+          <div class="brand">
+            <span class="brand__mark">+</span>
+            <span>CuraMente</span>
           </div>
-          <div class="footer">
-            <span>Alejandro Ramirez</span>
-            <span>Fernando Terrazas</span>
+          <div>
+            <p class="eyebrow">Fin de la presentación</p>
+            <h1 style="font-size: clamp(60px, 8vw, 100px);">¡Gracias!</h1>
+            <p class="lead" style="margin-top: 15px;">Abrimos el espacio para dudas y preguntas del tribunal.</p>
+          </div>
+          <div>
+            <p class="muted">Integrantes</p>
+            <div class="names">
+              <span class="pill">Alejandro Ramirez</span>
+              <span class="pill">Fernando Terrazas</span>
+            </div>
           </div>
         </div>
       </section>
-    </main>
+      </main>
 
     <nav class="controls" aria-label="Controles de presentación">
       <button type="button" id="prev">Anterior</button>
-      <span class="counter" id="counter">1 / 12</span>
+      <span class="counter" id="counter">1 / 9</span>
       <button type="button" id="next">Siguiente</button>
     </nav>
 
