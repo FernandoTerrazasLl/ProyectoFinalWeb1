@@ -3,11 +3,13 @@ from datetime import date, datetime, timezone
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from sqlalchemy import or_
 from sqlalchemy.orm import Session, joinedload
 
 from src.db.database import get_db
+from src.core.security import decode_token
 import src.models.domain as models
 from src.models.schemas import *
 from src.services.mongo_client import get_mongo_db
@@ -15,6 +17,7 @@ from src.services.schedule_service import generate_slots
 from src.services.availability_service import get_provider_slots, is_slot_blocked
 
 router = APIRouter(prefix="/psychologists", tags=["psychologists"])
+optional_security = HTTPBearer(auto_error=False)
 
 def _review_date(review: dict) -> str:
     created_at = review.get("created_at") or review.get("date")
@@ -134,7 +137,8 @@ async def get_psychologist(
 def get_availability(
     psychologist_id: str,
     target_date: date = Query(..., alias="date"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials | None = Depends(optional_security)
 ):
     try:
         prov_uuid = uuid.UUID(psychologist_id)
@@ -145,6 +149,12 @@ def get_availability(
 
     if not all_slots_set and not blocked_exceptions:
         return []
+
+    if is_own_provider_profile(db, credentials, prov_uuid):
+        return sorted(
+            [{"time": slot.strftime("%H:%M"), "available": False, "status": "Perfil propio"} for slot in all_slots_set],
+            key=lambda x: x["time"],
+        )
 
     appointments = db.query(models.Appointment).filter(
         models.Appointment.provider_id == prov_uuid,
@@ -159,15 +169,37 @@ def get_availability(
         slot_str = slot.strftime("%H:%M")
 
         if is_slot_blocked(slot, blocked_exceptions):
-            availability.append({"time": slot_str, "available": False})
+            availability.append({"time": slot_str, "available": False, "status": "Bloqueado"})
             continue
 
         if slot in booked_times:
-            availability.append({"time": slot_str, "available": False})
+            availability.append({"time": slot_str, "available": False, "status": "Reservado"})
         else:
-            availability.append({"time": slot_str, "available": True})
+            availability.append({"time": slot_str, "available": True, "status": ""})
 
     return sorted(availability, key=lambda x: x["time"])
+
+def is_own_provider_profile(
+    db: Session,
+    credentials: HTTPAuthorizationCredentials | None,
+    psychologist_id: uuid.UUID,
+) -> bool:
+    if credentials is None:
+        return False
+
+    payload = decode_token(credentials.credentials)
+
+    if not payload or payload.get("type") != "access":
+        return False
+
+    email = payload.get("sub")
+
+    if not email:
+        return False
+
+    user = db.query(models.User).filter(models.User.email == email).first()
+
+    return bool(user and user.provider_profile and user.provider_profile.id == psychologist_id)
 
 @router.get("/{psychologist_id}/reviews")
 async def get_reviews(

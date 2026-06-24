@@ -88,7 +88,7 @@ export class BookingCalendar extends Block<BookingCalendarProps> {
           available: slot.available && !past,
           label: formatTimeLabel(slot.time),
           isPast: past,
-          status: this.slotStatus(slot.available, past),
+          status: this.slotStatus(slot.status, past),
         };
       })
       : [];
@@ -96,12 +96,10 @@ export class BookingCalendar extends Block<BookingCalendarProps> {
     this.setProps({ loading: false, slots });
   }
 
-  private slotStatus(available: boolean, past: boolean): string {
+  private slotStatus(status: string | undefined, past: boolean): string {
     if (past)
       return "Horario pasado";
-    if (!available)
-      return "Reservado";
 
-    return "";
+    return status ?? "";
   }
 }

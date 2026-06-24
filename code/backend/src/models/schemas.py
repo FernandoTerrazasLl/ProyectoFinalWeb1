@@ -140,6 +140,7 @@ class PsychologistResponse(BaseModel):
 class AvailabilitySlot(BaseModel):
     time: str
     available: bool
+    status: Optional[str] = ""
 
 class SpecialtyResponse(BaseModel):
     id: str
