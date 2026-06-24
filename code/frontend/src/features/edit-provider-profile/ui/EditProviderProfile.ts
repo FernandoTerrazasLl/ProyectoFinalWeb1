@@ -3,6 +3,8 @@ import type { EventListType } from "@shared/lib/block/EventListType";
 import { updateProviderProfile } from "@entities/psychologist";
 import { listSpecialties } from "@entities/specialty";
 import { showToast } from "@shared/lib/toast/showToast";
+import { setAvatarInitial, syncAvatarPreview } from "@shared/lib/avatar/avatarPreview";
+import { todayInputValue } from "@shared/lib/date/todayInputValue";
 import { sessionStore } from "@entities/user";
 import type { EditProviderProfileProps } from "@features/edit-provider-profile/ui/EditProviderProfileProps";
 import editProviderProfileTemplate from "@features/edit-provider-profile/ui/EditProviderProfile.hbs?raw";
@@ -29,14 +31,14 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
     (this.refs.maternalLastName as HTMLInputElement).value = this.props.draft.maternalLastName;
     (this.refs.ci as HTMLInputElement).value = this.props.draft.ci;
     (this.refs.birthDate as HTMLInputElement).value = this.props.draft.birthDate;
-    (this.refs.birthDate as HTMLInputElement).max = new Date().toISOString().substring(0, 10);
+    (this.refs.birthDate as HTMLInputElement).max = todayInputValue();
     (this.refs.phoneNumber as HTMLInputElement).value = this.props.draft.phoneNumber;
     (this.refs.email as HTMLInputElement).value = this.props.draft.email;
     (this.refs.bio as HTMLTextAreaElement).value = this.props.draft.bio;
     (this.refs.rate as HTMLInputElement).value = String(this.props.draft.sessionPrice);
     (this.refs.officeAddress as HTMLInputElement).value = this.props.draft.officeAddress;
     (this.refs.avatarUrl as HTMLInputElement).value = this.props.draft.avatarUrl;
-    this.setAvatarInitial();
+    setAvatarInitial(this.props.draft.firstName, this.refs.avatarInitial as HTMLElement | undefined, this.refs.avatarPreview as HTMLImageElement | undefined);
     this.tags = [...this.props.draft.tags];
     this.renderChips();
 
@@ -52,17 +54,6 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
         select.append(option);
       });
     }
-  }
-
-  private setAvatarInitial() {
-    const initial = this.props.draft.firstName.trim().charAt(0).toUpperCase() || "P";
-    const element = this.refs.avatarInitial as HTMLElement | undefined;
-    const preview = this.refs.avatarPreview as HTMLImageElement | undefined;
-
-    if (element)
-      element.textContent = initial;
-    if (element && preview && preview.getAttribute("src"))
-      element.style.display = "none";
   }
 
   private handleTagKeydown(event: KeyboardEvent) {
@@ -131,16 +122,7 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
     if (input !== this.refs.avatarUrl)
       return;
 
-    this.syncAvatarPreview(input.value.trim());
-  }
-
-  private syncAvatarPreview(imageUrl: string) {
-    const preview = this.refs.avatarPreview as HTMLImageElement;
-    const initial = this.refs.avatarInitial as HTMLElement;
-
-    preview.src = imageUrl;
-    preview.style.display = imageUrl ? "block" : "none";
-    initial.style.display = imageUrl ? "none" : "inline";
+    syncAvatarPreview(input.value.trim(), this.refs.avatarPreview as HTMLImageElement, this.refs.avatarInitial as HTMLElement);
   }
 
   private async save() {

@@ -7,6 +7,7 @@ import { DashboardSidebar } from "@widgets/dashboard-sidebar";
 import { Modal } from "@shared/ui/Modal/Modal";
 import { Spinner } from "@shared/ui/Spinner/Spinner";
 import { EmptyState } from "@shared/ui/EmptyState/EmptyState";
+import { todayInputValue } from "@shared/lib/date/todayInputValue";
 import {
   getProviderSchedule,
   getAppointmentPatient,
@@ -17,10 +18,6 @@ import {
 import providerSchedulePageTemplate from "@pages/provider-schedule/ProviderSchedulePage.hbs?raw";
 import "@pages/provider-schedule/ProviderSchedulePage.css";
 
-function today(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
 export class ProviderSchedulePage extends Block<BlockOwnProps> {
   protected template = providerSchedulePageTemplate;
   protected events: EventListType = {
@@ -30,15 +27,15 @@ export class ProviderSchedulePage extends Block<BlockOwnProps> {
         return;
 
       const dateInput = this.refs.date as HTMLInputElement;
-      dateInput.value = today();
-      void this.loadSchedule(today());
+      dateInput.value = todayInputValue();
+      void this.loadSchedule(todayInputValue());
     },
   };
 
   protected componentDidMount() {
     this.mountInto("sidebar", new DashboardSidebar({ active: "schedule" }));
-    (this.refs.date as HTMLInputElement).value = today();
-    void this.loadSchedule(today());
+    (this.refs.date as HTMLInputElement).value = todayInputValue();
+    void this.loadSchedule(todayInputValue());
   }
 
   private async loadSchedule(date: string) {

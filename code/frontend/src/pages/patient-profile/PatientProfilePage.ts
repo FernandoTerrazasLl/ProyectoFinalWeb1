@@ -8,7 +8,7 @@ import { EmptyState } from "@shared/ui/EmptyState/EmptyState";
 import { ReviewForm } from "@features/leave-review";
 import { listMyAppointments, cancelAppointment, type PatientAppointment } from "@entities/appointment";
 import { submitReview } from "@entities/review";
-import { sessionStore, getMyProfile } from "@entities/user";
+import { clearStoredSession, sessionStore, getMyProfile } from "@entities/user";
 import { routerInstance } from "@shared/lib/router/routerInstance";
 import type { PatientProfilePageProps } from "@pages/patient-profile/PatientProfilePageProps";
 import patientProfilePageTemplate from "@pages/patient-profile/PatientProfilePage.hbs?raw";
@@ -47,6 +47,9 @@ export class PatientProfilePage extends Block<PatientProfilePageProps> {
     const result = await listMyAppointments();
 
     if (result.isErr()) {
+      if (this.redirectIfUnauthorized(result.error.status))
+        return;
+
       this.replaceChildrenInto("upcomingList", [new EmptyState({ title: "No pudimos cargar tus citas" })]);
       this.replaceChildrenInto("historyList", []);
       return;
@@ -102,6 +105,9 @@ export class PatientProfilePage extends Block<PatientProfilePageProps> {
     const result = await getMyProfile();
 
     if (result.isErr()) {
+      if (this.redirectIfUnauthorized(result.error.status))
+        return;
+
       this.mountInto("profileForm", new EmptyState({ title: "No pudimos cargar tus datos" }));
       return;
     }
@@ -125,5 +131,16 @@ export class PatientProfilePage extends Block<PatientProfilePageProps> {
 
     if (element)
       document.body.append(element);
+  }
+
+  private redirectIfUnauthorized(status: number): boolean {
+    if (status !== 401)
+      return false;
+
+    clearStoredSession();
+    sessionStore.setState({ accessToken: null, user: null, role: "guest" });
+    routerInstance.navigate("/auth");
+
+    return true;
   }
 }
