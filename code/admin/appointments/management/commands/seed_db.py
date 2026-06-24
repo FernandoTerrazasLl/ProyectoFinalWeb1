@@ -84,8 +84,10 @@ class Command(BaseCommand):
 
         for profile in provider_profiles:
             for day in range(1, 6):
-                ScheduleRule.objects.create(provider=profile, day_of_week=day, start_time=time(8, 0), end_time=time(12, 0))
-                ScheduleRule.objects.create(provider=profile, day_of_week=day, start_time=time(14, 0), end_time=time(18, 0))
+                for h in range(8, 12):
+                    ScheduleRule.objects.create(provider=profile, day_of_week=day, start_time=time(h, 0), end_time=time(h+1, 0))
+                for h in range(14, 18):
+                    ScheduleRule.objects.create(provider=profile, day_of_week=day, start_time=time(h, 0), end_time=time(h+1, 0))
         self.stdout.write("Creating Schedule Exceptions...")
         today = timezone.now().date()
 

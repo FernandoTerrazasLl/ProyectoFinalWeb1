@@ -12,7 +12,7 @@ interface ProviderAvailabilitySettingsProps extends BlockOwnProps {
 
 const DAY_SLOTS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
 const NIGHT_SLOTS = ["20:00", "21:00", "22:00", "23:00", "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00"];
-const ALL_DAYS = [1, 2, 3, 4, 5, 6, 7];
+const ALL_DAYS = [1, 2, 3, 4, 5];
 const DEFAULT_BLOCKED_SLOTS = new Set(["12:00", "13:00", ...NIGHT_SLOTS]);
 
 function addHour(time: string): string {

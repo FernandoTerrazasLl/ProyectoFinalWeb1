@@ -7,6 +7,9 @@ def generate_slots(start_time: time, end_time: time, interval_minutes: int = 60)
     current = datetime.combine(date.today(), start_time)
     end = datetime.combine(date.today(), end_time)
 
+    if end_time <= start_time:
+        end += timedelta(days=1)
+
     while current + timedelta(minutes=interval_minutes) <= end:
         slots.append(current.time())
         current += timedelta(minutes=interval_minutes)

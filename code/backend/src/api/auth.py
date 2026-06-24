@@ -12,7 +12,7 @@ from src.services.redis_client import get_redis
 import redis.asyncio as redis
 from src.core.dependencies import get_current_user
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, time
 from src.models.schemas import *
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -54,6 +54,14 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     elif new_user.role == "PROVIDER":
         provider_profile = models.ProviderProfile(user_id=new_user.id)
         db.add(provider_profile)
+        db.commit()
+        db.refresh(provider_profile)
+
+        for day in range(1, 6):
+            for h in range(8, 12):
+                db.add(models.ScheduleRule(provider_id=provider_profile.id, day_of_week=day, start_time=time(h, 0), end_time=time(h+1, 0)))
+            for h in range(14, 18):
+                db.add(models.ScheduleRule(provider_id=provider_profile.id, day_of_week=day, start_time=time(h, 0), end_time=time(h+1, 0)))
         db.commit()
 
     return {"message": "User registered successfully", "user_id": new_user.id}
