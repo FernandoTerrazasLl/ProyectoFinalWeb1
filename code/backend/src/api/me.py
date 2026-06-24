@@ -29,7 +29,8 @@ def get_user_profile(current_user: models.User = Depends(get_current_user)):
         "birth_date": current_user.birth_date,
         "gender": current_user.gender,
         "phone_number": current_user.phone_number or "",
-        "email": current_user.email
+        "email": current_user.email,
+        "avatar_url": current_user.avatar_url or ""
     }
 
 @router.put("/profile", response_model=UserProfileResponse)
@@ -51,6 +52,7 @@ def update_user_profile(
     current_user.birth_date = profile_data.birth_date
     current_user.gender = profile_data.gender
     current_user.phone_number = profile_data.phone_number
+    current_user.avatar_url = profile_data.avatar_url or current_user.avatar_url or ""
 
     db.commit()
     db.refresh(current_user)
@@ -63,7 +65,8 @@ def update_user_profile(
         "birth_date": current_user.birth_date,
         "gender": current_user.gender,
         "phone_number": current_user.phone_number or "",
-        "email": current_user.email
+        "email": current_user.email,
+        "avatar_url": current_user.avatar_url or ""
     }
 
 @router.get("/appointments", response_model=List[MyAppointmentResponse])
@@ -248,6 +251,7 @@ def get_provider_profile(
         "gender": provider.user.gender,
         "phone_number": provider.user.phone_number or "",
         "email": provider.user.email,
+        "avatar_url": provider.user.avatar_url or "",
         "bio": provider.bio or "",
         "session_price": float(provider.session_price) if provider.session_price else 0.0,
         "tags": [tag.name for tag in provider.tags],
@@ -277,6 +281,7 @@ async def update_provider_profile(
     current_user.birth_date = profile_update.birth_date
     current_user.gender = profile_update.gender
     current_user.phone_number = profile_update.phone_number
+    current_user.avatar_url = profile_update.avatar_url or current_user.avatar_url or ""
 
     provider.bio = profile_update.bio
     provider.session_price = profile_update.session_price
@@ -318,7 +323,8 @@ async def update_provider_profile(
                     "bio": provider.bio,
                     "session_price": price,
                     "tags": tags_list,
-                    "specialty": profile_update.specialty
+                    "specialty": profile_update.specialty,
+                    "avatar_url": current_user.avatar_url or ""
                 }
             }
         )
@@ -334,6 +340,7 @@ async def update_provider_profile(
         "gender": current_user.gender,
         "phone_number": current_user.phone_number or "",
         "email": current_user.email,
+        "avatar_url": current_user.avatar_url or "",
         "bio": provider.bio or "",
         "session_price": price,
         "tags": tags_list,

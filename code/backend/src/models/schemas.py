@@ -23,6 +23,7 @@ class UserProfileResponse(BaseModel):
     gender: Optional[str] = None
     phone_number: str
     email: Optional[EmailStr] = None
+    avatar_url: Optional[str] = ""
 
 class UserProfileUpdate(BaseModel):
     first_name: str
@@ -33,6 +34,7 @@ class UserProfileUpdate(BaseModel):
     gender: Optional[str] = None
     phone_number: str
     email: Optional[EmailStr] = None
+    avatar_url: Optional[str] = ""
 
 class UserLogin(BaseModel):
     email: EmailStr
