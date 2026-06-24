@@ -164,4 +164,3 @@ def complete_appointment(
     db.commit()
 
     return {"detail": "Appointment completed successfully"}
-

@@ -52,5 +52,4 @@ def verify_google_token(token: str):
     except Exception as e:
         import logging
         logging.error(f"Google Token Verification Failed: {e}")
-        return None
-
+        raise ValueError(str(e))

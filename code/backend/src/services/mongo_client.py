@@ -19,4 +19,3 @@ class MongoClient:
 
 async def get_mongo_db():
     return MongoClient.get_db()
-

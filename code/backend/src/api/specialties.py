@@ -13,4 +13,3 @@ router = APIRouter(prefix="/specialties", tags=["specialties"])
 def get_specialties(db: Session = Depends(get_db)):
     specialties = db.query(models.Specialty).all()
     return [{"id": str(s.id), "name": s.name} for s in specialties]
-

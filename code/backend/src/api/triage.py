@@ -66,4 +66,3 @@ async def evaluate_triage(
         risk_level=risk_level,
         recommended_providers=recommended_providers
     )
-

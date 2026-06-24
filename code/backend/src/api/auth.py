@@ -88,7 +88,11 @@ def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
 
 @router.post("/google")
 def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
-    idinfo = verify_google_token(data.id_token)
+    try:
+        idinfo = verify_google_token(data.id_token)
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=f"Google Token Error: {str(e)}")
+    
     if not idinfo:
         raise HTTPException(status_code=401, detail="Invalid Google Token")
 
@@ -99,8 +103,6 @@ def google_login(data: GoogleLogin, db: Session = Depends(get_db)):
     first_name = idinfo.get("given_name", "")
     full_last_name = idinfo.get("family_name", "").strip()
     
-    # Split "family_name" into Paterno and Materno.
-    # Using rsplit(" ", 1) handles cases like "De La Cruz Perez" correctly.
     last_name = full_last_name
     maternal_last_name = ""
     
@@ -208,4 +210,3 @@ def change_password(
     current_user.password = get_password_hash(request.new_password)
     db.commit()
     return {"message": "Password updated successfully"}
-

@@ -95,7 +95,6 @@ async def get_my_appointments(
         })
     return result
 
-
 @router.get("/schedule", response_model=List[ScheduleItemResponse])
 def get_my_schedule(
     target_date: date = Query(..., alias="date"),
@@ -177,7 +176,6 @@ def update_schedule_rules(
     db.query(models.ScheduleRule).filter(
         models.ScheduleRule.provider_id == provider.id
     ).delete()
-
 
     new_rules = []
     for rule in rules:

@@ -16,7 +16,6 @@ from src.services.availability_service import get_provider_slots, is_slot_blocke
 
 router = APIRouter(prefix="/psychologists", tags=["psychologists"])
 
-
 def _to_psychologist_response(provider: models.ProviderProfile) -> dict:
     user = provider.user
 
@@ -33,7 +32,6 @@ def _to_psychologist_response(provider: models.ProviderProfile) -> dict:
         "tags": [tag.name for tag in provider.tags],
         "avatar_url": user.avatar_url or "",
     }
-
 
 def _query_psychologists_from_db(
     db: Session,
@@ -79,8 +77,6 @@ def _query_psychologists_from_db(
 
     return [_to_psychologist_response(provider) for provider in providers]
 
-
-
 @router.get("/", response_model=List[PsychologistResponse])
 async def get_psychologists(
     skip: int = 0,
@@ -117,8 +113,6 @@ async def get_psychologist(
         raise HTTPException(status_code=404, detail="Psychologist not found")
 
     return _to_psychologist_response(provider)
-
-
 
 @router.get("/{psychologist_id}/availability", response_model=List[AvailabilitySlot])
 def get_availability(
@@ -178,4 +172,3 @@ async def get_reviews(
             "verified": True
         })
     return result
-

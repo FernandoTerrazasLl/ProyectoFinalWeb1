@@ -45,4 +45,3 @@ async def capture_event(
 ):
     background_tasks.add_task(dispatch_async_event, producer, "metric_event", event.dict())
     return {"status": "accepted", "message": "Event captured successfully"}
-

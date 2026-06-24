@@ -40,4 +40,3 @@ def parse_es_hits(es_response: dict, model_class: Type[T]) -> List[T]:
         source.pop("id", None)
         result.append(model_class(id=hit.get("_id"), **source))
     return result
-

@@ -49,7 +49,6 @@ class Token(BaseModel):
     token_type: str
     role: str
 
-
 class AppointmentCreate(BaseModel):
     provider_id: UUID4
     date: date
@@ -79,7 +78,6 @@ class PatientDetailResponse(BaseModel):
     date: date
     created_at: datetime
     previous_appointments_count: int
-
 
 class MyAppointmentResponse(BaseModel):
     id: UUID4
@@ -126,7 +124,6 @@ class ProviderProfileResponse(UserProfileResponse):
     specialty: Optional[str] = None
     office_address: Optional[str] = ""
 
-
 class PsychologistResponse(BaseModel):
     id: str
     first_name: str
@@ -144,11 +141,9 @@ class AvailabilitySlot(BaseModel):
     time: str
     available: bool
 
-
 class SpecialtyResponse(BaseModel):
     id: str
     name: str
-
 
 class TriageScores(BaseModel):
     clinica: int = 0
@@ -165,7 +160,6 @@ class TriageResponse(BaseModel):
     risk_level: str
     recommended_providers: List[PsychologistResponse]
 
-
 class ReviewPayload(BaseModel):
     provider_id: str
     user_id: str
@@ -176,4 +170,3 @@ class EventPayload(BaseModel):
     user_id: Optional[str] = None
     event_type: str
     metadata: Dict[str, Any]
-

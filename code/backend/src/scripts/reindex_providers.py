@@ -25,7 +25,6 @@ TAGS_QUERY = text("""
     WHERE pt.providerprofile_id = :provider_id
 """)
 
-
 def build_document(row, tags):
     return {
         "first_name": row.first_name or "",
@@ -40,7 +39,6 @@ def build_document(row, tags):
         "avatar_url": row.avatar_url or "",
     }
 
-
 def reindex_providers():
     es = Elasticsearch([ES_HOST])
 
@@ -53,17 +51,14 @@ def reindex_providers():
     print("Force refreshing the index to make docs immediately searchable...")
     es.indices.refresh(index="providers")
 
-    # Invalidate Redis Cache globally after batch update
     print("Invalidating Redis cache...")
     try:
         redis_client = redis.Redis.from_url(os.getenv("REDIS_URL", "redis://redis:6379/0"))
         
-        # Invalidate all detail caches
         detail_keys = redis_client.keys("psychs:detail:*")
         if detail_keys:
             redis_client.delete(*detail_keys)
             
-        # Invalidate all list caches
         list_keys = redis_client.keys("psychs:list:*")
         if list_keys:
             redis_client.delete(*list_keys)
@@ -76,7 +71,6 @@ def reindex_providers():
 
     print("Reindex complete!")
     logger.info(f"Indexed {len(providers)} providers into Elasticsearch")
-
 
 if __name__ == "__main__":
     reindex_providers()

@@ -40,4 +40,3 @@ def get_current_provider(current_user: models.User = Depends(get_current_user), 
     if not provider:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not registered as a psychologist/provider")
     return provider
-
