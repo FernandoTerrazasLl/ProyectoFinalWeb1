@@ -48,10 +48,10 @@ jobs:
         run: docker compose logs backend
 
       - name: Verificar arquitectura con import-linter (Backend)
-        run: docker compose exec -T backend sh -c "lint-imports"
+        run: docker compose exec -T backend sh -c "lint-imports --no-cache"
 
       - name: Verificar arquitectura con import-linter (Admin)
-        run: docker compose exec -T admin sh -c "lint-imports"
+        run: docker compose exec -T admin sh -c "lint-imports --no-cache"
 
       - name: Ejecutar Tests de Backend (pytest)
         run: |

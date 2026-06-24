@@ -284,4 +284,3 @@ async def update_provider_profile(
         logger.error(f"Failed to clear redis cache: {e}")
 
     return build_provider_profile_response(provider)
-
