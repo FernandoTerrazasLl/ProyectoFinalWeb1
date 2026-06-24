@@ -102,6 +102,7 @@ describe("Datos personales del paciente [US-AUTH-01]", () => {
         gender: "F",
         phone_number: "70000000",
         email: "ana@correo.com",
+        avatar_url: "",
       }),
     );
 
@@ -121,6 +122,7 @@ describe("Datos personales del paciente [US-AUTH-01]", () => {
       gender: "F",
       phoneNumber: "70000000",
       email: "ana@correo.com",
+      avatarUrl: "",
     });
 
     expect(request).toHaveBeenCalledWith(

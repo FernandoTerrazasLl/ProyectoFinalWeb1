@@ -7,4 +7,5 @@ export interface MyProfileResponse {
   gender: string;
   phone_number: string;
   email: string;
+  avatar_url?: string;
 }

@@ -7,6 +7,17 @@
         <h2 class="edit-patient-profile__title">Información de Identidad</h2>
         <p class="edit-patient-profile__subtitle">Tus datos personales básicos utilizados en la plataforma.</p>
       </header>
+      <div class="edit-patient-profile__photo-row">
+        <div class="edit-patient-profile__avatar">
+          <img class="edit-patient-profile__avatar-image" ref="avatarPreview" alt="Foto de perfil" src="{{draft.avatarUrl}}">
+          <span class="edit-patient-profile__avatar-initial" ref="avatarInitial">{{draft.firstName}}</span>
+        </div>
+        <div>
+          <button class="button button--secondary edit-patient-profile__photo-button" type="button">Cambiar foto</button>
+          <input class="edit-patient-profile__photo-input" type="file" accept="image/png,image/jpeg,image/gif" ref="avatarInput">
+          <p class="edit-patient-profile__hint">JPG, GIF o PNG. Max 2MB.</p>
+        </div>
+      </div>
       <div class="edit-patient-profile__grid">
         <div class="edit-patient-profile__field edit-patient-profile__field--full">
           {{{ Label text="Nombre(s)" forId="profile-first-name" }}}

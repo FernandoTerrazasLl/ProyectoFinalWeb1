@@ -12,6 +12,7 @@ function buildResponse(overrides: Partial<MyProfileResponse> = {}): MyProfileRes
     gender: "F",
     phone_number: "70000000",
     email: "ana@correo.com",
+    avatar_url: "",
     ...overrides,
   };
 }

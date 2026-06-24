@@ -7,4 +7,5 @@ export interface PatientProfileDraft {
   gender: string;
   phoneNumber: string;
   email: string;
+  avatarUrl: string;
 }

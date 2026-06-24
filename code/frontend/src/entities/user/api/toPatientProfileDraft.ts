@@ -11,5 +11,6 @@ export function toPatientProfileDraft(response: MyProfileResponse): PatientProfi
     gender: response.gender,
     phoneNumber: response.phone_number,
     email: response.email,
+    avatarUrl: response.avatar_url ?? "",
   };
 }

@@ -1,5 +1,11 @@
 <div class="patient-info-card">
-  <p class="patient-info-card__name">{{info.name}}</p>
+  <header class="patient-info-card__person">
+    <div class="patient-info-card__avatar">{{initial}}</div>
+    <div>
+      <p class="patient-info-card__name">{{info.name}}</p>
+      <p class="patient-info-card__time">Horario de cita: {{timeLabel}}</p>
+    </div>
+  </header>
   <div class="patient-info-card__grid">
     <div class="patient-info-card__stat">
       <dt class="patient-info-card__label">Edad</dt>

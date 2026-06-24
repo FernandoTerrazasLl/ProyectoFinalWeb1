@@ -12,5 +12,6 @@ export function updateMyProfile(draft: PatientProfileDraft): Promise<Result<unkn
     birth_date: draft.birthDate,
     gender: draft.gender,
     phone_number: draft.phoneNumber,
+    avatar_url: draft.avatarUrl,
   });
 }

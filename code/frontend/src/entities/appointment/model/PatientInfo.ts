@@ -3,5 +3,6 @@ export interface PatientInfo {
   age: number;
   phone: string;
   email: string;
+  time?: string;
   reason: string;
 }
