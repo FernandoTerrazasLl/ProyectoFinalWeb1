@@ -111,7 +111,11 @@ export class ProviderAvailabilitySettings extends Block<ProviderAvailabilitySett
   }
 
   private renderSlots() {
-    this.refs.slots?.replaceChildren(...this.allSlots.map((slot) => this.createSlotButton(slot)));
+    const daySlots = this.allSlots.filter((slot) => toMinutes(slot) >= toMinutes("08:00") && toMinutes(slot) <= toMinutes("19:00"));
+    const nightSlots = this.allSlots.filter((slot) => !daySlots.includes(slot));
+
+    this.refs.daySlots?.replaceChildren(...daySlots.map((slot) => this.createSlotButton(slot)));
+    this.refs.nightSlots?.replaceChildren(...nightSlots.map((slot) => this.createSlotButton(slot)));
   }
 
   private createSlotButton(time: string): HTMLButtonElement {
