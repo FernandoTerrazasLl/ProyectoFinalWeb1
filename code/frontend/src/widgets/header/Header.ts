@@ -18,6 +18,15 @@ export class Header extends Block<HeaderProps> {
     click: (event) => this.handleClick(event),
   };
 
+  constructor(props: HeaderProps = {}) {
+    const initialState = sessionStore.getState();
+    super({ 
+      ...props, 
+      userName: initialState.user?.name ?? null, 
+      isProvider: initialState.role === "PROVIDER" 
+    });
+  }
+
   protected componentDidMount() {
     this.unsubscribe = sessionStore.subscribe((state) =>
       this.setProps({ userName: state.user?.name ?? null, isProvider: state.role === "PROVIDER" }),
