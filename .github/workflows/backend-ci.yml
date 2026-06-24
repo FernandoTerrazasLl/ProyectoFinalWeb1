@@ -49,19 +49,24 @@ jobs:
 
       - name: Ejecutar Tests de Backend (pytest)
         run: |
-          # Usamos -T porque en GitHub Actions no hay terminal interactiva (TTY)
-          docker compose exec -T backend pytest --junitxml=pytest-report.xml --cov=src --cov-report=html tests/
+          mkdir -p code/backend/test-artifacts/htmlcov
+          set +e
+          docker compose exec -T backend sh -lc "COVERAGE_FILE=/tmp/.coverage pytest --junitxml=/tmp/pytest-report.xml --cov=src --cov-report=html:/tmp/htmlcov tests/"
+          test_status=$?
+          docker compose cp backend:/tmp/pytest-report.xml code/backend/test-artifacts/pytest-report.xml || true
+          docker compose cp backend:/tmp/htmlcov/. code/backend/test-artifacts/htmlcov/ || true
+          exit $test_status
 
       - name: Subir Resultados de Tests (Artifact)
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: backend-pytest-results
-          path: code/backend/pytest-report.xml
+          path: code/backend/test-artifacts/pytest-report.xml
 
       - name: Subir Reporte de Cobertura HTML (Artifact)
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: backend-coverage-report
-          path: code/backend/htmlcov/
+          path: code/backend/test-artifacts/htmlcov/
