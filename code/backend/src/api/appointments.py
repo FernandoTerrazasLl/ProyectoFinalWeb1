@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import date, time, datetime, timezone
+from zoneinfo import ZoneInfo
 from pydantic import BaseModel, UUID4
 import src.models.domain as models
 from src.db.database import get_db
@@ -11,6 +12,10 @@ from src.services.schedule_service import generate_slots
 from src.services.availability_service import get_provider_slots, is_slot_blocked
 
 router = APIRouter(prefix="/appointments", tags=["appointments"])
+LOCAL_TIMEZONE = ZoneInfo("America/La_Paz")
+
+def local_now() -> datetime:
+    return datetime.now(LOCAL_TIMEZONE).replace(tzinfo=None)
 
 @router.post("/", response_model=AppointmentResponse)
 def create_appointment(
@@ -20,7 +25,7 @@ def create_appointment(
 ):
     naive_time = appt.time.replace(tzinfo=None)
 
-    now = datetime.now()
+    now = local_now()
     appointment_dt = datetime.combine(appt.date, naive_time)
     if appointment_dt < now:
         raise HTTPException(status_code=400, detail="No se puede reservar una cita en el pasado.")
