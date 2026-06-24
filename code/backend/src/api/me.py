@@ -86,8 +86,9 @@ async def get_my_appointments(
     reviewed_provider_ids = set()
     if provider_ids:
         user_id_str = str(patient.user.id)
+        user_email = patient.user.email
         cursor = mongo_db.reviews.find({
-            "user_id": user_id_str,
+            "user_id": {"$in": [user_id_str, user_email]},
             "provider_id": {"$in": provider_ids}
         })
         reviews = await cursor.to_list(length=None)
