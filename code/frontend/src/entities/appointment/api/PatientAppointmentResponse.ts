@@ -4,6 +4,7 @@ export interface PatientAppointmentResponse {
   provider_name: string;
   provider_phone: string;
   provider_address: string;
+  provider_avatar?: string;
   date: string;
   time: string;
   state: string;

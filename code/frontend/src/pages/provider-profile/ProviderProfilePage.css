@@ -7,6 +7,12 @@
   margin: 0 auto;
 }
 
+.provider-profile-page__left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
 .provider-profile-page__main {
   display: flex;
   flex-direction: column;
@@ -88,20 +94,15 @@
     column-gap: 4.25rem;
   }
 
-  .provider-profile-page__main {
+  .provider-profile-page__left-column {
     grid-column: 1;
   }
 
   .provider-profile-page__booking {
     grid-column: 2;
-    grid-row: 1 / span 2;
     flex-shrink: 0;
     position: sticky;
     top: var(--space-8);
-  }
-
-  .provider-profile-page__reviews {
-    grid-column: 1;
   }
 }
 

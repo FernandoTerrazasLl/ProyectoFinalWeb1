@@ -32,6 +32,8 @@ async def submit_review(
     if existing:
         raise HTTPException(status_code=400, detail="You have already submitted a review for this professional.")
 
+    await mongo_db.reviews.insert_one(review.dict())
+
     background_tasks.add_task(dispatch_async_event, producer, "review", review.dict())
     return {"status": "accepted", "message": "Review submitted successfully"}
 

@@ -6,6 +6,7 @@ export interface PatientAppointment {
   providerName: string;
   providerPhone: string;
   providerAddress: string;
+  providerAvatar?: string;
   date: string;
   time: string;
   state: AppointmentState;

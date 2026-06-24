@@ -43,8 +43,7 @@ async def process_message(msg_value, mongo_db, ch_client):
         event_type = event.get("type")
 
         if event_type == "review":
-            await mongo_db.reviews.insert_one(event["data"])
-            logger.info("Inserted review into MongoDB.")
+            logger.info("Processing review from Kafka to update aggregates.")
 
             provider_id = event["data"].get("provider_id")
             if provider_id:

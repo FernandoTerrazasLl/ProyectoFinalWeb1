@@ -87,6 +87,7 @@ class MyAppointmentResponse(BaseModel):
     provider_name: str
     provider_phone: str
     provider_address: str
+    provider_avatar: Optional[str] = ""
     date: date
     time: time
     state: str

@@ -9,7 +9,8 @@ export class PatientInfoCard extends Block<PatientInfoCardProps> {
   constructor(props: PatientInfoCardProps) {
     const initial = props.info.name.trim().charAt(0).toUpperCase() || "P";
     const timeLabel = props.info.time?.slice(0, 5) ?? "--:--";
+    const ageLabel = props.info.age ? `${props.info.age} años` : "N/A";
 
-    super({ ...props, initial, timeLabel });
+    super({ ...props, initial, timeLabel, ageLabel });
   }
 }

@@ -87,6 +87,7 @@ async def get_my_appointments(
             "provider_name": f"{user.first_name} {user.last_name}".strip(),
             "provider_phone": user.phone_number or "No provisto",
             "provider_address": getattr(provider_profile, "office_address", "No provista"),
+            "provider_avatar": user.avatar_url or "",
             "date": appt.date,
             "time": appt.time,
             "state": appt.status,

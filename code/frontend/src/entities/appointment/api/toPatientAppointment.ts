@@ -11,6 +11,7 @@ export function toPatientAppointment(response: PatientAppointmentResponse): Pati
     providerName: response.provider_name,
     providerPhone: response.provider_phone,
     providerAddress: response.provider_address,
+    providerAvatar: response.provider_avatar || "",
     date: response.date,
     time: response.time,
     state,

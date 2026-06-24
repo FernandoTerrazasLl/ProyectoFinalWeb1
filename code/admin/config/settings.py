@@ -27,6 +27,15 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
+DOMAIN_NAME = os.environ.get('DOMAIN_NAME', 'localhost')
+CSRF_TRUSTED_ORIGINS = [f'https://{DOMAIN_NAME}', f'https://www.{DOMAIN_NAME}']
+if DOMAIN_NAME == 'localhost':
+    CSRF_TRUSTED_ORIGINS.extend(['http://localhost', 'http://127.0.0.1'])
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+
 
 
 INSTALLED_APPS = [

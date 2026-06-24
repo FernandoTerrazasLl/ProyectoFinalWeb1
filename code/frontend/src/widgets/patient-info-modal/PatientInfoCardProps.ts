@@ -5,4 +5,5 @@ export interface PatientInfoCardProps extends BlockOwnProps {
   info: PatientInfo;
   initial?: string;
   timeLabel?: string;
+  ageLabel?: string;
 }
