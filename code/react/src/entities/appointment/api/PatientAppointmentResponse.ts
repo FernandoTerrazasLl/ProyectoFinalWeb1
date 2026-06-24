@@ -1,0 +1,12 @@
+export interface PatientAppointmentResponse {
+  id: string;
+  provider_id: string;
+  provider_name: string;
+  provider_phone: string;
+  provider_address: string;
+  provider_avatar?: string;
+  date: string;
+  time: string;
+  state: string;
+  has_reviewed: boolean;
+}

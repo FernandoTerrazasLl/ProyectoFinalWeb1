@@ -1,0 +1,31 @@
+<article class="psychologist-detail">
+  <header class="psychologist-detail__header">
+    {{{ Avatar
+      src=psychologist.image
+      alt=psychologist.name
+      initials=psychologist.name
+      size="lg"
+    }}}
+    <div class="psychologist-detail__heading">
+      <h1 class="psychologist-detail__name">{{psychologist.name}}</h1>
+      <p class="psychologist-detail__specialty">{{psychologist.specialty}}</p>
+      <div class="psychologist-detail__rating">
+        {{{ Icon name="star" }}}
+        <span class="psychologist-detail__rating-value">{{psychologist.rating}}</span>
+        <span class="psychologist-detail__rating-count">({{psychologist.reviewsCount}} reseñas)</span>
+      </div>
+    </div>
+  </header>
+  <section class="psychologist-detail__section">
+    <h2 class="psychologist-detail__section-title">Sobre mí</h2>
+    <p class="psychologist-detail__bio">{{psychologist.bio}}</p>
+  </section>
+  <section class="psychologist-detail__section">
+    <h2 class="psychologist-detail__section-title">Especialidades y Enfoque</h2>
+    <div class="psychologist-detail__tags">
+      {{#each psychologist.tags}}
+        {{{ Tag text=this }}}
+      {{/each}}
+    </div>
+  </section>
+</article>

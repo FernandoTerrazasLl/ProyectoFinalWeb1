@@ -1,0 +1,58 @@
+<form class="edit-patient-profile" ref="form">
+  <section class="edit-patient-profile__section">
+    <header class="edit-patient-profile__header">
+        <h2 class="edit-patient-profile__title">Información de Identidad</h2>
+        <p class="edit-patient-profile__subtitle">Tus datos personales básicos utilizados en la plataforma.</p>
+      </header>
+      <div class="edit-patient-profile__photo-row">
+        <div class="profile-avatar edit-patient-profile__avatar">
+          <img class="profile-avatar__image edit-patient-profile__avatar-image" ref="avatarPreview" alt="Foto de perfil" src="{{draft.avatarUrl}}">
+          <span class="profile-avatar__initial edit-patient-profile__avatar-initial" ref="avatarInitial">{{draft.firstName}}</span>
+        </div>
+        <div class="edit-patient-profile__photo-field">
+          {{{ Label text="URL de la foto" forId="profile-avatar-url" }}}
+          {{{ Input id="profile-avatar-url" type="url" name="avatarUrl" placeholder="https://..." ref="avatarUrl" }}}
+          <p class="edit-patient-profile__hint">Pegá el enlace público de tu imagen.</p>
+        </div>
+      </div>
+      <div class="edit-patient-profile__grid">
+        <div class="edit-patient-profile__field edit-patient-profile__field--full">
+          {{{ Label text="Nombre(s)" forId="profile-first-name" }}}
+          {{{ Input id="profile-first-name" type="text" name="firstName" ref="firstName" }}}
+        </div>
+        <div class="edit-patient-profile__field">
+          {{{ Label text="Apellido Paterno" forId="profile-last-name" }}}
+          {{{ Input id="profile-last-name" type="text" name="lastName" ref="lastName" }}}
+        </div>
+        <div class="edit-patient-profile__field">
+          {{{ Label text="Apellido Materno (Opcional)" forId="profile-maternal-last-name" }}}
+          {{{ Input id="profile-maternal-last-name" type="text" name="maternalLastName" ref="maternalLastName" }}}
+        </div>
+        <div class="edit-patient-profile__field edit-patient-profile__field--full">
+          {{{ Label text="Cédula de Identidad (CI)" forId="profile-ci" }}}
+          {{{ Input id="profile-ci" type="text" name="ci" ref="ci" }}}
+        </div>
+        <div class="edit-patient-profile__field">
+          {{{ Label text="Fecha de Nacimiento" forId="profile-birth-date" }}}
+          {{{ Input id="profile-birth-date" type="date" name="birthDate" ref="birthDate" }}}
+        </div>
+        <div class="edit-patient-profile__field">
+          {{{ Label text="Género / Sexo Biológico" }}}
+          {{{ GenderSelect ref="gender" value=draft.gender }}}
+        </div>
+        <div class="edit-patient-profile__field edit-patient-profile__field--full">
+          {{{ Label text="Número de Teléfono" forId="profile-phone" }}}
+          {{{ Input id="profile-phone" type="tel" name="phoneNumber" ref="phoneNumber" }}}
+          <p class="edit-patient-profile__hint">Este número puede ser utilizado por tu terapeuta para contactarte en caso de emergencia.</p>
+        </div>
+        <div class="edit-patient-profile__field edit-patient-profile__field--full">
+          {{{ Label text="Correo Electrónico" forId="profile-email" }}}
+          <p class="edit-patient-profile__readonly" id="profile-email">{{draft.email}}</p>
+        </div>
+      </div>
+      {{#if error}}
+        <p class="form-error">{{error}}</p>
+      {{/if}}
+      <button class="button button--primary edit-patient-profile__submit" type="submit">Guardar Cambios</button>
+    </section>
+</form>

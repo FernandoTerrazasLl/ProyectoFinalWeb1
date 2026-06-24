@@ -1,0 +1,63 @@
+import { Block } from "@shared/lib/block/Block";
+import type { EventListType } from "@shared/lib/block/EventListType";
+import { updateMyProfile, updateSessionUserName } from "@entities/user";
+import { showToast } from "@shared/lib/toast/showToast";
+import { setAvatarInitialFromRefs, syncAvatarPreviewFromRefs } from "@shared/lib/avatar/avatarPreview";
+import { todayInputValue } from "@shared/lib/date/todayInputValue";
+import type { EditPatientProfileProps } from "@features/edit-patient-profile/ui/EditPatientProfileProps";
+import editPatientProfileTemplate from "@features/edit-patient-profile/ui/EditPatientProfile.hbs?raw";
+import "@shared/ui/ProfileAvatar/ProfileAvatar.css";
+import "@features/edit-patient-profile/ui/EditPatientProfile.css";
+
+export class EditPatientProfile extends Block<EditPatientProfileProps> {
+  protected template = editPatientProfileTemplate;
+  protected events: EventListType = {
+    input: (event) => this.handleAvatarUrlInput(event),
+    submit: (event) => {
+      event.preventDefault();
+      void this.save();
+    },
+  };
+
+  protected componentDidMount() {
+    const draft = this.props.draft;
+
+    (this.refs.firstName as HTMLInputElement).value = draft.firstName;
+    (this.refs.lastName as HTMLInputElement).value = draft.lastName;
+    (this.refs.maternalLastName as HTMLInputElement).value = draft.maternalLastName;
+    (this.refs.ci as HTMLInputElement).value = draft.ci;
+    (this.refs.birthDate as HTMLInputElement).value = draft.birthDate;
+    (this.refs.birthDate as HTMLInputElement).max = todayInputValue();
+    (this.refs.phoneNumber as HTMLInputElement).value = draft.phoneNumber;
+    (this.refs.avatarUrl as HTMLInputElement).value = draft.avatarUrl;
+    setAvatarInitialFromRefs(draft.firstName, this.refs);
+  }
+
+  private handleAvatarUrlInput(event: Event) {
+    syncAvatarPreviewFromRefs(event, this.refs);
+  }
+
+  private async save() {
+    const firstName = (this.refs.firstName as HTMLInputElement).value;
+    const lastName = (this.refs.lastName as HTMLInputElement).value;
+
+    const result = await updateMyProfile({
+      firstName,
+      lastName,
+      maternalLastName: (this.refs.maternalLastName as HTMLInputElement).value,
+      ci: (this.refs.ci as HTMLInputElement).value,
+      birthDate: (this.refs.birthDate as HTMLInputElement).value,
+      gender: (this.refs.gender as HTMLElement).dataset.value ?? "",
+      phoneNumber: (this.refs.phoneNumber as HTMLInputElement).value,
+      email: this.props.draft.email,
+      avatarUrl: (this.refs.avatarUrl as HTMLInputElement).value.trim(),
+    });
+
+    if (result.isOk()) {
+      showToast("Tus datos fueron actualizados.", "success", 1500);
+      updateSessionUserName(firstName, lastName);
+    } else {
+      this.setProps({ error: "No pudimos guardar tus cambios. Intentá de nuevo." });
+    }
+  }
+}

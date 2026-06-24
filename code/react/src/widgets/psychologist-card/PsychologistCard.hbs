@@ -1,0 +1,29 @@
+<article class="psychologist-card">
+  <div class="psychologist-card__top">
+    {{{ Avatar
+      src=psychologist.image
+      alt=psychologist.name
+      initials=psychologist.name
+      size="md"
+    }}}
+    <div class="psychologist-card__body">
+      <h3 class="psychologist-card__name">{{psychologist.name}}</h3>
+      <p class="psychologist-card__specialty">{{psychologist.specialty}}</p>
+      {{{ StarRating value=psychologist.rating }}}
+    </div>
+  </div>
+  <div class="psychologist-card__tags">
+    {{#each psychologist.tags}}
+      {{{ Tag text=this }}}
+    {{/each}}
+  </div>
+  <div class="psychologist-card__footer">
+    <div class="psychologist-card__price">
+      <span class="psychologist-card__price-label">Por sesión</span>
+      <span class="psychologist-card__rate">{{psychologist.rate}} Bs.</span>
+    </div>
+    <button class="button button--secondary psychologist-card__open" type="button">
+      Ver perfil
+    </button>
+  </div>
+</article>

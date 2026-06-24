@@ -1,0 +1,107 @@
+.provider-schedule-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+.provider-schedule-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-4);
+  width: 100%;
+}
+
+@media (width >= 768px) {
+  .provider-schedule-page {
+    flex-direction: row;
+  }
+
+  .provider-schedule-page__content {
+    padding: var(--space-8) 2.5rem;
+  }
+}
+
+.provider-schedule-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.provider-schedule-page__title {
+  font-family: var(--font-sans);
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.provider-schedule-page__subtitle {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-muted);
+}
+
+.provider-schedule-page__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.provider-schedule-page__today {
+  height: 2.3125rem;
+  padding-inline: var(--space-4);
+  border-color: #99f6e4;
+  background-color: #ccfbf1;
+  color: #0f766e;
+  box-shadow: 0 1px 2px rgb(15 118 110 / 10%);
+}
+
+.provider-schedule-page__date-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 2.3125rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  padding-inline: var(--space-3);
+}
+
+.provider-schedule-page__date-wrap .icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-muted);
+}
+
+.provider-schedule-page__date {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.provider-schedule-page__timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+@media (width >= 1024px) {
+  .provider-schedule-page__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

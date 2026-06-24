@@ -1,0 +1,21 @@
+.not-found-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-8);
+  text-align: center;
+}
+
+.not-found-page__code {
+  font-family: var(--font-sans);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.not-found-page__description {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-muted);
+}

@@ -1,0 +1,113 @@
+.provider-profile-page {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  padding: 1.5rem var(--space-4) 3rem;
+  max-width: 76rem;
+  margin: 0 auto;
+}
+
+.provider-profile-page__left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.provider-profile-page__main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.provider-profile-page__reviews {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.provider-profile-page__title {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.provider-profile-page__booking {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  width: 100%;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  box-shadow: 0 1.5rem 3rem rgb(15 23 42 / 8%);
+  overflow: hidden;
+}
+
+.provider-profile-page__price-label {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.provider-profile-page__price-value {
+  font-family: var(--font-sans);
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: var(--space-1) 0 0;
+}
+
+.provider-profile-page__price-value span {
+  margin-left: var(--space-2);
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+.provider-profile-page__price {
+  padding: 1.125rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.provider-profile-page__booking-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+@media (width >= 768px) {
+  .provider-profile-page {
+    padding: 1.5rem var(--space-8) 3rem;
+  }
+}
+
+@media (width >= 1024px) {
+  .provider-profile-page {
+    grid-template-columns: minmax(0, 49.5rem) 22.5rem;
+    justify-content: center;
+    align-items: start;
+    column-gap: 4.25rem;
+  }
+
+  .provider-profile-page__left-column {
+    grid-column: 1;
+  }
+
+  .provider-profile-page__booking {
+    grid-column: 2;
+    flex-shrink: 0;
+    position: sticky;
+    top: var(--space-8);
+  }
+}
+
+@media (width >= 1280px) {
+  .provider-profile-page {
+    column-gap: 5rem;
+  }
+}

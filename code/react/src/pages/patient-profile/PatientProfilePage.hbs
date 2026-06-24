@@ -1,0 +1,35 @@
+<main class="patient-profile-page">
+  <header class="patient-profile-page__header">
+    <h1 class="patient-profile-page__title">Mi Perfil</h1>
+    <p class="patient-profile-page__subtitle">Gestiona tu información personal y tus citas.</p>
+  </header>
+  <div class="patient-profile-page__layout">
+    <nav class="patient-profile-page__tabs">
+      <button type="button" class="patient-profile-page__tab {{#if isDataTab}}patient-profile-page__tab--active{{/if}}" data-tab="data">
+        {{{ Icon name="user" }}}
+        Mis Datos
+      </button>
+      <button type="button" class="patient-profile-page__tab {{#if isAppointmentsTab}}patient-profile-page__tab--active{{/if}}" data-tab="appointments">
+        {{{ Icon name="calendar" }}}
+        Mis Citas
+      </button>
+    </nav>
+    {{#if isDataTab}}
+      <section class="patient-profile-page__panel">
+        <div ref="profileForm"></div>
+      </section>
+    {{/if}}
+    {{#if isAppointmentsTab}}
+      <section class="patient-profile-page__panel patient-profile-page__panel--appointments">
+        <div class="patient-profile-page__section">
+          <h2 class="patient-profile-page__section-title">Mis Citas Próximas</h2>
+          <div class="patient-profile-page__list" ref="upcomingList"></div>
+        </div>
+        <div class="patient-profile-page__section">
+          <h2 class="patient-profile-page__section-title">Historial de Citas</h2>
+          <div class="patient-profile-page__list" ref="historyList"></div>
+        </div>
+      </section>
+    {{/if}}
+  </div>
+</main>

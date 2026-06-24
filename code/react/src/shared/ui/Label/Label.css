@@ -1,0 +1,12 @@
+.label {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.label__optional {
+  font-weight: 400;
+  color: var(--color-muted);
+}

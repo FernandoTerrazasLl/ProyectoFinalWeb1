@@ -1,0 +1,29 @@
+.profile-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 6rem;
+  height: 6rem;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: #ccfbf1;
+  color: #0f766e;
+}
+
+.profile-avatar__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar__image:not([src]),
+.profile-avatar__image[src=""] {
+  display: none;
+}
+
+.profile-avatar__initial {
+  font-family: var(--font-sans);
+  font-size: 1.875rem;
+  font-weight: 800;
+}

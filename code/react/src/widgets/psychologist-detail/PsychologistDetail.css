@@ -1,0 +1,116 @@
+.psychologist-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.psychologist-detail__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.psychologist-detail__heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding-top: var(--space-2);
+}
+
+.psychologist-detail__name {
+  font-family: var(--font-sans);
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.psychologist-detail__specialty {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.psychologist-detail__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface);
+  padding: 0.625rem 1rem;
+}
+
+.psychologist-detail__rating .icon {
+  width: 1rem;
+  height: 1rem;
+  fill: var(--color-ink);
+  color: var(--color-ink);
+}
+
+.psychologist-detail__rating-value {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.psychologist-detail__rating-count {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+}
+
+.psychologist-detail__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.psychologist-detail__section-title {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.psychologist-detail__bio {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  color: var(--color-muted);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 46rem;
+}
+
+.psychologist-detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.psychologist-detail__tags .tag {
+  background-color: #f1f5f9;
+  border-color: var(--color-border);
+  color: var(--color-text);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+}
+
+@media (width < 640px) {
+  .psychologist-detail__header {
+    flex-direction: column;
+  }
+
+  .psychologist-detail__name {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+}

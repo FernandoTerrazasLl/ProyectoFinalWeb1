@@ -1,0 +1,40 @@
+<div class="schedule-slot">
+  <span class="schedule-slot__time">{{entry.time}}</span>
+  <div class="schedule-slot__body {{stateBodyClass}}">
+    {{#if isReserved}}
+      <div class="schedule-slot__meta">
+        <h3 class="schedule-slot__patient">Cita: {{entry.patientName}}</h3>
+        <span class="schedule-slot__state {{stateClass}}">
+          {{{ Icon name="clock" }}}
+          {{stateLabel}}
+        </span>
+      </div>
+      <div class="schedule-slot__actions">
+        {{#if canComplete}}
+          <button class="button button--secondary schedule-slot__complete" type="button">
+            Completar
+          </button>
+        {{/if}}
+        {{#if canCancel}}
+          <button class="button button--secondary schedule-slot__cancel" type="button">
+            Cancelar Cita
+          </button>
+        {{/if}}
+        <button class="button button--ink schedule-slot__info" type="button">
+          {{{ Icon name="user" }}}
+          Ver Información
+        </button>
+      </div>
+    {{/if}}
+    {{#if isFree}}
+      <p class="schedule-slot__free"><span></span>{{stateLabel}}</p>
+      <button class="button button--secondary schedule-slot__block" type="button">Bloquear Horario</button>
+    {{/if}}
+    {{#if isBlocked}}
+      <p class="schedule-slot__blocked">
+        {{{ Icon name="clock" }}}
+        {{stateLabel}}
+      </p>
+    {{/if}}
+  </div>
+</div>

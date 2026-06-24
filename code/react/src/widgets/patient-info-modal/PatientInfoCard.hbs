@@ -1,0 +1,32 @@
+<div class="patient-info-card">
+  <div class="patient-info-card__content">
+    <header class="patient-info-card__person">
+      <div class="patient-info-card__avatar">{{initial}}</div>
+      <div>
+        <p class="patient-info-card__name">{{info.name}}</p>
+        <p class="patient-info-card__time">Horario de cita: {{timeLabel}}</p>
+      </div>
+    </header>
+    <div class="patient-info-card__grid">
+      <div class="patient-info-card__stat">
+        <dt class="patient-info-card__label">Edad</dt>
+        <dd class="patient-info-card__value">{{ageLabel}}</dd>
+      </div>
+      <div class="patient-info-card__stat">
+        <dt class="patient-info-card__label">Teléfono</dt>
+        <dd class="patient-info-card__value">{{info.phone}}</dd>
+      </div>
+    </div>
+    <div class="patient-info-card__stat">
+      <dt class="patient-info-card__label">Correo Electrónico</dt>
+      <dd class="patient-info-card__value">{{info.email}}</dd>
+    </div>
+    <div class="patient-info-card__reason">
+      <dt class="patient-info-card__label">Motivo de la consulta</dt>
+      <dd class="patient-info-card__value">{{info.reason}}</dd>
+    </div>
+  </div>
+  <footer class="patient-info-card__footer">
+    <button class="button button--ink patient-info-card__close modal__close" type="button">Cerrar</button>
+  </footer>
+</div>

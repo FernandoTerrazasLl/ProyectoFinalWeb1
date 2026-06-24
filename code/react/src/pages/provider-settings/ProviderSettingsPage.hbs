@@ -1,0 +1,25 @@
+<div class="provider-settings-page">
+  <div ref="sidebar"></div>
+  <main class="provider-settings-page__content">
+    <section class="provider-settings-page__header">
+      <div>
+        {{#if isConfiguration}}
+          <h1 class="provider-settings-page__title">Configuración de Disponibilidad Horaria</h1>
+          <p class="provider-settings-page__subtitle">Selecciona los bloques horarios en los que NO deseas recibir citas de pacientes. El sistema guardará tus preferencias de forma recurrente.</p>
+        {{else}}
+          <h1 class="provider-settings-page__title">Edición de Perfil Profesional</h1>
+          <p class="provider-settings-page__subtitle">Actualiza los datos de tu perfil público que los pacientes verán en el directorio.</p>
+        {{/if}}
+      </div>
+    </section>
+    <section class="provider-settings-page__panel {{#if isConfiguration}}provider-settings-page__panel--plain{{/if}}">
+      <div ref="form"></div>
+    </section>
+    {{#unless isConfiguration}}
+      <div class="provider-settings-page__actions">
+        <a class="button button--secondary" href="/directory" data-link>Descartar cambios</a>
+        <button class="button button--ink" type="submit" form="provider-profile-form">Guardar Perfil</button>
+      </div>
+    {{/unless}}
+  </main>
+</div>

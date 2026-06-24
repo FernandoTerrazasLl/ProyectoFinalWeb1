@@ -1,0 +1,66 @@
+<form class="register-form" ref="form">
+  <div class="register-form__section">
+    <h3 class="register-form__section-title">1. Información Personal</h3>
+    <div class="register-form__field">
+      {{{ Label text="Nombre(s)" forId="register-first-name" }}}
+      {{{ Input id="register-first-name" type="text" name="firstName" placeholder="Ej. Ana María" ref="firstName" }}}
+    </div>
+    <div class="register-form__row">
+      <div class="register-form__field">
+        {{{ Label text="Apellido Paterno" forId="register-last-name" }}}
+        {{{ Input id="register-last-name" type="text" name="lastName" placeholder="Ej. López" ref="lastName" }}}
+      </div>
+      <div class="register-form__field">
+        {{{ Label text="Apellido Materno (Opcional)" forId="register-maternal-last-name" }}}
+        {{{ Input id="register-maternal-last-name" type="text" name="maternalLastName" placeholder="Ej. Vargas" ref="maternalLastName" }}}
+      </div>
+    </div>
+    <div class="register-form__field">
+      {{{ Label text="Cédula de Identidad (CI)" forId="register-ci" }}}
+      {{{ Input id="register-ci" type="text" name="ci" placeholder="Ej. 1234567" ref="ci" }}}
+    </div>
+  </div>
+
+  <div class="register-form__section">
+    <h3 class="register-form__section-title">2. Datos Clínicos y Contacto</h3>
+    <div class="register-form__row">
+      <div class="register-form__field">
+        {{{ Label text="Fecha de Nacimiento" forId="register-birth-date" }}}
+        {{{ Input id="register-birth-date" type="date" name="birthDate" ref="birthDate" }}}
+      </div>
+      <div class="register-form__field">
+        {{{ Label text="Género / Sexo Biológico" }}}
+        {{{ GenderSelect ref="gender" }}}
+      </div>
+    </div>
+    <div class="register-form__field">
+      {{{ Label text="Teléfono de contacto" forId="register-phone" }}}
+      {{{ Input id="register-phone" type="tel" name="phoneNumber" placeholder="Ej. +591 70000000" ref="phoneNumber" }}}
+    </div>
+  </div>
+
+  <div class="register-form__section">
+    <h3 class="register-form__section-title">3. Credenciales de Acceso</h3>
+    <div class="register-form__field">
+      {{{ Label text="Correo electrónico" forId="register-email" }}}
+      {{{ Input id="register-email" type="email" name="email" placeholder="ejemplo@correo.com" ref="email" }}}
+    </div>
+    <div class="register-form__field">
+      {{{ Label text="Contraseña" forId="register-password" }}}
+      {{{ Input id="register-password" type="password" name="password" placeholder="Mínimo 8 caracteres" ref="password" }}}
+    </div>
+    <div class="register-form__field">
+      {{{ Label text="Confirmar Contraseña" forId="register-confirm-password" }}}
+      {{{ Input id="register-confirm-password" type="password" name="confirmPassword" placeholder="Repite tu contraseña" ref="confirmPassword" }}}
+    </div>
+  </div>
+
+  <button
+    class="button button--primary register-form__submit"
+    type="submit"
+    ref="submit"
+    disabled
+  >
+    Crear cuenta
+  </button>
+</form>

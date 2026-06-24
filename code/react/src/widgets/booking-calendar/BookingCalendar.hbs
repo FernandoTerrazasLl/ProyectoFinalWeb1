@@ -1,0 +1,37 @@
+<div class="booking-calendar">
+  <p class="booking-calendar__label">
+    {{{ Icon name="calendar" }}}
+    Selecciona una fecha
+  </p>
+  <div class="booking-calendar__date-field">
+    {{{ Icon name="calendar" }}}
+    <span class="booking-calendar__date-label">{{dateLabel}}</span>
+    {{{ Icon name="chevron-down" }}}
+    <input class="booking-calendar__date-input" type="date" value="{{date}}" min="{{min}}" ref="date">
+  </div>
+  {{#if loading}}
+    <p class="booking-calendar__status">Cargando horarios…</p>
+  {{else}}
+    {{#if slots.length}}
+      <p class="booking-calendar__label">
+        {{{ Icon name="clock" }}}
+        Horarios disponibles
+      </p>
+      <div class="booking-calendar__slots">
+        {{#each slots}}
+          <button
+            class="booking-calendar__slot {{#if isPast}}booking-calendar__slot--past{{/if}}"
+            type="button"
+            data-time="{{time}}"
+            {{#unless available}}disabled{{/unless}}
+          >
+            {{label}}
+            {{#if status}}<span class="booking-calendar__slot-status">{{status}}</span>{{/if}}
+          </button>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="booking-calendar__empty">Selecciona una fecha primero para ver los horarios.</p>
+    {{/if}}
+  {{/if}}
+</div>

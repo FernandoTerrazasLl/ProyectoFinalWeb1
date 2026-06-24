@@ -1,0 +1,67 @@
+.signup-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--space-4);
+}
+
+.signup-page__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  max-width: 32rem;
+}
+
+.signup-page__intro .icon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--color-muted);
+}
+
+.signup-page__title {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.signup-page__subtitle {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-muted);
+}
+
+.signup-page__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 42rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-6) var(--space-4);
+}
+
+@media (width >= 768px) {
+  .signup-page__panel {
+    padding: var(--space-8);
+  }
+}
+
+.signup-page__login {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  color: var(--color-muted);
+}
+
+.signup-page__login-link {
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: underline;
+}

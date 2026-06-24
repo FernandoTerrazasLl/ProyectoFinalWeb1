@@ -1,0 +1,110 @@
+.edit-provider-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.edit-provider-profile__section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem 2rem 2rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.edit-provider-profile__section:last-child {
+  border-bottom: 0;
+}
+
+.edit-provider-profile__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.edit-provider-profile__photo-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.edit-provider-profile__photo-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.edit-provider-profile__hint {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+}
+
+.edit-provider-profile__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.edit-provider-profile__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.edit-provider-profile__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.edit-provider-profile__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  border-radius: var(--radius-full);
+  padding: 0.375rem 0.75rem;
+  background-color: #f1f5f9;
+  border: 1px solid var(--color-border);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.edit-provider-profile__remove {
+  border: none;
+  background: none;
+  color: var(--color-muted);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.edit-provider-profile__limit {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+}
+
+.edit-provider-profile__success {
+  margin: 0;
+  padding: 2rem;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-success);
+}
+
+@media (width >= 768px) {
+  .edit-provider-profile__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .edit-provider-profile__field--full {
+    grid-column: 1 / -1;
+  }
+}

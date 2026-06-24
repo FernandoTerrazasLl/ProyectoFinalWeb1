@@ -1,0 +1,35 @@
+<div class="dashboard-sidebar-shell">
+  <div class="dashboard-sidebar-shell__topbar">
+    <a class="dashboard-sidebar-shell__brand" href="/directory" data-link>CuraMente</a>
+    <button class="dashboard-sidebar-shell__toggle" type="button" aria-label="Abrir menú">☰</button>
+  </div>
+  <div class="dashboard-sidebar-shell__scrim {{#if isOpen}}dashboard-sidebar-shell__scrim--visible{{/if}}"></div>
+  <aside class="dashboard-sidebar {{#if isOpen}}dashboard-sidebar--open{{/if}}">
+    <div class="dashboard-sidebar__head">
+      <a class="dashboard-sidebar__brand" href="/directory" data-link>
+        {{{ Icon name="heart-pulse" }}}
+        CuraMente
+      </a>
+      <button class="dashboard-sidebar-shell__close" type="button" aria-label="Cerrar menú">×</button>
+    </div>
+    <p class="dashboard-sidebar__eyebrow">Dashboard</p>
+    <nav class="dashboard-sidebar__nav">
+      <a class="dashboard-sidebar__link {{#if isSchedule}}dashboard-sidebar__link--active{{/if}}" href="/dashboard/schedule" data-link>
+        {{{ Icon name="calendar" }}}
+        Mi Agenda
+      </a>
+      <a class="dashboard-sidebar__link {{#if isProfile}}dashboard-sidebar__link--active{{/if}}" href="/dashboard/profile" data-link>
+        {{{ Icon name="user" }}}
+        Mi Perfil
+      </a>
+      <a class="dashboard-sidebar__link {{#if isConfiguration}}dashboard-sidebar__link--active{{/if}}" href="/dashboard/configuration" data-link>
+        {{{ Icon name="settings" }}}
+        Configuración
+      </a>
+    </nav>
+    <a class="dashboard-sidebar__back" href="/directory" data-link>
+      {{{ Icon name="arrow-left" }}}
+      Volver a la plataforma
+    </a>
+  </aside>
+</div>

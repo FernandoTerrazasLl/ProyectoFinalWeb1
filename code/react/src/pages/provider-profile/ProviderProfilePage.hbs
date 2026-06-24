@@ -1,0 +1,27 @@
+<main class="provider-profile-page">
+  <div class="provider-profile-page__left-column">
+    <section class="provider-profile-page__main">
+      <div class="provider-profile-page__detail" ref="detail"></div>
+    </section>
+    {{#if psychologist}}
+      <section class="provider-profile-page__reviews">
+        <h2 class="provider-profile-page__title">Reseñas de Pacientes</h2>
+        <div ref="reviewsList"></div>
+      </section>
+    {{/if}}
+  </div>
+  {{#if psychologist}}
+    <aside class="provider-profile-page__booking">
+      <section class="provider-profile-page__price">
+        <p class="provider-profile-page__price-label">Costo de inversión</p>
+        <p class="provider-profile-page__price-value">
+          {{psychologist.rate}} Bs.<span>por sesión</span>
+        </p>
+      </section>
+      <section class="provider-profile-page__booking-body">
+        <div ref="calendar"></div>
+        <div ref="bookForm"></div>
+      </section>
+    </aside>
+  {{/if}}
+</main>
