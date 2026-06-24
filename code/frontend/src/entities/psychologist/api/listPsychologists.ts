@@ -1,12 +1,10 @@
-import { Ok, type Result } from "ts-results-es";
+import type { Result } from "ts-results-es";
 import { http } from "@shared/api/http";
 import type { HttpError } from "@shared/api/HttpError";
 import type { Psychologist } from "@entities/psychologist/model/Psychologist";
 import type { PsychologistQuery } from "@entities/psychologist/api/PsychologistQuery";
 import type { PsychologistResponse } from "@entities/psychologist/api/PsychologistResponse";
 import { toPsychologist } from "@entities/psychologist/api/toPsychologist";
-
-const cache = new Map<string, Psychologist[]>();
 
 export async function listPsychologists(
   query: PsychologistQuery = {},
@@ -26,11 +24,6 @@ export async function listPsychologists(
     params.set("limit", String(query.limit));
 
   const search = params.toString();
-  const cached = cache.get(search);
-
-  if (cached)
-    return Ok(cached);
-
   const result = await http.request<PsychologistResponse[]>(
     "GET",
     `/psychologists/${search ? `?${search}` : ""}`,
@@ -38,10 +31,5 @@ export async function listPsychologists(
     signal,
   );
 
-  return result.map((responses) => {
-    const psychologists = responses.map(toPsychologist);
-    cache.set(search, psychologists);
-
-    return psychologists;
-  });
+  return result.map((responses) => responses.map(toPsychologist));
 }

@@ -63,6 +63,19 @@ describe("Catálogo de psicólogos con filtros [US-API-02]", () => {
 
     expect(request).toHaveBeenCalledWith("GET", "/psychologists/", undefined, undefined);
   });
+
+  it("vuelve a consultar para reflejar cambios recientes del perfil [AC-3]", async () => {
+    request
+      .mockResolvedValueOnce(Ok([buildPsychologistResponse({ avatar_url: "https://old.test/avatar.jpg" })]))
+      .mockResolvedValueOnce(Ok([buildPsychologistResponse({ avatar_url: "https://new.test/avatar.jpg" })]));
+
+    const firstResult = await listPsychologists({ skip: 0, limit: 5 });
+    const secondResult = await listPsychologists({ skip: 0, limit: 5 });
+
+    expect(request).toHaveBeenCalledTimes(2);
+    expect(firstResult.unwrap()[0]?.image).toBe("https://old.test/avatar.jpg");
+    expect(secondResult.unwrap()[0]?.image).toBe("https://new.test/avatar.jpg");
+  });
 });
 
 describe("Edición del perfil profesional [US-BKG-05]", () => {
