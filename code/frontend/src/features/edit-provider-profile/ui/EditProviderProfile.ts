@@ -1,6 +1,6 @@
 import { Block } from "@shared/lib/block/Block";
 import type { EventListType } from "@shared/lib/block/EventListType";
-import { prepareProfileImage } from "@shared/lib/image/prepareProfileImage";
+import { previewProfileImage } from "@shared/lib/image/prepareProfileImage";
 import { updateProviderProfile } from "@entities/psychologist";
 import { listSpecialties } from "@entities/specialty";
 import { showToast } from "@shared/lib/toast/showToast";
@@ -136,23 +136,12 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
 
   private async handlePhotoChange(event: Event) {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-
-    if (!file || !file.type.startsWith("image/") || file.size > 5 * 1024 * 1024)
-      return;
-
-    const imageUrl = await prepareProfileImage(file);
-
-    if (!imageUrl)
-      return;
-
     const preview = this.refs.avatarPreview as HTMLImageElement;
     const initial = this.refs.avatarInitial as HTMLElement;
+    const imageUrl = await previewProfileImage(input.files?.[0], preview, initial);
 
-    this.avatarUrl = imageUrl;
-    preview.src = this.avatarUrl;
-    preview.style.display = "block";
-    initial.style.display = "none";
+    if (imageUrl)
+      this.avatarUrl = imageUrl;
   }
 
   private async save() {

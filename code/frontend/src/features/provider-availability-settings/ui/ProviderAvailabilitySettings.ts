@@ -75,7 +75,6 @@ export class ProviderAvailabilitySettings extends Block<ProviderAvailabilitySett
     else
       this.blockedSlots.add(time);
 
-    this.setProps({ saved: false, error: "" });
     this.renderSlots();
   }
 
@@ -89,7 +88,7 @@ export class ProviderAvailabilitySettings extends Block<ProviderAvailabilitySett
     button.type = "button";
     button.dataset.time = time;
     button.className = `provider-availability-settings__slot${this.blockedSlots.has(time) ? " provider-availability-settings__slot--blocked" : ""}`;
-    button.innerHTML = `${this.blockedSlots.has(time) ? '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>' : ""}<span>${time}</span>`;
+    button.innerHTML = `${this.blockedSlots.has(time) ? '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4" fill="none" stroke="currentColor" stroke-width="2"></path></svg>' : ""}<span>${time}</span>`;
     return button;
   }
 

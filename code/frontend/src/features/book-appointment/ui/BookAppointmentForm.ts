@@ -1,6 +1,8 @@
 import { Block } from "@shared/lib/block/Block";
 import type { EventListType } from "@shared/lib/block/EventListType";
 import { bookAppointment } from "@entities/appointment";
+import { hasActiveSession } from "@entities/user";
+import { routerInstance } from "@shared/lib/router/routerInstance";
 import type { BookAppointmentFormProps } from "@features/book-appointment/ui/BookAppointmentFormProps";
 import bookAppointmentFormTemplate from "@features/book-appointment/ui/BookAppointmentForm.hbs?raw";
 import "@features/book-appointment/ui/BookAppointmentForm.css";
@@ -38,6 +40,11 @@ export class BookAppointmentForm extends Block<BookAppointmentFormProps> {
   }
 
   private async confirm() {
+    if (!hasActiveSession()) {
+      routerInstance.navigate("/auth");
+      return;
+    }
+
     if (!this.date || !this.time)
       return;
 

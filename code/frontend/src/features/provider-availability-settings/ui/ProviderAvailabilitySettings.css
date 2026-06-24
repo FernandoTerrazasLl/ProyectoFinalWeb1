@@ -79,8 +79,8 @@
 
 .provider-availability-settings__slot .icon {
   display: none;
-  width: 1rem;
-  height: 1rem;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 .provider-availability-settings__slot--blocked {
