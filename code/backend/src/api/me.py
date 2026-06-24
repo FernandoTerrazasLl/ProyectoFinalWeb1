@@ -6,15 +6,8 @@ from pydantic import BaseModel, UUID4
 import src.models.domain as models
 from src.db.database import get_db
 from src.core.dependencies import get_current_patient, get_current_provider, get_current_user
-from src.services.es_client import get_es
 from src.services.mongo_client import get_mongo_db
-from src.services.redis_client import get_redis
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from elasticsearch import AsyncElasticsearch
-import redis.asyncio as redis
-import logging
-
-logger = logging.getLogger(__name__)
 
 from src.models.schemas import *
 from src.services.schedule_service import generate_slots
@@ -263,12 +256,10 @@ def get_provider_profile(
     }
 
 @router.put("/provider-profile", response_model=ProviderProfileResponse)
-async def update_provider_profile(
+def update_provider_profile(
     profile_update: ProviderProfileUpdate,
     provider: models.ProviderProfile = Depends(get_current_provider),
-    db: Session = Depends(get_db),
-    es: AsyncElasticsearch = Depends(get_es),
-    redis_client: redis.Redis = Depends(get_redis)
+    db: Session = Depends(get_db)
 ):
     current_user = provider.user
 
@@ -315,34 +306,6 @@ async def update_provider_profile(
 
     tags_list = [tag.name for tag in provider.tags]
     price = float(provider.session_price) if provider.session_price else 0.0
-
-    try:
-        await es.update(
-            index="providers",
-            id=str(provider.id),
-            body={
-                "doc": {
-                    "first_name": current_user.first_name,
-                    "last_name": current_user.last_name,
-                    "bio": provider.bio,
-                    "session_price": price,
-                    "tags": tags_list,
-                    "specialty": profile_update.specialty,
-                    "avatar_url": current_user.avatar_url or ""
-                }
-            },
-            refresh=True
-        )
-    except Exception as e:
-        logger.error(f"Failed to sync provider profile update to ES: {e}")
-
-    try:
-        await redis_client.delete(f"psychs:detail:{str(provider.id)}")
-        keys = await redis_client.keys("psychs:list:*")
-        if keys:
-            await redis_client.delete(*keys)
-    except Exception as e:
-        logger.error(f"Failed to clear redis cache: {e}")
 
     return {
         "first_name": current_user.first_name or "",
