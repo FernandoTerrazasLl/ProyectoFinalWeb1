@@ -10,7 +10,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session, joinedload
 from datetime import date, time, datetime, timedelta
 
-from src.services.es_client import get_es
+from src.services.es_client import get_es, parse_es_hits
 from src.services.redis_client import get_redis
 from src.services.mongo_client import get_mongo_db
 from motor.motor_asyncio import AsyncIOMotorDatabase
@@ -97,7 +97,8 @@ async def get_psychologists(
     specialty: Optional[str] = None,
     maxRate: Optional[float] = None,
     db: Session = Depends(get_db),
-    redis_client: redis.Redis = Depends(get_redis)
+    redis_client: redis.Redis = Depends(get_redis),
+    es: AsyncElasticsearch = Depends(get_es)
 ):
     cache_key = f"psychs:list:skip_{skip}:limit_{limit}:q_{q}:spec_{specialty}:max_{maxRate}"
 

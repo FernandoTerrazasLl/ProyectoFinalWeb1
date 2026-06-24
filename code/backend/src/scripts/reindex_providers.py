@@ -1,5 +1,6 @@
 import os
 import logging
+import redis
 from elasticsearch import Elasticsearch
 from sqlalchemy import text
 from src.db.database import SessionLocal
@@ -49,7 +50,31 @@ def reindex_providers():
             tags = [tag.name for tag in db.execute(TAGS_QUERY, {"provider_id": provider.id}).fetchall()]
             es.index(index="providers", id=str(provider.id), body=build_document(provider, tags))
 
+    print("Force refreshing the index to make docs immediately searchable...")
     es.indices.refresh(index="providers")
+
+    # Invalidate Redis Cache globally after batch update
+    print("Invalidating Redis cache...")
+    try:
+        redis_client = redis.Redis.from_url(os.getenv("REDIS_URL", "redis://redis:6379/0"))
+        
+        # Invalidate all detail caches
+        detail_keys = redis_client.keys("psychs:detail:*")
+        if detail_keys:
+            redis_client.delete(*detail_keys)
+            
+        # Invalidate all list caches
+        list_keys = redis_client.keys("psychs:list:*")
+        if list_keys:
+            redis_client.delete(*list_keys)
+            
+        print("Redis cache invalidated successfully.")
+    except Exception as e:
+        print(f"Warning: Failed to invalidate Redis cache: {e}")
+    finally:
+        redis_client.close()
+
+    print("Reindex complete!")
     logger.info(f"Indexed {len(providers)} providers into Elasticsearch")
 
 

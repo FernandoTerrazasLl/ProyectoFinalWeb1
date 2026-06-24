@@ -8,6 +8,7 @@ import asyncio
 from src.db.database import SessionLocal
 import src.models.domain as models
 from elasticsearch import Elasticsearch
+import redis.asyncio as redis
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -15,6 +16,7 @@ logger = logging.getLogger(__name__)
 KAFKA_BROKER = os.getenv("KAFKA_BROKER_URL", "kafka:9092")
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://mongodb:27017")
 CLICKHOUSE_HOST = os.getenv("CLICKHOUSE_HOST", "clickhouse")
+REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 KAFKA_TOPIC = "ugc_events"
 
 async def setup_clickhouse():
@@ -66,6 +68,18 @@ async def process_message(msg_value, mongo_db, ch_client):
                     es = Elasticsearch([ES_HOST])
                     es.update(index="providers", id=provider_id, body={"doc": {"average_rating": avg, "review_count": count}}, ignore=[404])
                     logger.info(f"Updated ES for provider {provider_id} with avg {avg} and count {count}")
+
+                    try:
+                        redis_client = redis.from_url(REDIS_URL)
+                        await redis_client.delete(f"psychs:detail:{provider_id}")
+                        keys = await redis_client.keys("psychs:list:*")
+                        if keys:
+                            await redis_client.delete(*keys)
+                        logger.info(f"Invalidated Redis cache for provider {provider_id}")
+                    except Exception as redis_err:
+                        logger.error(f"Failed to invalidate Redis cache: {redis_err}")
+                    finally:
+                        await redis_client.aclose()
 
         elif event_type == "triage_assessment":
             await mongo_db.triages.insert_one(event["data"])
