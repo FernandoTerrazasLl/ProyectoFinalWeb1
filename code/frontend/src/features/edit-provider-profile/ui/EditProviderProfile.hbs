@@ -1,9 +1,6 @@
-<form class="edit-provider-profile" id="provider-profile-form">
-  {{#if saved}}
-    <p class="edit-provider-profile__success">Tus cambios ya son visibles para los pacientes.</p>
-  {{else}}
-    <section class="edit-provider-profile__section">
-      <h2 class="edit-provider-profile__title">Información Básica</h2>
+<form class="edit-provider-profile" ref="form">
+  <section class="edit-provider-profile__section">
+    <h2 class="edit-provider-profile__title">Información de Identidad</h2>
       <div class="edit-provider-profile__photo-row">
         {{{ Avatar initials=draft.firstName size="lg" }}}
         <div>
@@ -74,5 +71,5 @@
       {{{ Input id="edit-tag" type="text" placeholder="Escribí un problema y presioná Enter" ref="tagInput" }}}
       <p class="edit-provider-profile__limit" ref="limit"></p>
     </section>
-  {{/if}}
+    <button class="button button--primary edit-provider-profile__submit" type="submit">Guardar Cambios</button>
 </form>

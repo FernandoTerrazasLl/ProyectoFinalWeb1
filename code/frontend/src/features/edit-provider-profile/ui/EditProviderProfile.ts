@@ -1,6 +1,7 @@
 import { Block } from "@shared/lib/block/Block";
 import type { EventListType } from "@shared/lib/block/EventListType";
 import { updateProviderProfile } from "@entities/psychologist";
+import { showToast } from "@shared/lib/toast/showToast";
 import type { EditProviderProfileProps } from "@features/edit-provider-profile/ui/EditProviderProfileProps";
 import editProviderProfileTemplate from "@features/edit-provider-profile/ui/EditProviderProfile.hbs?raw";
 import "@features/edit-provider-profile/ui/EditProviderProfile.css";
@@ -20,9 +21,6 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
   };
 
   protected componentDidMount() {
-    if (this.props.saved)
-      return;
-
     (this.refs.firstName as HTMLInputElement).value = this.props.draft.firstName;
     (this.refs.lastName as HTMLInputElement).value = this.props.draft.lastName;
     (this.refs.maternalLastName as HTMLInputElement).value = this.props.draft.maternalLastName;
@@ -113,6 +111,6 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
     });
 
     if (result.isOk())
-      this.setProps({ saved: true });
+      showToast("Tus datos fueron actualizados.", "success", 1500);
   }
 }

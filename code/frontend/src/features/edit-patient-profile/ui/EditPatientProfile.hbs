@@ -1,9 +1,6 @@
 <form class="edit-patient-profile" ref="form">
-  {{#if saved}}
-    <p class="edit-patient-profile__success">Tus datos fueron actualizados.</p>
-  {{else}}
-    <section class="edit-patient-profile__section">
-      <header class="edit-patient-profile__header">
+  <section class="edit-patient-profile__section">
+    <header class="edit-patient-profile__header">
         <h2 class="edit-patient-profile__title">Información de Identidad</h2>
         <p class="edit-patient-profile__subtitle">Tus datos personales básicos utilizados en la plataforma.</p>
       </header>
@@ -47,5 +44,4 @@
       {{/if}}
       <button class="button button--primary edit-patient-profile__submit" type="submit">Guardar Cambios</button>
     </section>
-  {{/if}}
 </form>

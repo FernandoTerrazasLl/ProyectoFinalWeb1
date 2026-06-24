@@ -1,6 +1,7 @@
 import { Block } from "@shared/lib/block/Block";
 import type { EventListType } from "@shared/lib/block/EventListType";
 import { updateMyProfile } from "@entities/user";
+import { showToast } from "@shared/lib/toast/showToast";
 import type { EditPatientProfileProps } from "@features/edit-patient-profile/ui/EditPatientProfileProps";
 import editPatientProfileTemplate from "@features/edit-patient-profile/ui/EditPatientProfile.hbs?raw";
 import "@features/edit-patient-profile/ui/EditPatientProfile.css";
@@ -15,9 +16,6 @@ export class EditPatientProfile extends Block<EditPatientProfileProps> {
   };
 
   protected componentDidMount() {
-    if (this.props.saved)
-      return;
-
     const draft = this.props.draft;
 
     (this.refs.firstName as HTMLInputElement).value = draft.firstName;
@@ -41,7 +39,7 @@ export class EditPatientProfile extends Block<EditPatientProfileProps> {
     });
 
     if (result.isOk())
-      this.setProps({ saved: true });
+      showToast("Tus datos fueron actualizados.", "success", 1500);
     else
       this.setProps({ error: "No pudimos guardar tus cambios. Intentá de nuevo." });
   }
