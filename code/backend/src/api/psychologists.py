@@ -134,53 +134,41 @@ async def get_psychologist(
         logger.error(f"Redis error: {e}")
 
     try:
+        provider_id = uuid.UUID(psychologist_id)
+    except ValueError:
+        provider_id = None
+
+    if provider_id:
+        provider = (
+            db.query(models.ProviderProfile)
+            .options(
+                joinedload(models.ProviderProfile.user),
+                joinedload(models.ProviderProfile.specialty),
+                joinedload(models.ProviderProfile.tags),
+            )
+            .filter(models.ProviderProfile.id == provider_id, models.ProviderProfile.is_approved.is_(True))
+            .first()
+        )
+
+        if provider:
+            result = _to_psychologist_response(provider)
+            try:
+                await redis_client.setex(cache_key, 60, json.dumps(result))
+            except Exception:
+                pass
+
+            return result
+
+    try:
         es_response = await es.get(index="providers", id=psychologist_id)
         source = es_response["_source"]
         source.pop("id", None)
         result = PsychologistResponse(id=es_response["_id"], **source).dict()
     except NotFoundError:
-        try:
-            provider_id = uuid.UUID(psychologist_id)
-        except ValueError:
-            raise HTTPException(status_code=404, detail="Psychologist not found")
-
-        provider = (
-            db.query(models.ProviderProfile)
-            .options(
-                joinedload(models.ProviderProfile.user),
-                joinedload(models.ProviderProfile.specialty),
-                joinedload(models.ProviderProfile.tags),
-            )
-            .filter(models.ProviderProfile.id == provider_id, models.ProviderProfile.is_approved.is_(True))
-            .first()
-        )
-
-        if not provider:
-            raise HTTPException(status_code=404, detail="Psychologist not found")
-
-        result = _to_psychologist_response(provider)
+        raise HTTPException(status_code=404, detail="Psychologist not found")
     except Exception as e:
         logger.error(f"Elasticsearch error: {e}")
-        try:
-            provider_id = uuid.UUID(psychologist_id)
-        except ValueError:
-            raise HTTPException(status_code=503, detail="Service Unavailable")
-
-        provider = (
-            db.query(models.ProviderProfile)
-            .options(
-                joinedload(models.ProviderProfile.user),
-                joinedload(models.ProviderProfile.specialty),
-                joinedload(models.ProviderProfile.tags),
-            )
-            .filter(models.ProviderProfile.id == provider_id, models.ProviderProfile.is_approved.is_(True))
-            .first()
-        )
-
-        if not provider:
-            raise HTTPException(status_code=503, detail="Service Unavailable")
-
-        result = _to_psychologist_response(provider)
+        raise HTTPException(status_code=503, detail="Service Unavailable")
 
     try:
         await redis_client.setex(cache_key, 60, json.dumps(result))
