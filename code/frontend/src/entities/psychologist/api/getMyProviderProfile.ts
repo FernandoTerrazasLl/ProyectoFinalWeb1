@@ -16,6 +16,7 @@ export async function getMyProviderProfile(): Promise<Result<ProviderProfileDraf
     gender: response.gender ?? "",
     phoneNumber: response.phone_number,
     email: response.email ?? "",
+    avatarUrl: response.avatar_url ?? "",
     bio: response.bio,
     sessionPrice: response.session_price,
     tags: response.tags,

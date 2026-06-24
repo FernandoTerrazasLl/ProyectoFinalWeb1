@@ -35,6 +35,15 @@
   overflow: hidden;
 }
 
+.provider-settings-page__panel--plain {
+  display: block;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+
 @media (width >= 768px) {
   .provider-settings-page {
     flex-direction: row;

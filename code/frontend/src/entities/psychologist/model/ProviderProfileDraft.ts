@@ -7,6 +7,7 @@ export interface ProviderProfileDraft {
   gender: string;
   phoneNumber: string;
   email: string;
+  avatarUrl: string;
   bio: string;
   sessionPrice: number;
   tags: string[];

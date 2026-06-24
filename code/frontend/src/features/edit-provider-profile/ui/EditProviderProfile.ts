@@ -10,9 +10,11 @@ const MAX_TAGS = 5;
 export class EditProviderProfile extends Block<EditProviderProfileProps> {
   protected template = editProviderProfileTemplate;
   private tags: string[] = [];
+  private avatarUrl = "";
   protected events: EventListType = {
     keydown: (event) => this.handleTagKeydown(event as KeyboardEvent),
-    click: (event) => this.handleRemoveTag(event),
+    click: (event) => this.handleClick(event),
+    change: (event) => this.handlePhotoChange(event),
     submit: (event) => {
       event.preventDefault();
       void this.save();
@@ -35,8 +37,21 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
     (this.refs.rate as HTMLInputElement).value = String(this.props.draft.sessionPrice);
     (this.refs.specialty as HTMLInputElement).value = this.props.draft.specialty;
     (this.refs.officeAddress as HTMLInputElement).value = this.props.draft.officeAddress;
+    this.avatarUrl = this.props.draft.avatarUrl;
+    this.setAvatarInitial();
     this.tags = [...this.props.draft.tags];
     this.renderChips();
+  }
+
+  private setAvatarInitial() {
+    const initial = this.props.draft.firstName.trim().charAt(0).toUpperCase() || "P";
+    const element = this.refs.avatarInitial as HTMLElement | undefined;
+    const preview = this.refs.avatarPreview as HTMLImageElement | undefined;
+
+    if (element)
+      element.textContent = initial;
+    if (element && preview && preview.getAttribute("src"))
+      element.style.display = "none";
   }
 
   private handleTagKeydown(event: KeyboardEvent) {
@@ -57,6 +72,17 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
       input.value = "";
       this.renderChips();
     }
+  }
+
+  private handleClick(event: Event) {
+    const target = event.target as Element;
+
+    if (target.closest(".edit-provider-profile__photo-button")) {
+      (this.refs.avatarInput as HTMLInputElement).click();
+      return;
+    }
+
+    this.handleRemoveTag(event);
   }
 
   private handleRemoveTag(event: Event) {
@@ -95,6 +121,26 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
       this.refs.limit.textContent = message;
   }
 
+  private handlePhotoChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file || !file.type.startsWith("image/") || file.size > 2 * 1024 * 1024)
+      return;
+
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      const preview = this.refs.avatarPreview as HTMLImageElement;
+      const initial = this.refs.avatarInitial as HTMLElement;
+
+      this.avatarUrl = String(reader.result);
+      preview.src = this.avatarUrl;
+      preview.style.display = "block";
+      initial.style.display = "none";
+    });
+    reader.readAsDataURL(file);
+  }
+
   private async save() {
     const result = await updateProviderProfile({
       firstName: (this.refs.firstName as HTMLInputElement).value,
@@ -105,6 +151,7 @@ export class EditProviderProfile extends Block<EditProviderProfileProps> {
       gender: (this.refs.gender as HTMLInputElement).value,
       phoneNumber: (this.refs.phoneNumber as HTMLInputElement).value,
       email: (this.refs.email as HTMLInputElement).value,
+      avatarUrl: this.avatarUrl,
       bio: (this.refs.bio as HTMLTextAreaElement).value,
       sessionPrice: Number((this.refs.rate as HTMLInputElement).value),
       tags: this.tags,

@@ -13,6 +13,7 @@ export function updateProviderProfile(draft: ProviderProfileDraft): Promise<Resu
     gender: draft.gender || null,
     phone_number: draft.phoneNumber,
     email: draft.email || null,
+    avatar_url: draft.avatarUrl,
     bio: draft.bio,
     session_price: draft.sessionPrice,
     tags: draft.tags,

@@ -5,9 +5,13 @@
     <section class="edit-provider-profile__section">
       <h2 class="edit-provider-profile__title">Información Básica</h2>
       <div class="edit-provider-profile__photo-row">
-        {{{ Avatar initials=draft.firstName size="lg" }}}
+        <div class="edit-provider-profile__avatar">
+          <img class="edit-provider-profile__avatar-image" ref="avatarPreview" alt="Foto de perfil" src="{{draft.avatarUrl}}">
+          <span class="edit-provider-profile__avatar-initial" ref="avatarInitial">{{draft.firstName}}</span>
+        </div>
         <div>
-          <button class="button button--secondary" type="button">Cambiar foto</button>
+          <button class="button button--secondary edit-provider-profile__photo-button" type="button">Cambiar foto</button>
+          <input class="edit-provider-profile__photo-input" type="file" accept="image/png,image/jpeg,image/gif" ref="avatarInput">
           <p class="edit-provider-profile__hint">JPG, GIF o PNG. Max 2MB.</p>
         </div>
       </div>

@@ -57,6 +57,10 @@
 .provider-schedule-page__today {
   height: 2.3125rem;
   padding-inline: var(--space-4);
+  border-color: #99f6e4;
+  background-color: #ccfbf1;
+  color: #0f766e;
+  box-shadow: 0 1px 2px rgb(15 118 110 / 10%);
 }
 
 .provider-schedule-page__date-wrap {

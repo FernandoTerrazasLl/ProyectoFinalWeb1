@@ -7,6 +7,7 @@ export interface ProviderProfileResponse {
   gender: string | null;
   phone_number: string;
   email?: string;
+  avatar_url?: string;
   bio: string;
   session_price: number;
   tags: string[];

@@ -1,0 +1,34 @@
+<section class="provider-availability-settings">
+  {{#if saved}}
+    <p class="provider-availability-settings__success">Tus preferencias de agenda fueron guardadas.</p>
+  {{/if}}
+  {{#if error}}
+    <p class="form-error">{{error}}</p>
+  {{/if}}
+  <article class="provider-availability-settings__group">
+    <header class="provider-availability-settings__group-head">
+      <div>
+        <h2 class="provider-availability-settings__group-title">Jornada Diurna - Mañana y Tarde</h2>
+        <p class="provider-availability-settings__range">08:00 a 19:00</p>
+      </div>
+      <span class="provider-availability-settings__collapse">{{{ Icon name="chevron-up" }}}</span>
+    </header>
+    <div class="provider-availability-settings__slots" ref="daySlots"></div>
+  </article>
+  <article class="provider-availability-settings__group">
+    <header class="provider-availability-settings__group-head">
+      <div>
+        <h2 class="provider-availability-settings__group-title">Horario Nocturno y Madrugada</h2>
+        <p class="provider-availability-settings__range">20:00 a 07:00</p>
+      </div>
+      <span class="provider-availability-settings__collapse">{{{ Icon name="chevron-up" }}}</span>
+    </header>
+    <div class="provider-availability-settings__slots" ref="nightSlots"></div>
+  </article>
+  <div class="provider-availability-settings__footer">
+    <button class="button button--primary provider-availability-settings__save" type="button">
+      {{{ Icon name="save" }}}
+      Guardar Preferencias de Agenda
+    </button>
+  </div>
+</section>
