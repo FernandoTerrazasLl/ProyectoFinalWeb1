@@ -5,29 +5,58 @@
   {{#if error}}
     <p class="form-error">{{error}}</p>
   {{/if}}
+  <div class="provider-availability-settings__range-controls">
+    <label class="provider-availability-settings__field">
+      <span class="provider-availability-settings__label">Hora inicio</span>
+      <input
+        class="provider-availability-settings__input"
+        ref="startTime"
+        type="time"
+        value="{{startTime}}"
+      />
+    </label>
+    <label class="provider-availability-settings__field">
+      <span class="provider-availability-settings__label">Hora final</span>
+      <input
+        class="provider-availability-settings__input"
+        ref="endTime"
+        type="time"
+        value="{{endTime}}"
+      />
+    </label>
+    <label class="provider-availability-settings__field">
+      <span class="provider-availability-settings__label">Separar cada</span>
+      <select class="provider-availability-settings__input" ref="intervalMinutes">
+        <option value="15">15 minutos</option>
+        <option value="30">30 minutos</option>
+        <option value="45">45 minutos</option>
+        <option value="60" selected>60 minutos</option>
+      </select>
+    </label>
+  </div>
   <article class="provider-availability-settings__group">
     <header class="provider-availability-settings__group-head">
       <div>
         <h2 class="provider-availability-settings__group-title">Jornada Diurna - Mañana y Tarde</h2>
-        <p class="provider-availability-settings__range">08:00 a 19:00</p>
+        <p class="provider-availability-settings__range">Horas de inicio generadas automáticamente</p>
       </div>
-      <span class="provider-availability-settings__collapse">{{{ Icon name="chevron-up" }}}</span>
+      <span class="provider-availability-settings__collapse">{{{Icon name="chevron-up"}}}</span>
     </header>
     <div class="provider-availability-settings__slots" ref="daySlots"></div>
   </article>
-  <article class="provider-availability-settings__group">
+  <article class="provider-availability-settings__group" ref="nightGroup">
     <header class="provider-availability-settings__group-head">
       <div>
         <h2 class="provider-availability-settings__group-title">Horario Nocturno y Madrugada</h2>
-        <p class="provider-availability-settings__range">20:00 a 07:00</p>
+        <p class="provider-availability-settings__range">Aparece si el rango elegido cruza la noche</p>
       </div>
-      <span class="provider-availability-settings__collapse">{{{ Icon name="chevron-up" }}}</span>
+      <span class="provider-availability-settings__collapse">{{{Icon name="chevron-up"}}}</span>
     </header>
     <div class="provider-availability-settings__slots" ref="nightSlots"></div>
   </article>
   <div class="provider-availability-settings__footer">
     <button class="button button--primary provider-availability-settings__save" type="button">
-      {{{ Icon name="save" }}}
+      {{{Icon name="save"}}}
       Guardar Preferencias de Agenda
     </button>
   </div>

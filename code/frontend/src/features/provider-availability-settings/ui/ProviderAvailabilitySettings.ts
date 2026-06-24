@@ -10,20 +10,47 @@ interface ProviderAvailabilitySettingsProps extends BlockOwnProps {
   error?: string;
 }
 
-const DAY_SLOTS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
-const NIGHT_SLOTS = ["20:00", "21:00", "22:00", "23:00", "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00"];
+const DEFAULT_START_TIME = "08:00";
+const DEFAULT_END_TIME = "20:00";
+const DEFAULT_INTERVAL_MINUTES = 60;
 const ALL_DAYS = [1, 2, 3, 4, 5];
-const DEFAULT_BLOCKED_SLOTS = new Set(["12:00", "13:00", ...NIGHT_SLOTS]);
+const DEFAULT_BLOCKED_SLOTS = new Set(["12:00", "13:00"]);
 
-function addHour(time: string): string {
-  const hour = Number(time.split(":")[0] ?? "0");
-  return `${String((hour + 1) % 24).padStart(2, "0")}:00`;
+function toMinutes(time: string): number {
+  const [hour = "0", minute = "0"] = time.split(":");
+  return Number(hour) * 60 + Number(minute);
+}
+
+function toTime(totalMinutes: number): string {
+  const minutesInDay = 24 * 60;
+  const normalized = ((totalMinutes % minutesInDay) + minutesInDay) % minutesInDay;
+  const hour = Math.floor(normalized / 60);
+  const minute = normalized % 60;
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}
+
+function splitHour(start: string, end: string, minutes: number): string[] {
+  const startMinutes = toMinutes(start);
+  let endMinutes = toMinutes(end);
+  const slots: string[] = [];
+
+  if (endMinutes <= startMinutes)
+    endMinutes += 24 * 60;
+
+  for (let current = startMinutes; current < endMinutes; current += minutes)
+    slots.push(toTime(current));
+
+  return slots;
 }
 
 export class ProviderAvailabilitySettings extends Block<ProviderAvailabilitySettingsProps> {
   protected template = providerAvailabilitySettingsTemplate;
-  private blockedSlots = new Set<string>(DEFAULT_BLOCKED_SLOTS);
-  private allSlots = [...DAY_SLOTS, ...NIGHT_SLOTS];
+  private startTime = DEFAULT_START_TIME;
+  private endTime = DEFAULT_END_TIME;
+  private intervalMinutes = DEFAULT_INTERVAL_MINUTES;
+  private blockedSlots = new Set<string>([...DEFAULT_BLOCKED_SLOTS]);
+  private allSlots = splitHour(DEFAULT_START_TIME, DEFAULT_END_TIME, DEFAULT_INTERVAL_MINUTES);
+  private rulesLoaded = false;
   protected events: EventListType = {
     click: (event) => {
       const target = event.target as Element;
@@ -37,15 +64,20 @@ export class ProviderAvailabilitySettings extends Block<ProviderAvailabilitySett
       if (target.closest(".provider-availability-settings__save"))
         void this.save();
     },
+    change: (event) => this.handleRangeChange(event),
   };
 
   protected componentDidMount() {
+    this.syncRangeConntrols();
     this.renderSlots();
-    void this.loadRules();
+
+    if (!this.rulesLoaded)
+      void this.loadRules();
   }
 
   private async loadRules() {
     const result = await getScheduleRules();
+    this.rulesLoaded = true;
 
     if (result.isErr()) {
       this.setProps({ error: "No pudimos cargar tus preferencias de agenda." });
@@ -79,8 +111,7 @@ export class ProviderAvailabilitySettings extends Block<ProviderAvailabilitySett
   }
 
   private renderSlots() {
-    this.refs.daySlots?.replaceChildren(...DAY_SLOTS.map((slot) => this.createSlotButton(slot)));
-    this.refs.nightSlots?.replaceChildren(...NIGHT_SLOTS.map((slot) => this.createSlotButton(slot)));
+    this.refs.slots?.replaceChildren(...this.allSlots.map((slot) => this.createSlotButton(slot)));
   }
 
   private createSlotButton(time: string): HTMLButtonElement {
@@ -92,12 +123,51 @@ export class ProviderAvailabilitySettings extends Block<ProviderAvailabilitySett
     return button;
   }
 
+  private syncRangeConntrols() {
+    const startInput = this.refs.startTime as HTMLInputElement | undefined;
+    const endInput = this.refs.endTime as HTMLInputElement | undefined;
+    const intervalInput = this.refs.intervalMinutes as HTMLSelectElement | undefined;
+
+    if (startInput)
+      startInput.value = this.startTime;
+    if (endInput)
+      endInput.value = this.endTime;
+    if (intervalInput)
+      intervalInput.value = String(this.intervalMinutes);
+  }
+
+  private handleRangeChange(event: Event) {
+    const target = event.target as HTMLInputElement | HTMLSelectElement;
+
+    if (!target.closest(".provider-availability-settings__range-controls"))
+      return;
+
+    const startInput = this.refs.startTime as HTMLInputElement | undefined;
+    const endInput = this.refs.endTime as HTMLInputElement | undefined;
+    const intervalInput = this.refs.intervalMinutes as HTMLSelectElement | undefined;
+
+    this.startTime = startInput?.value || DEFAULT_START_TIME;
+    this.endTime = endInput?.value || DEFAULT_END_TIME;
+    this.intervalMinutes = Number(intervalInput?.value || DEFAULT_INTERVAL_MINUTES);
+
+    const nextSlots = splitHour(this.startTime, this.endTime, this.intervalMinutes);
+
+    if (nextSlots.length === 0) {
+      this.setProps({ saved: false, error: "Pon un rango horario validp" });
+      return;
+    }
+
+    this.allSlots = nextSlots;
+    this.blockedSlots = new Set([...this.blockedSlots].filter((slot) => this.allSlots.includes(slot)));
+    this.renderSlots();
+  }
+
   private async save() {
     const availableSlots = this.allSlots.filter((slot) => !this.blockedSlots.has(slot));
     const rules: ScheduleRule[] = ALL_DAYS.flatMap((day) => availableSlots.map((slot) => ({
       dayOfWeek: day,
       startTime: slot,
-      endTime: addHour(slot),
+      endTime: toTime(toMinutes(slot) + this.intervalMinutes),
     })));
     const result = await updateScheduleRules(rules);
 
