@@ -1,7 +1,7 @@
 import { Block } from "@shared/lib/block/Block";
 import type { EventListType } from "@shared/lib/block/EventListType";
 import { bookAppointment } from "@entities/appointment";
-import { hasActiveSession } from "@entities/user";
+import { clearStoredSession, hasActiveSession, sessionStore } from "@entities/user";
 import { routerInstance } from "@shared/lib/router/routerInstance";
 import type { BookAppointmentFormProps } from "@features/book-appointment/ui/BookAppointmentFormProps";
 import bookAppointmentFormTemplate from "@features/book-appointment/ui/BookAppointmentForm.hbs?raw";
@@ -54,9 +54,28 @@ export class BookAppointmentForm extends Block<BookAppointmentFormProps> {
     if (result.isOk()) {
       this.setProps({ submitted: true });
       this.props.onBooked();
+    } else if (result.error.status === 401) {
+      clearStoredSession();
+      sessionStore.setState({ accessToken: null, user: null, role: "guest" });
+      routerInstance.navigate("/auth");
     } else {
-      this.setProps({ error: "No pudimos agendar la cita. Intentá de nuevo." });
+      this.setProps({ error: this.bookingError(result.error.message) });
     }
+  }
+
+  private bookingError(message: string): string {
+    const lowerMessage = message.toLowerCase();
+
+    if (lowerMessage.includes("already booked"))
+      return "Ese horario ya fue reservado. Elegí otro horario disponible.";
+    if (lowerMessage.includes("outside provider"))
+      return "Ese horario está fuera de la agenda del psicólogo.";
+    if (lowerMessage.includes("blocked"))
+      return "Ese horario fue bloqueado por el psicólogo.";
+    if (lowerMessage.includes("contigo mismo"))
+      return "No podés agendar una cita contigo mismo.";
+
+    return "No pudimos agendar la cita. Intentá de nuevo.";
   }
 
   private isPastSelection(date: string, time: string): boolean {

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { formatRelativeDate } from "@entities/review/lib/formatRelativeDate";
 
-const NOW = new Date("2026-06-23T12:00:00.000Z");
+const NOW = new Date(2026, 5, 23, 12, 0, 0);
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -34,7 +34,8 @@ describe("Antigüedad de una reseña [US-UGC-02]", () => {
   });
 
   it("muestra 'Ayer' por calendario aunque hayan pasado menos de 24 horas [AC-1]", () => {
-    const fecha = "2026-06-22T23:30:00-04:00";
+    vi.setSystemTime(new Date(2026, 5, 23, 0, 30, 0));
+    const fecha = new Date(2026, 5, 22, 23, 30, 0).toISOString();
 
     const etiqueta = formatRelativeDate(fecha);
 

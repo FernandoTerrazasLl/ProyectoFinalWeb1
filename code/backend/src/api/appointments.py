@@ -44,6 +44,10 @@ def create_appointment(
         raise HTTPException(status_code=400, detail="Requested time is blocked by the provider")
 
     provider_profile = db.query(models.ProviderProfile).filter(models.ProviderProfile.id == appt.provider_id).first()
+
+    if provider_profile and provider_profile.user_id == patient.user_id:
+        raise HTTPException(status_code=400, detail="No puedes agendar una cita contigo mismo.")
+
     price = provider_profile.session_price if provider_profile else None
 
     new_appt = models.Appointment(
