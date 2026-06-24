@@ -23,6 +23,7 @@ export class DirectoryPage extends Block<BlockOwnProps> {
 
   protected componentDidMount() {
     this.mountInto("search", new SearchBox({
+      placeholder: "Ej: Ansiedad, Insomnio, etc.",
       onSearch: (q) => this.applyQuery({ ...this.query, q }),
     }));
 
@@ -44,7 +45,9 @@ export class DirectoryPage extends Block<BlockOwnProps> {
         ...specialties.map((specialty) => ({ value: specialty.name, label: specialty.name })),
       ],
       maxRate: 1000,
-      onChange: (filters) => this.applyQuery({ ...this.query, ...filters }),
+      onChange: (filters) => {
+        this.query = { ...this.query, ...filters };
+      },
     }));
   }
 

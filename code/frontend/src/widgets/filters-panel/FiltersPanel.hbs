@@ -6,7 +6,10 @@
     options=specialtyOptions
     ref="specialty"
   }}}
-  {{{ Label text="Tarifa máxima" forId="filters-max-rate" }}}
+  <div class="filters-panel__rate-header">
+    {{{ Label text="Tarifa máxima" forId="filters-max-rate" }}}
+    <span class="filters-panel__current-rate" ref="currentRateLabel">{{maxRate}} Bs.</span>
+  </div>
   {{{ RangeSlider
     id="filters-max-rate"
     min=0

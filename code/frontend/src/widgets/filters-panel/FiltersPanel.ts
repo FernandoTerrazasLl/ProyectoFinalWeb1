@@ -12,9 +12,16 @@ export class FiltersPanel extends Block<FiltersPanelProps> {
   };
 
   private emitChange() {
+    const maxRate = Number((this.refs.maxRate as HTMLInputElement).value);
+    const specialty = (this.refs.specialty as HTMLSelectElement).value;
+
+    if (this.refs.currentRateLabel) {
+      (this.refs.currentRateLabel as HTMLElement).innerText = `${maxRate} Bs.`;
+    }
+
     this.props.onChange({
-      specialty: (this.refs.specialty as HTMLSelectElement).value,
-      maxRate: Number((this.refs.maxRate as HTMLInputElement).value),
+      specialty,
+      maxRate,
     });
   }
 }

@@ -8,18 +8,18 @@ export class SearchBox extends Block<SearchBoxProps> {
   protected template = searchBoxTemplate;
   private debounceTimer: ReturnType<typeof setTimeout> | undefined;
   protected events: EventListType = {
-    input: (event) => {
-      clearTimeout(this.debounceTimer);
-      const value = (event.target as HTMLInputElement).value;
-      this.debounceTimer = setTimeout(() => this.props.onSearch(value), 350);
-    },
     click: (event) => {
       if (!(event.target as Element).closest(".search-box__submit"))
         return;
 
-      clearTimeout(this.debounceTimer);
       this.props.onSearch((this.refs.input as HTMLInputElement).value);
     },
+    keydown: (event) => {
+      const e = event as KeyboardEvent;
+      if (e.key === "Enter") {
+        this.props.onSearch((this.refs.input as HTMLInputElement).value);
+      }
+    }
   };
 
   protected componentWillUnmount() {

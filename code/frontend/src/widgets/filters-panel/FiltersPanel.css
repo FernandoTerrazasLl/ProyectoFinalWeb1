@@ -22,3 +22,16 @@
   width: 1rem;
   height: 1rem;
 }
+
+.filters-panel__rate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filters-panel__current-rate {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+}
