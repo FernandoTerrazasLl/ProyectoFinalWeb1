@@ -25,7 +25,7 @@ def get_provider_slots(db: Session, provider_id: UUID4, target_date: date) -> Tu
 
     all_slots_set = set()
     for rule in rules:
-        slots = generate_slots(rule.start_time, rule.end_time)
+        slots = generate_slots(rule.start_time, rule.end_time) #OJO
         all_slots_set.update(slots)
 
     extra_exceptions = [e for e in exceptions if e.exception_type == "EXTRA"]
