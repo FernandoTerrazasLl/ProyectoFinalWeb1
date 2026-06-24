@@ -25,7 +25,6 @@ export class BookingCalendar extends Block<BookingCalendarProps> {
   protected template = bookingCalendarTemplate;
   protected events: EventListType = {
     change: () => void this.handleDateChange(),
-    input: () => void this.handleDateChange(),
     click: (event) => {
       const slot = (event.target as Element).closest("[data-time]");
 

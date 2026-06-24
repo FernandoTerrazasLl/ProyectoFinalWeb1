@@ -1,7 +1,7 @@
 .book-appointment {
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: 1rem;
 }
 
 .book-appointment__label {
@@ -20,7 +20,7 @@
 .book-appointment__submit {
   min-height: 3.5rem;
   border-radius: 0.875rem;
-  margin-top: 1rem;
+  margin-top: 1.125rem;
 }
 
 .book-appointment__disclaimer {
