@@ -88,6 +88,7 @@ class MyAppointmentResponse(BaseModel):
     date: date
     time: time
     state: str
+    has_reviewed: bool = False
 
 class ScheduleExceptionCreate(BaseModel):
     date: date

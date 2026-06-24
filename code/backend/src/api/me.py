@@ -7,6 +7,8 @@ import src.models.domain as models
 from src.db.database import get_db
 from src.core.dependencies import get_current_patient, get_current_provider, get_current_user
 from src.services.es_client import get_es
+from src.services.mongo_client import get_mongo_db
+from motor.motor_asyncio import AsyncIOMotorDatabase
 from elasticsearch import AsyncElasticsearch
 import logging
 
@@ -65,13 +67,26 @@ def update_user_profile(
     }
 
 @router.get("/appointments", response_model=List[MyAppointmentResponse])
-def get_my_appointments(
+async def get_my_appointments(
     patient: models.PatientProfile = Depends(get_current_patient),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    mongo_db: AsyncIOMotorDatabase = Depends(get_mongo_db)
 ):
     appointments = db.query(models.Appointment).filter(
         models.Appointment.patient_id == patient.id
     ).order_by(models.Appointment.date.desc(), models.Appointment.time.desc()).all()
+
+    provider_ids = list({str(appt.provider_id) for appt in appointments})
+    
+    reviewed_provider_ids = set()
+    if provider_ids:
+        user_id_str = str(patient.user.id)
+        cursor = mongo_db.reviews.find({
+            "user_id": user_id_str,
+            "provider_id": {"$in": provider_ids}
+        })
+        reviews = await cursor.to_list(length=None)
+        reviewed_provider_ids = {r.get("provider_id") for r in reviews}
 
     result = []
     for appt in appointments:
@@ -86,7 +101,8 @@ def get_my_appointments(
             "provider_address": getattr(provider_profile, "office_address", "No provista"),
             "date": appt.date,
             "time": appt.time,
-            "state": appt.status
+            "state": appt.status,
+            "has_reviewed": str(appt.provider_id) in reviewed_provider_ids
         })
     return result
 

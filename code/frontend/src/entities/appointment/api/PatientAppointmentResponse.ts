@@ -7,4 +7,5 @@ export interface PatientAppointmentResponse {
   date: string;
   time: string;
   state: string;
+  has_reviewed: boolean;
 }

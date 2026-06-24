@@ -12,6 +12,7 @@ function buildResponse(overrides: Partial<PatientAppointmentResponse> = {}): Pat
     date: "2026-06-22",
     time: "10:00",
     state: "PENDING",
+    has_reviewed: false,
     ...overrides,
   };
 }
@@ -46,6 +47,14 @@ describe("Reseña solo de citas finalizadas [US-UGC-01]", () => {
 
   it("no permite reseñar cuando la atención todavía no ocurrió [AC-3]", () => {
     const response = buildResponse({ state: "PENDING" });
+
+    const cita = toPatientAppointment(response);
+
+    expect(cita.reviewable).toBe(false);
+  });
+
+  it("no permite reseñar si el paciente ya dejó una reseña para ese profesional", () => {
+    const response = buildResponse({ state: "COMPLETED", has_reviewed: true });
 
     const cita = toPatientAppointment(response);
 

@@ -14,6 +14,6 @@ export function toPatientAppointment(response: PatientAppointmentResponse): Pati
     date: response.date,
     time: response.time,
     state,
-    reviewable: state === "completed",
+    reviewable: state === "completed" && !response.has_reviewed,
   };
 }
