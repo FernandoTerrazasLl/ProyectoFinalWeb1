@@ -8,7 +8,12 @@ import { Modal } from "@shared/ui/Modal/Modal";
 import triagePageTemplate from "@pages/triage/TriagePage.hbs?raw";
 import "@pages/triage/TriagePage.css";
 
-class TriageResultBody extends Block<any> {
+interface TriageResultBodyProps extends BlockOwnProps {
+  specialty: string;
+  onContinue: () => void;
+}
+
+class TriageResultBody extends Block<TriageResultBodyProps> {
   protected template = `
     <div style="padding: 1.5rem; text-align: center;">
       <h2 style="font-family: var(--font-sans); font-size: 1.5rem; font-weight: 700; color: var(--color-text); margin-bottom: 1rem;">Evaluación Completada</h2>
