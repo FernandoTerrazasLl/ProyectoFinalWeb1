@@ -15,6 +15,6 @@ def test_get_psychologists():
 
 def test_get_psychologist_detail():
     res = client.get("/psychologists/123e4567-e89b-12d3-a456-426614174000")
-    assert res.status_code in [200, 404, 503]
+    assert res.status_code in [200, 404]
 
 

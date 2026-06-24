@@ -22,10 +22,15 @@ def test_register_and_login():
         "password": "password123",
         "first_name": "Test",
         "last_name": "User",
+        "maternal_last_name": "",
+        "ci": "1234567",
+        "birth_date": "1990-01-01",
+        "gender": "F",
+        "phone_number": "70000000",
         "role": "PATIENT"
     })
-    assert res.status_code in [200, 201, 422]
+    assert res.status_code in [200, 201]
     res = client.post("/auth/login", json={"email": random_email, "password": "password123"})
-    assert res.status_code in [200, 401]
+    assert res.status_code == 200
     assert "access_token" in res.json()
 
