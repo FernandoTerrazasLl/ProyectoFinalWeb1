@@ -51,10 +51,6 @@ class ScheduleRule(models.Model):
 
     def clean(self):
         super().clean()
-        if self.start_time and (self.start_time.minute != 0 or self.start_time.second != 0):
-            raise ValidationError({'start_time': 'Start time must be exactly on the hour.'})
-        if self.end_time and (self.end_time.minute != 0 or self.end_time.second != 0):
-            raise ValidationError({'end_time': 'End time must be exactly on the hour.'})
         if self.start_time and self.end_time and self.start_time >= self.end_time:
             raise ValidationError('End time must be strictly after start time.')
 
